@@ -56,7 +56,7 @@
                     <div class="list-inline-item"><a href="#" class="search-open nav-link"><i class="icon-magnifying-glass-browser"></i></a></div>
                     <!-- Log out               -->
                     <div class="list-inline-item logout">
-                        <a id="logout" href="/logout" class="nav-link"> <span class="d-none d-sm-inline">Logout </span><i class="icon-logout"></i></a>
+                        <a id="logout" href="#" class="nav-link"> <span class="d-none d-sm-inline">Logout </span><i class="icon-logout"></i></a>
                     </div>
                 </div>
             </div>
@@ -330,6 +330,7 @@
     <script src="assets/vendor/jquery-validation/jquery.validate.min.js"></script>
     <script src="assets/js/charts-home.js"></script>
     <script src="assets/js/front.js"></script>
+    <script src="assets/js/custom.js"></script>
 </body>
 
 </html>

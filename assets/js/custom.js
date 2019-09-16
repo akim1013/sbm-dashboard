@@ -3,7 +3,7 @@ $(document).ready(function(){
         e.stopPropagation();
         e.preventDefault();
         $.ajax({
-            url: '/register/add',
+            url: '/auth/add',
             method: 'post',
             data: $(this).serialize(),
             success: function(res){
@@ -36,7 +36,7 @@ $(document).ready(function(){
         e.stopPropagation();
         e.preventDefault();
         $.ajax({
-            url: '/login/auth',
+            url: '/auth/login',
             method: 'post',
             data: $(this).serialize(),
             success: function(res){
@@ -64,5 +64,15 @@ $(document).ready(function(){
             }
         });
     })
-
+    $('#logout').click(function(e){
+        e.stopPropagation();
+        e.preventDefault();
+        $.ajax({
+            url: '/auth/logout',
+            method: 'post',
+            success: function(res){
+                window.location.assign('/');
+            }
+        });
+    })
 })

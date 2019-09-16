@@ -60,7 +60,7 @@
                                     </div>
                                     <button type="submit" class="btn btn-primary">Login</button>
                                 </form>
-                                <a href="/forget_password" class="forgot-pass">Forgot Password?</a>
+                                <a href="#" class="forgot-pass">Forgot Password?</a>
                                 <br><small>Do not have an account? </small><a href="/register" class="signup">Signup</a>
                             </div>
                         </div>

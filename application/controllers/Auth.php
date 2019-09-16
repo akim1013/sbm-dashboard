@@ -1,18 +1,43 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Register extends CI_Controller {
+class Auth extends CI_Controller {
 
-    public function __construct(){
-        parent::__construct();
-        $this->load->model('user_model');
+	public function __construct(){
+		parent::__construct();
+		$this->load->helper('url');
+		$this->load->library('session');
+		$this->load->model('user_model');
     }
 
 	public function index(){
-		$this->load->view('register');
+		$this->load->view('login');
 	}
 
-    public function add(){
+	public function login(){
+		$data = array(
+			'name' => $this->input->post('name'),
+			'password' => md5($this->input->post('password'))
+		);
+		$res = $this->user_model->login($data);
+		if($res == 1){
+			$this->session->set_userdata('user_name', $data['name']);
+            echo json_encode(array(
+                'status' => 'success',
+                'msg'    => 'User logged in successfully'
+            ));
+        }else{
+            echo json_encode(array(
+                'status' => 'failed',
+                'msg'    => 'User name or Password incorrect'
+            ));
+        }
+	}
+    public function logout(){
+        $this->session->sess_destroy();
+        echo 1;
+	}
+    public function register(){
         $data = array(
             'name'              => $this->input->post('name'),
             'email'             => $this->input->post('email'),
