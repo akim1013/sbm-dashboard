@@ -29,6 +29,7 @@
 </head>
 
 <body style="background-color: #2d3035;">
+    <div class="loader hide"></div>
     <header class="header">
         <nav class="navbar navbar-expand-lg">
             <div class="search-panel">

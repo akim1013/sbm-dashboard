@@ -1,5 +1,6 @@
 $(document).ready(function(){
     $('#register-form').submit(function(e){
+        $('.loader').removeClass('hide');
         e.stopPropagation();
         e.preventDefault();
         $.ajax({
@@ -7,6 +8,7 @@ $(document).ready(function(){
             method: 'post',
             data: $(this).serialize(),
             success: function(res){
+                $('.loader').addClass('hide');
                 var response = JSON.parse(res);
                 if(response.status == 'failed'){
                     $.toast({
@@ -33,6 +35,7 @@ $(document).ready(function(){
     })
 
     $('#login-form').submit(function(e){
+        $('.loader').removeClass('hide');
         e.stopPropagation();
         e.preventDefault();
         $.ajax({
@@ -40,6 +43,7 @@ $(document).ready(function(){
             method: 'post',
             data: $(this).serialize(),
             success: function(res){
+                $('.loader').addClass('hide');
                 var response = JSON.parse(res);
                 if(response.status == 'failed'){
                     $.toast({
@@ -65,12 +69,14 @@ $(document).ready(function(){
         });
     })
     $('.logout').click(function(e){
+        $('.loader').removeClass('hide');
         e.stopPropagation();
         e.preventDefault();
         $.ajax({
             url: '/auth/logout',
             method: 'post',
             success: function(res){
+                $('.loader').addClass('hide');
                 window.location.assign('/');
             }
         });

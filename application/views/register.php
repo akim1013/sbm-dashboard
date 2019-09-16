@@ -30,6 +30,7 @@
 </head>
 
 <body>
+    <div class="loader hide"></div>
     <div class="login-page">
         <div class="container d-flex align-items-center">
             <div class="form-holder has-shadow">
@@ -69,7 +70,7 @@
                                     <div class="form-group">
                                         <input id="register" type="submit" value="Register" class="btn btn-primary">
                                     </div>
-                                </form><small>Already have an account? </small><a href="/auth/login" class="signup">Login</a>
+                                </form><small>Already have an account? </small><a href="/" class="signup">Login</a>
                             </div>
                         </div>
                     </div>
