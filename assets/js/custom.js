@@ -3,7 +3,7 @@ $(document).ready(function(){
         e.stopPropagation();
         e.preventDefault();
         $.ajax({
-            url: '/auth/add',
+            url: '/auth/register',
             method: 'post',
             data: $(this).serialize(),
             success: function(res){
@@ -25,7 +25,7 @@ $(document).ready(function(){
                         position: 'top-right'
                     })
                     setTimeout(function(){
-                        window.location.assign('/login');
+                        window.location.assign('/');
                     }, 3500);
                 }
             }
@@ -64,7 +64,7 @@ $(document).ready(function(){
             }
         });
     })
-    $('#logout').click(function(e){
+    $('.logout').click(function(e){
         e.stopPropagation();
         e.preventDefault();
         $.ajax({

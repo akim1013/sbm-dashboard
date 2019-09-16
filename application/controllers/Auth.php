@@ -13,7 +13,9 @@ class Auth extends CI_Controller {
 	public function index(){
 		$this->load->view('login');
 	}
-
+	public function signup(){
+		$this->load->view('register');
+	}
 	public function login(){
 		$data = array(
 			'name' => $this->input->post('name'),
