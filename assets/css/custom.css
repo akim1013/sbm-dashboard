@@ -1,0 +1,20 @@
+/* your styles go here */
+header{
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+a, a:hover{
+    text-decoration: none;
+}
+
+#sidebar{
+    position: sticky;
+    top: -20px;
+    height: 100%;
+}
+.page-header{
+    position: sticky;
+    top: 81px;
+    z-index: 999;
+}
