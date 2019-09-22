@@ -42,7 +42,7 @@
                                 <div class="logo">
                                     <h1>SBM Dashboard Login</h1>
                                 </div>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+                                <p>The goal is to turn data into information,<br> and information into insight</p>
                             </div>
                         </div>
                     </div>

@@ -103,150 +103,151 @@
                     <div class="h5 no-margin-bottom">Comparison of shops KPI</div>
                 </div>
             </div>
-
-            <section class="no-padding-top no-padding-bottom">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="stats-3-block block d-flex">
-                                <div class="stats-3"><strong class="d-block turnover">0</strong><span class="d-block">Total turnover</span>
-                                    <div class="progress progress-template progress-small">
-                                        <div role="progressbar" style="width: 35%;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template progress-bar-small dashbg-1"></div>
-                                    </div>
-                                </div>
-                                <div class="stats-3 d-flex justify-content-between text-center">
-                                    <div class="item"><strong class="d-block strong-sm discount">0</strong><span class="d-block span-sm">Discount</span>
-                                        <div class="line"></div><small class="discount_percent">0%</small>
-                                    </div>
-                                    <div class="item"><strong class="d-block strong-sm promotion">0</strong><span class="d-block span-sm">Promotion</span>
-                                        <div class="line"></div><small class="promotion_percent">0%</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="stats-2-block block d-flex">
-                                <div class="stats-2 d-flex">
-                                    <div class="stats-2-content"><strong class="d-block transactions">0</strong><span class="d-block">Transactions</span>
+            <div class="page-dashboard">
+                <section class="no-padding-top no-padding-bottom">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="stats-3-block block d-flex">
+                                    <div class="stats-3"><strong class="d-block turnover">0</strong><span class="d-block">Total turnover</span>
                                         <div class="progress progress-template progress-small">
-                                            <div role="progressbar" style="width: 60%;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template progress-bar-small dashbg-2"></div>
+                                            <div role="progressbar" style="width: 35%;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template progress-bar-small dashbg-1"></div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="stats-2 d-flex">
-                                    <div class="stats-2-content"><strong class="d-block average_bill">0</strong><span class="d-block">Average bill</span>
-                                        <div class="progress progress-template progress-small">
-                                            <div role="progressbar" style="width: 35%;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template progress-bar-small dashbg-3"></div>
+                                    <div class="stats-3 d-flex justify-content-between text-center">
+                                        <div class="item"><strong class="d-block strong-sm discount">0</strong><span class="d-block span-sm">Discount</span>
+                                            <div class="line"></div><small class="discount_percent">0%</small>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <section class="margin-bottom-sm">
-                <div class="container-fluid">
-                    <div class="row d-flex align-items-stretch">
-                        <div class="col-lg-4">
-                            <div class="stats-with-chart-1 block">
-                                <div class="title"> <strong class="d-block">Transactions per hour</strong></div>
-                                <div class="row d-flex align-items-end justify-content-between">
-                                    <div class="col-5">
-                                        <div class="text"><strong class="d-block dashtext-3">$740</strong><span class="d-block">20, Sept 2019</span><small class="d-block">320 Sales</small></div>
-                                    </div>
-                                    <div class="col-7">
-                                        <div class="bar-chart chart">
-                                            <canvas id="salesBarChart1"></canvas>
+                                        <div class="item"><strong class="d-block strong-sm promotion">0</strong><span class="d-block span-sm">Promotion</span>
+                                            <div class="line"></div><small class="promotion_percent">0%</small>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-lg-4">
-                            <div class="stats-with-chart-1 block">
-                                <div class="title"> <strong class="d-block">Total sales per hour</strong></div>
-                                <div class="row d-flex align-items-end justify-content-between">
-                                    <div class="col-5">
-                                        <div class="text"><strong class="d-block dashtext-2">80%</strong><span class="d-block">20, Sept 2019</span><small class="d-block">+35 Sales</small></div>
-                                    </div>
-                                    <div class="col-7">
-                                        <div class="bar-chart chart">
-                                            <canvas id="salesBarChart2"></canvas>
+                            <div class="col-lg-6">
+                                <div class="stats-2-block block d-flex">
+                                    <div class="stats-2 d-flex">
+                                        <div class="stats-2-content"><strong class="d-block transactions">0</strong><span class="d-block">Transactions</span>
+                                            <div class="progress progress-template progress-small">
+                                                <div role="progressbar" style="width: 60%;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template progress-bar-small dashbg-2"></div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4">
-                            <div class="stats-with-chart-1 block">
-                                <div class="title"> <strong class="d-block">Total sales by weekday</strong></div>
-                                <div class="row d-flex align-items-end justify-content-between">
-                                    <div class="col-5">
-                                        <div class="text"><strong class="d-block dashtext-2">80%</strong><span class="d-block">Sept 2019</span><small class="d-block">+35 Sales</small></div>
-                                    </div>
-                                    <div class="col-7">
-                                        <div class="bar-chart chart">
-                                            <canvas id="salesBarChart3"></canvas>
+                                    <div class="stats-2 d-flex">
+                                        <div class="stats-2-content"><strong class="d-block average_bill">0</strong><span class="d-block">Average bill</span>
+                                            <div class="progress progress-template progress-small">
+                                                <div role="progressbar" style="width: 35%;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template progress-bar-small dashbg-3"></div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </section>
-            <section class="no-padding-bottom">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            Sales comparison by months
-                            <div class="drills-chart block">
-                                <canvas id="lineChart1"></canvas>
+                </section>
+                <section class="margin-bottom-sm">
+                    <div class="container-fluid">
+                        <div class="row d-flex align-items-stretch">
+                            <div class="col-lg-4">
+                                <div class="stats-with-chart-1 block">
+                                    <div class="title"> <strong class="d-block">Transactions per hour</strong></div>
+                                    <div class="row d-flex align-items-end justify-content-between">
+                                        <div class="col-5">
+                                            <div class="text"><strong class="d-block dashtext-3">$740</strong><span class="d-block">20, Sept 2019</span><small class="d-block">320 Sales</small></div>
+                                        </div>
+                                        <div class="col-7">
+                                            <div class="bar-chart chart">
+                                                <canvas id="salesBarChart1"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-lg-6">
-                            Transactions comparison by months
-                            <div class="line-cahrt block">
-                                <canvas id="lineCahrt"></canvas>
+                            <div class="col-lg-4">
+                                <div class="stats-with-chart-1 block">
+                                    <div class="title"> <strong class="d-block">Total sales per hour</strong></div>
+                                    <div class="row d-flex align-items-end justify-content-between">
+                                        <div class="col-5">
+                                            <div class="text"><strong class="d-block dashtext-2">80%</strong><span class="d-block">20, Sept 2019</span><small class="d-block">+35 Sales</small></div>
+                                        </div>
+                                        <div class="col-7">
+                                            <div class="bar-chart chart">
+                                                <canvas id="salesBarChart2"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="stats-with-chart-1 block">
+                                    <div class="title"> <strong class="d-block">Total sales by weekday</strong></div>
+                                    <div class="row d-flex align-items-end justify-content-between">
+                                        <div class="col-5">
+                                            <div class="text"><strong class="d-block dashtext-2">80%</strong><span class="d-block">Sept 2019</span><small class="d-block">+35 Sales</small></div>
+                                        </div>
+                                        <div class="col-7">
+                                            <div class="bar-chart chart">
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </section>
-            <section>
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-lg-4">
-                            <div class="stats-with-chart-2 block">
-                                <div class="title"><strong class="d-block">Sales comparison</strong></div>
-                                <div class="piechart chart">
-                                    <canvas id="pieChartHome1"></canvas>
-                                    <div class="text"><strong class="d-block turnover">0</strong><span class="d-block">Turnover</span></div>
+                </section>
+                <section class="no-padding-bottom">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                Sales comparison by months
+                                <div class="drills-chart block">
+                                    <canvas id="lineChart1"></canvas>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-lg-4">
-                            <div class="stats-with-chart-2 block">
-                                <div class="title"><strong class="d-block">Transaction comparison</strong></div>
-                                <div class="piechart chart">
-                                    <canvas id="pieChartHome2"></canvas>
-                                    <div class="text"><strong class="d-block transactions">0</strong><span class="d-block">Transactions</span></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4">
-                            <div class="stats-with-chart-2 block">
-                                <div class="title"><strong class="d-block">Discount comparison</strong></div>
-                                <div class="piechart chart">
-                                    <canvas id="pieChartHome3"></canvas>
-                                    <div class="text"><strong class="d-block discount">0</strong><span class="d-block">Discounts</span></div>
+                            <div class="col-lg-6">
+                                Transactions comparison by months
+                                <div class="line-cahrt block">
+                                    <canvas id="lineCahrt"></canvas>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
+                <section>
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="stats-with-chart-2 block">
+                                    <div class="title"><strong class="d-block">Sales comparison</strong></div>
+                                    <div class="piechart chart">
+                                        <canvas id="pieChartHome1"></canvas>
+                                        <div class="text"><strong class="d-block turnover">0</strong><span class="d-block">Turnover</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="stats-with-chart-2 block">
+                                    <div class="title"><strong class="d-block">Transaction comparison</strong></div>
+                                    <div class="piechart chart">
+                                        <canvas id="pieChartHome2"></canvas>
+                                        <div class="text"><strong class="d-block transactions">0</strong><span class="d-block">Transactions</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="stats-with-chart-2 block">
+                                    <div class="title"><strong class="d-block">Discount comparison</strong></div>
+                                    <div class="piechart chart">
+                                        <canvas id="pieChartHome3"></canvas>
+                                        <div class="text"><strong class="d-block discount">0</strong><span class="d-block">Discounts</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
             <footer class="footer">
                 <div class="footer__block block no-margin-bottom">
                     <div class="container-fluid text-center">
@@ -265,11 +266,10 @@
     <script src="/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
     <script src="/assets/vendor/jquery.cookie/jquery.cookie.js">
     </script>
-    <script src="/assets/vendor/chart.js/Chart.min.js"></script>
     <script src="/assets/vendor/jquery-validation/jquery.validate.min.js"></script>
-    <script src="/assets/js/charts-home.js"></script>
+
     <script src="/assets/js/front.js"></script>
-    <script src="/assets/js/custom.js"></script>
+    <script src="/assets/js/dashboard.js"></script>
 </body>
 
 </html>
