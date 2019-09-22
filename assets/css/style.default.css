@@ -1072,6 +1072,7 @@ nav#sidebar.shrinked a[aria-expanded="true"]::after {
   color: #8a8d93;
   position: relative;
   padding-right: 50px;
+  height: 98px;
 }
 
 .stats-2-block .stats-2::after {

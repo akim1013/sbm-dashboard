@@ -75,6 +75,8 @@
     </div>
     <!-- JavaScript files-->
     <script src="/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="/assets/vendor/jquery/moment.min.js"></script>
+    <script src="/assets/vendor/jquery/daterangepicker.min.js"></script>
     <script src="/assets/vendor/popper.js/umd/popper.min.js">
     </script>
     <script src="/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
