@@ -47,20 +47,20 @@ $(document).ready(function(){
         var average_bill = 0;
 
         for(var to of data.turnover){
-            turnover += parseFloat(to.TurnOver);
+            turnover += parseFloat(to.turnover);
         }
-        for(var dc of data.discount){
-            discount += parseFloat(dc.Discount);
+        // for(var dc of data.discount){
+        //     //discount += parseFloat(dc.Discount);
+        // }
+        // for(var pr of data.promotion){
+        //     //promotion += parseFloat(pr.Promotion);
+        // }
+        for(var tr of data.transaction){
+            transactions += parseInt(tr.transaction);
         }
-        for(var pr of data.promotion){
-            promotion += parseFloat(pr.Promotion);
-        }
-        for(var tr of data.transactions){
-            transactions += parseInt(tr.Transactions);
-        }
-        for(var ab of data.average_bill){
-            average_bill += parseFloat(ab.average_bill);
-        }
+        // for(var ab of data.average_bill){
+        //     //average_bill += parseFloat(ab.average_bill);
+        // }
         $('.turnover').text((turnover / 1000).toFixed(2) + ' k');
         $('.discount').text((discount / 1000).toFixed(2) + ' k');
         $('.promotion').text((promotion / 1000).toFixed(2) + ' k');
@@ -112,6 +112,7 @@ $(document).ready(function(){
                 console.log(response)
                 if(response.status == 'success'){
                     add_shop_list(response.data.shops);
+                    //total_process(response.data);
                 }
             }
         });
