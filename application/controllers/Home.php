@@ -27,7 +27,7 @@ class Home extends MY_Controller {
 		);
 		$ret = array(
 			"shops" 	=> $this->dashboard_model->get_shop_list($conn),
-			"netsale" 	=> $this->dashboard_model->get_sale($conn, $date),
+			"sale" 	=> $this->dashboard_model->get_sale($conn, $date),
 			"transaction" 	=> $this->dashboard_model->get_transaction_count($conn, $date)
 		);
 		echo json_encode(array(
