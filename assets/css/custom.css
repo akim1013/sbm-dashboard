@@ -54,3 +54,9 @@ a, a:hover{
     position: sticky;
     top: -100px;
 }
+._pie_chart{
+    height: 500px;
+}
+._bar_chart{
+    height: 500px;
+}

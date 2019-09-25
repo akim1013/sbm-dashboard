@@ -109,17 +109,17 @@
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="stats-3-block block d-flex">
-                                    <div class="stats-3"><strong class="d-block grossale">0</strong><span class="d-block">Gros sale</span>
+                                    <div class="stats-3"><strong class="d-block _grossale">0</strong><span class="d-block">Gros sale</span>
                                         <div class="progress progress-template progress-small">
                                             <div role="progressbar" style="width: 35%;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template progress-bar-small dashbg-1"></div>
                                         </div>
                                     </div>
                                     <div class="stats-3 d-flex justify-content-between text-center">
-                                        <div class="item"><strong class="d-block strong-sm netsale">0</strong><span class="d-block span-sm">Net sale</span>
-                                            <div class="line"></div><small class="discount_percent">0%</small>
+                                        <div class="item"><strong class="d-block strong-sm _netsale">0</strong><span class="d-block span-sm">Net sale</span>
+                                            <div class="line"></div><small><span class=""></span></small>
                                         </div>
-                                        <div class="item"><strong class="d-block strong-sm realsale">0</strong><span class="d-block span-sm">Real sale</span>
-                                            <div class="line"></div><small class="promotion_percent">0%</small>
+                                        <div class="item"><strong class="d-block strong-sm _realsale">0</strong><span class="d-block span-sm">Real sale</span>
+                                            <div class="line"></div><small><span class=""></span></small>
                                         </div>
                                     </div>
                                 </div>
@@ -127,14 +127,14 @@
                             <div class="col-lg-6">
                                 <div class="stats-2-block block d-flex">
                                     <div class="stats-2 d-flex">
-                                        <div class="stats-2-content"><strong class="d-block transactions">0</strong><span class="d-block">Transactions</span>
+                                        <div class="stats-2-content"><strong class="d-block _transaction_count">0</strong><span class="d-block">Transaction count</span>
                                             <div class="progress progress-template progress-small">
                                                 <div role="progressbar" style="width: 60%;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template progress-bar-small dashbg-2"></div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="stats-2 d-flex">
-                                        <div class="stats-2-content"><strong class="d-block average_bill">0</strong><span class="d-block">Average bill</span>
+                                        <div class="stats-2-content"><strong class="d-block _average_bill">0</strong><span class="d-block">Average bill</span>
                                             <div class="progress progress-template progress-small">
                                                 <div role="progressbar" style="width: 35%;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template progress-bar-small dashbg-3"></div>
                                             </div>
@@ -152,9 +152,22 @@
                                 <div class="statistic-block block">
                                     <div class="progress-details d-flex align-items-end justify-content-between">
                                         <div class="title">
-                                            <div class="icon"><i class="icon-contract"></i></div><strong>New Projects</strong>
+                                            <div class="icon"><i class="icon-contract"></i></div><strong>Discount</strong>
                                         </div>
-                                        <div class="number dashtext-2">375</div>
+                                        <div class="number dashtext-1 _discount">0</div>
+                                    </div>
+                                    <div class="progress progress-template">
+                                        <div role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-1"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6">
+                                <div class="statistic-block block">
+                                    <div class="progress-details d-flex align-items-end justify-content-between">
+                                        <div class="title">
+                                            <div class="icon"><i class="icon-contract"></i></div><strong>Promotion</strong>
+                                        </div>
+                                        <div class="number dashtext-2 _promotion">0</div>
                                     </div>
                                     <div class="progress progress-template">
                                         <div role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-2"></div>
@@ -165,12 +178,12 @@
                                 <div class="statistic-block block">
                                     <div class="progress-details d-flex align-items-end justify-content-between">
                                         <div class="title">
-                                            <div class="icon"><i class="icon-contract"></i></div><strong>New Projects</strong>
+                                            <div class="icon"><i class="icon-contract"></i></div><strong>Vat</strong>
                                         </div>
-                                        <div class="number dashtext-2">375</div>
+                                        <div class="number dashtext-3 _vat">0</div>
                                     </div>
                                     <div class="progress progress-template">
-                                        <div role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-2"></div>
+                                        <div role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-3"></div>
                                     </div>
                                 </div>
                             </div>
@@ -178,95 +191,36 @@
                                 <div class="statistic-block block">
                                     <div class="progress-details d-flex align-items-end justify-content-between">
                                         <div class="title">
-                                            <div class="icon"><i class="icon-contract"></i></div><strong>New Projects</strong>
+                                            <div class="icon"><i class="icon-contract"></i></div><strong>Tax</strong>
                                         </div>
-                                        <div class="number dashtext-2">375</div>
+                                        <div class="number dashtext-4 _tax">0</div>
                                     </div>
                                     <div class="progress progress-template">
-                                        <div role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-2"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3 col-sm-6">
-                                <div class="statistic-block block">
-                                    <div class="progress-details d-flex align-items-end justify-content-between">
-                                        <div class="title">
-                                            <div class="icon"><i class="icon-contract"></i></div><strong>New Projects</strong>
-                                        </div>
-                                        <div class="number dashtext-2">375</div>
-                                    </div>
-                                    <div class="progress progress-template">
-                                        <div role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-2"></div>
+                                        <div role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template dashbg-4"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </section>
-                <section class="margin-bottom-sm">
+                <section class="no-padding-top no-padding-bottom">
                     <div class="container-fluid">
                         <div class="row d-flex align-items-stretch">
-                            <div class="col-lg-4">
-                                <div class="stats-with-chart-1 block">
-                                    <div class="title"> <strong class="d-block">Transactions per hour</strong></div>
-                                    <div class="row d-flex align-items-end justify-content-between">
-                                        <div class="col-5">
-                                            <div class="text"><strong class="d-block dashtext-3">$740</strong><span class="d-block">20, Sept 2019</span><small class="d-block">320 Sales</small></div>
-                                        </div>
-                                        <div class="col-7">
-                                            <div class="bar-chart chart">
-                                                <canvas id="salesBarChart1"></canvas>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="col-md-6">
+                                <div id="sale_comparison_pie" class="stats-with-chart-1 block _pie_chart"></div>
                             </div>
-                            <div class="col-lg-4">
-                                <div class="stats-with-chart-1 block">
-                                    <div class="title"> <strong class="d-block">Total sales per hour</strong></div>
-                                    <div class="row d-flex align-items-end justify-content-between">
-                                        <div class="col-5">
-                                            <div class="text"><strong class="d-block dashtext-2">80%</strong><span class="d-block">20, Sept 2019</span><small class="d-block">+35 Sales</small></div>
-                                        </div>
-                                        <div class="col-7">
-                                            <div class="bar-chart chart">
-                                                <canvas id="salesBarChart2"></canvas>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4">
-                                <div class="stats-with-chart-1 block">
-                                    <div class="title"> <strong class="d-block">Total sales by weekday</strong></div>
-                                    <div class="row d-flex align-items-end justify-content-between">
-                                        <div class="col-5">
-                                            <div class="text"><strong class="d-block dashtext-2">80%</strong><span class="d-block">Sept 2019</span><small class="d-block">+35 Sales</small></div>
-                                        </div>
-                                        <div class="col-7">
-                                            <div class="bar-chart chart">
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="col-md-6">
+                                <div id="transaction_comparison_pie" class="stats-with-chart-1 block _pie_chart"></div>
                             </div>
                         </div>
                     </div>
                 </section>
-                <section class="no-padding-bottom">
+                <section class="no-padding-top no-padding-bottom">
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="col-lg-6">
-                                Sales comparison by months
+                            <div class="col-lg-12">
                                 <div class="drills-chart block">
-                                    <canvas id="lineChart1"></canvas>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                Transactions comparison by months
-                                <div class="line-cahrt block">
-                                    <canvas id="lineCahrt"></canvas>
+                                    <div id="sale_comparison_bar" class="_bar_chart"></div>
                                 </div>
                             </div>
                         </div>
@@ -276,31 +230,13 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-lg-4">
-                                <div class="stats-with-chart-2 block">
-                                    <div class="title"><strong class="d-block">Sales comparison</strong></div>
-                                    <div class="piechart chart">
-                                        <canvas id="pieChartHome1"></canvas>
-                                        <div class="text"><strong class="d-block turnover">0</strong><span class="d-block">Turnover</span></div>
-                                    </div>
-                                </div>
+                                <div id="weekly_growth_line"></div>
                             </div>
                             <div class="col-lg-4">
-                                <div class="stats-with-chart-2 block">
-                                    <div class="title"><strong class="d-block">Transaction comparison</strong></div>
-                                    <div class="piechart chart">
-                                        <canvas id="pieChartHome2"></canvas>
-                                        <div class="text"><strong class="d-block transactions">0</strong><span class="d-block">Transactions</span></div>
-                                    </div>
-                                </div>
+                                <div id="monthly_growth_line"></div>
                             </div>
                             <div class="col-lg-4">
-                                <div class="stats-with-chart-2 block">
-                                    <div class="title"><strong class="d-block">Discount comparison</strong></div>
-                                    <div class="piechart chart">
-                                        <canvas id="pieChartHome3"></canvas>
-                                        <div class="text"><strong class="d-block discount">0</strong><span class="d-block">Discounts</span></div>
-                                    </div>
-                                </div>
+                                <div id="yearly_growth_line"></div>
                             </div>
                         </div>
                     </div>
@@ -325,7 +261,10 @@
     <script src="/assets/vendor/jquery.cookie/jquery.cookie.js">
     </script>
     <script src="/assets/vendor/jquery-validation/jquery.validate.min.js"></script>
-
+    <script src="/assets/chart/highcharts.js"></script>
+    <script src="/assets/chart/modules/exporting.js"></script>
+    <script src="/assets/chart/modules/export-data.js"></script>
+    <script src="/assets/chart/themes/dark-unica.js"></script>
     <script src="/assets/js/front.js"></script>
     <script src="/assets/js/dashboard.js"></script>
 </body>

@@ -26,16 +26,35 @@ class Home extends MY_Controller {
 			"end"	=> $this->input->post('end')
 		);
 		$ret = array(
-			"shops" 	=> $this->dashboard_model->get_shop_list($conn),
-			"sale" 	=> $this->dashboard_model->get_sale($conn, $date),
-			"transaction" 	=> $this->dashboard_model->get_transaction_count($conn, $date)
+			"shops" 		=> $this->dashboard_model->get_shop_list($conn),
+			"sale" 			=> $this->dashboard_model->get_sale($conn, $date),
+			"transaction" 	=> $this->dashboard_model->get_transaction($conn, $date),
+			"promotion"		=> $this->dashboard_model->get_promotion($conn, $date),
+			"tip"			=> $this->dashboard_model->get_tip($conn, $date)
 		);
 		echo json_encode(array(
 			'status' => 'success',
 			'status_code' => 200,
 			'data' => $ret
 		));
+		sqlsrv_close($conn);
 	}
+	public function daily(){
+		$conn = parent::dbconnect();
 
+		$date = array(
+			"start" => $this->input->post('start'),
+			"end"	=> $this->input->post('end')
+		);
+		$ret = array(
+			"daily_data" => $this->dashboard_model->get_daily_data($conn, $date)
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
 
 }
