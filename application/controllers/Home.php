@@ -17,6 +17,19 @@ class Home extends MY_Controller {
             $this->load->view('login');
         }
 	}
+	public function dbtest(){
+		$serverName = "47.88.53.35";
+
+		$connectionInfo = array( "Database"=>"meetfresh", "UID"=>"laguna", "PWD"=>"goqkdtks.1234");
+		$conn = sqlsrv_connect( $serverName, $connectionInfo);
+
+		if( $conn ) {
+	     	echo "Connection established.<br />";
+		}else{
+		     echo "Connection could not be established.<br />";
+	     	die( print_r( sqlsrv_errors(), true));
+		}
+	}
 	public function dashboard(){
 
 		$conn = parent::dbconnect();
