@@ -100,7 +100,7 @@
         <div class="page-content">
             <div class="page-header">
                 <div class="container-fluid">
-                    <div class="h5 no-margin-bottom">Comparison of shops KPI</div>
+                    <div class="h5 no-margin-bottom">Sales and transaction overview</div>
                 </div>
             </div>
             <div class="page-dashboard">

@@ -1,6 +1,7 @@
 
 $(document).ready(function(){
     var shops               = [];
+    var _shops              = [];
     var grossale            = [];
     var netsale             = [];
     var realsale            = [];
@@ -23,7 +24,8 @@ $(document).ready(function(){
     var _tip                 = 0;
     var _average_bill        = 0;
 
-    var daily_data;
+    var first_ajax;
+    var second_ajax;
     function getRandomColor() {
         var letters = '0123456789ABCDEF';
         var color = '#';
@@ -39,15 +41,23 @@ $(document).ready(function(){
     }
     function add_shop_list(shop_lists){
         $('#all-shops').empty();
-        shops = [];
+        shops   = [];
+        _shops  = [];
         $('#all-shops').append($('<li>').append($('<a class="single-shop" style="cursor: pointer" shopId="0">Overall view</a>')));
-        for(var shop of shop_lists){
+        for(var shop of shop_lists.shops){
             shops.push({
                 id: shop.id,
                 name: shop.description,
                 value: shop.description
             });
-            $('#all-shops').append($('<li>').append($('<a class="single-shop" style="cursor: pointer" shopId=' + shop.id + '>' + shop.description + '</a>')));
+        }
+        for(var shop of shop_lists.sale){
+            _shops.push({
+                id: shop.shop_id,
+                name: find_shop_name(shop.shop_id),
+                value: find_shop_name(shop.shop_id)
+            });
+            $('#all-shops').append($('<li>').append($('<a class="single-shop" style="cursor: pointer" shopId=' + shop.shop_id + '>' + find_shop_name(shop.shop_id) + '</a>')));
         }
     }
     function flat_process(data){
@@ -165,6 +175,59 @@ $(document).ready(function(){
         $("._tip").text(process_price(_tip));
         $("._promotion").text(process_price(_promotion));
     }
+    function display_flat_data_single(shop){
+        let __grossale = 0;
+        let __netsale = 0;
+        let __realsale = 0;
+        let __vat = 0;
+        let __tax = 0;
+        let __discount = 0;
+        let __average_bill = 0;
+        let __transaction_count = 0;
+        let __tip = 0;
+        let __promotion = 0;
+
+        for(let item of grossale){
+            if(item.shop == shop) __grossale = item.value;
+        }
+        for(let item of netsale){
+            if(item.shop == shop) __netsale = item.value;
+        }
+        for(let item of realsale){
+            if(item.shop == shop) __realsale = item.value;
+        }
+        for(let item of vat){
+            if(item.shop == shop) __vat = item.value;
+        }
+        for(let item of tax){
+            if(item.shop == shop) __tax = item.value;
+        }
+        for(let item of discount){
+            if(item.shop == shop) __discount = item.value;
+        }
+        for(let item of average_bill){
+            if(item.shop == shop) __average_bill = item.value;
+        }
+        for(let item of transaction_count){
+            if(item.shop == shop) __transaction_count = item.value;
+        }
+        for(let item of tip){
+            if(item.shop == shop) __tip = item.value;
+        }
+        for(let item of promotion){
+            if(item.shop == shop) __promotion = item.value;
+        }
+        $("._grossale").text(process_price(__grossale));
+        $("._netsale").text(process_price(__netsale));
+        $("._realsale").text(process_price(__realsale));
+        $("._vat").text(process_price(__vat));
+        $("._tax").text(process_price(__tax));
+        $("._discount").text(process_price(__discount));
+        $("._average_bill").text(process_price(__average_bill));
+        $("._transaction_count").text(__transaction_count);
+        $("._tip").text(process_price(__tip));
+        $("._promotion").text(process_price(__promotion));
+    }
     function process_price(val){
 
         let value = parseFloat(val);
@@ -263,7 +326,7 @@ $(document).ready(function(){
                 text: 'Sales comparison'
             },
             xAxis: {
-                categories: process_one_value(shops, 0), // Error, Distorted shop names
+                categories: process_one_value(_shops, 0), // Error, Distorted shop names
                 crosshair: true
             },
             yAxis: {
@@ -298,7 +361,7 @@ $(document).ready(function(){
             }]
         });
     }
-    function monthly_growth_process(data){
+    function monthly_growth_process(data, id){
 
         let x_sale              = []; // x Axis date
         let s_sale              = []; // Shop names
@@ -307,15 +370,26 @@ $(document).ready(function(){
         let x_transaction       = [];
         let s_transaction       = [];
         let series_transaction  = [];
-
+        if($("#monthly_growth_line").highcharts()){
+            $("#monthly_growth_line").highcharts().destroy();
+        }
+        if($("#monthly_transaction_line").highcharts()){
+            $("#monthly_transaction_line").highcharts().destroy();
+        }
         for(let item of data.daily_sale){
             let date = new Date(item.transaction_date.date);
             let shop = find_shop_name(item.shop_id);
             if(x_sale.indexOf(formatDate(date)) < 0){
                 x_sale.push(formatDate(date));
             }
-            if(s_sale.indexOf(shop) < 0){
-                s_sale.push(shop);
+            if(id == 0){
+                if(s_sale.indexOf(shop) < 0){
+                    s_sale.push(shop);
+                }
+            }else{
+                if(s_sale.indexOf(find_shop_name(id)) < 0){
+                    s_sale.push(find_shop_name(id));
+                }
             }
         }
         for(let item of data.daily_transaction){
@@ -324,11 +398,16 @@ $(document).ready(function(){
             if(x_transaction.indexOf(formatDate(date)) < 0){
                 x_transaction.push(formatDate(date));
             }
-            if(s_transaction.indexOf(shop) < 0){
-                s_transaction.push(shop);
+            if(id == 0){
+                if(s_transaction.indexOf(shop) < 0){
+                    s_transaction.push(shop);
+                }
+            }else{
+                if(s_transaction.indexOf(find_shop_name(id)) < 0){
+                    s_transaction.push(find_shop_name(id));
+                }
             }
         }
-
         for(let _s of s_sale){
             let _data = [];
             for(let item of data.daily_sale){
@@ -418,7 +497,7 @@ $(document).ready(function(){
                 $('.loader').addClass('hide');
                 var response = JSON.parse(res);
                 if(response.status == 'success'){
-                    add_shop_list(response.data.shops);
+                    add_shop_list(response.data);
                     flat_process(response.data);
                     comparison_chart_process();
                     get_daily_data(end);
@@ -437,6 +516,7 @@ $(document).ready(function(){
         return year + '-' + monthNames[monthIndex] + '-' + day;
     }
     function get_daily_data(date){
+        second_ajax = undefined;
         var monthago = new Date(date.format('YYYY-MM-DD'));
         var past_month = monthago.getDate() - 30;
         monthago.setDate(past_month);
@@ -450,8 +530,9 @@ $(document).ready(function(){
             data: month,
             success: function(res){
                 var response = JSON.parse(res);
+                second_ajax = response;
                 if(response.status == 'success'){
-                    monthly_growth_process(response.data);
+                    monthly_growth_process(response.data, 0);
                 }
             }
         });
@@ -514,9 +595,13 @@ $(document).ready(function(){
         if(shop_id != 0){
             $("#comparison_pie").hide();
             $("#comparison_bar").hide();
+            display_flat_data_single(find_shop_name(shop_id));
+            monthly_growth_process(second_ajax.data, shop_id);
         }else{
             $("#comparison_pie").show();
             $("#comparison_bar").show();
+            display_flat_data();
+            monthly_growth_process(second_ajax.data, 0);
         }
     })
 })
