@@ -203,7 +203,7 @@
                         </div>
                     </div>
                 </section>
-                <section class="no-padding-top no-padding-bottom">
+                <section id="comparison_pie" class="no-padding-top no-padding-bottom">
                     <div class="container-fluid">
                         <div class="row d-flex align-items-stretch">
                             <div class="col-md-6">
@@ -215,7 +215,7 @@
                         </div>
                     </div>
                 </section>
-                <section class="no-padding-top no-padding-bottom">
+                <section id="comparison_bar" class="no-padding-top no-padding-bottom">
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-lg-12">
@@ -226,17 +226,24 @@
                         </div>
                     </div>
                 </section>
-                <section>
+                <section class="no-padding-top no-padding-bottom">
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="col-lg-4">
-                                <div id="weekly_growth_line"></div>
+                            <div class="col-lg-12">
+                                <div class="drills-chart block">
+                                    <div id="monthly_growth_line" class="_bar_chart"></div>
+                                </div>
                             </div>
-                            <div class="col-lg-4">
-                                <div id="monthly_growth_line"></div>
-                            </div>
-                            <div class="col-lg-4">
-                                <div id="yearly_growth_line"></div>
+                        </div>
+                    </div>
+                </section>
+                <section class="no-padding-top no-padding-bottom">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="drills-chart block">
+                                    <div id="monthly_transaction_line" class="_bar_chart"></div>
+                                </div>
                             </div>
                         </div>
                     </div>

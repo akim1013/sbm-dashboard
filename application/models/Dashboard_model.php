@@ -90,25 +90,36 @@ class Dashboard_model extends CI_Model{
     }
 
     // Daily data
-    function get_daily_data($conn, $day){
+    function get_daily_sale($conn, $date){
         $sql = "
             SELECT
                 t.shop_id as shop_id,
-                SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as netsale,
-                SUM(ta.price) as grossale,
-                SUM(ta.price * ta.vat_percent / 100) as vat,
-                (SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) - sum(ta.price * ta.vat_percent / 100)) as realsale,
-                SUM(t.tax_amount) as tax,
-                SUM( COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as discount,
-                t.bookkeeping_date
+            	t.bookkeeping_date transaction_date,
+                SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as netsale
             FROM transactions t WITH (INDEX(idx_transactions_bookdate))
             LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id AND tk.in_statistics=1
             LEFT JOIN trans_articles ta ON (ta.transaction_id = t.id)
             LEFT JOIN articles a ON (a.id = ta.article_id) AND a.article_type Not In(2,3)
             LEFT JOIN measure_units mu ON (mu.id = a.measure_unit_id)
             WHERE t.delete_operator_id IS NULL
-                    AND t.bookkeeping_date = '" . $day. "'
-            GROUP BY t.shop_id
+                    AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+            GROUP BY t.bookkeeping_date, t.shop_id
+            ORDER BY t.shop_id ASC, t.bookkeeping_date ASC
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function get_daily_transaction($conn, $date){
+        $sql = "
+            SELECT COUNT(*) transaction_count,
+                t.bookkeeping_date transaction_date,
+                t.shop_id as shop_id
+            FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+            LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id
+            LEFT JOIN shops s ON s.id = t.shop_id AND tk.in_statistics=1
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+            GROUP BY t.bookkeeping_date, t.shop_id
+            ORDER BY t.shop_id ASC, t.bookkeeping_date ASC
         ";
         return $this->run_query($conn, $sql);
     }

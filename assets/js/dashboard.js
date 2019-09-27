@@ -22,6 +22,8 @@ $(document).ready(function(){
     var _transaction_count   = 0;
     var _tip                 = 0;
     var _average_bill        = 0;
+
+    var daily_data;
     function getRandomColor() {
         var letters = '0123456789ABCDEF';
         var color = '#';
@@ -38,14 +40,14 @@ $(document).ready(function(){
     function add_shop_list(shop_lists){
         $('#all-shops').empty();
         shops = [];
-        $('#all-shops').append($('<li>').append($('<a class="">Overall view</a>')));
+        $('#all-shops').append($('<li>').append($('<a class="single-shop" style="cursor: pointer" shopId="0">Overall view</a>')));
         for(var shop of shop_lists){
             shops.push({
                 id: shop.id,
                 name: shop.description,
                 value: shop.description
             });
-            $('#all-shops').append($('<li>').append($('<a class="" shopId=' + shop.id + '>' + shop.description + '</a>')));
+            $('#all-shops').append($('<li>').append($('<a class="single-shop" style="cursor: pointer" shopId=' + shop.id + '>' + shop.description + '</a>')));
         }
     }
     function flat_process(data){
@@ -261,7 +263,7 @@ $(document).ready(function(){
                 text: 'Sales comparison'
             },
             xAxis: {
-                categories: process_one_value(shops, 0),
+                categories: process_one_value(shops, 0), // Error, Distorted shop names
                 crosshair: true
             },
             yAxis: {
@@ -293,202 +295,113 @@ $(document).ready(function(){
             }, {
                 name: 'Real sale',
                 data: process_one_value(realsale, 1)
-            }, {
-                name: 'VAT',
-                data: process_one_value(vat, 1)
-            }, {
-                name: 'Tax',
-                data: process_one_value(tax, 1)
             }]
         });
-        Highcharts.chart('weekly_growth_line', {
+    }
+    function monthly_growth_process(data){
 
-            title: {
-                text: 'Weekly growth'
-            },
+        let x_sale              = []; // x Axis date
+        let s_sale              = []; // Shop names
+        let series_sale         = []; // Series of data
 
-            subtitle: {
-                text: 'Total sales growth in last 7 days'
-            },
+        let x_transaction       = [];
+        let s_transaction       = [];
+        let series_transaction  = [];
 
-            yAxis: {
-                title: {
-                    text: 'Sales [USD]'
-                }
-            },
-            legend: {
-                layout: 'vertical',
-                align: 'right',
-                verticalAlign: 'middle'
-            },
-
-            plotOptions: {
-                series: {
-                    label: {
-                        connectorAllowed: false
-                    },
-                    pointStart: 2010
-                }
-            },
-
-            series: [{
-                name: 'Installation',
-                data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
-            }, {
-                name: 'Manufacturing',
-                data: [24916, 24064, 29742, 29851, 32490, 30282, 38121, 40434]
-            }, {
-                name: 'Sales & Distribution',
-                data: [11744, 17722, 16005, 19771, 20185, 24377, 32147, 39387]
-            }, {
-                name: 'Project Development',
-                data: [null, null, 7988, 12169, 15112, 22452, 34400, 34227]
-            }, {
-                name: 'Other',
-                data: [12908, 5948, 8105, 11248, 8989, 11816, 18274, 18111]
-            }],
-
-            responsive: {
-                rules: [{
-                    condition: {
-                        maxWidth: 500
-                    },
-                    chartOptions: {
-                        legend: {
-                            layout: 'horizontal',
-                            align: 'center',
-                            verticalAlign: 'bottom'
-                        }
-                    }
-                }]
+        for(let item of data.daily_sale){
+            let date = new Date(item.transaction_date.date);
+            let shop = find_shop_name(item.shop_id);
+            if(x_sale.indexOf(formatDate(date)) < 0){
+                x_sale.push(formatDate(date));
             }
+            if(s_sale.indexOf(shop) < 0){
+                s_sale.push(shop);
+            }
+        }
+        for(let item of data.daily_transaction){
+            let date = new Date(item.transaction_date.date);
+            let shop = find_shop_name(item.shop_id);
+            if(x_transaction.indexOf(formatDate(date)) < 0){
+                x_transaction.push(formatDate(date));
+            }
+            if(s_transaction.indexOf(shop) < 0){
+                s_transaction.push(shop);
+            }
+        }
 
-        });
+        for(let _s of s_sale){
+            let _data = [];
+            for(let item of data.daily_sale){
+                if(_s == find_shop_name(item.shop_id)){
+                    _data.push(parseFloat(item.netsale));
+                }
+            }
+            series_sale.push({
+                name: _s,
+                data: _data
+            })
+        }
+        for(let _s of s_transaction){
+            let _data = [];
+            for(let item of data.daily_transaction){
+                if(_s == find_shop_name(item.shop_id)){
+                    _data.push(parseFloat(item.transaction_count));
+                }
+            }
+            series_transaction.push({
+                name: _s,
+                data: _data
+            })
+        }
         Highcharts.chart('monthly_growth_line', {
-
+            chart: {
+                type: 'line'
+            },
             title: {
-                text: 'Weekly growth'
+                text: 'Sales growth in last 30 days'
             },
-
-            subtitle: {
-                text: 'Total sales growth in last 7 days'
+            xAxis: {
+                categories: x_sale
             },
-
             yAxis: {
                 title: {
-                    text: 'Sales [USD]'
+                    text: 'USD'
                 }
             },
-            legend: {
-                layout: 'vertical',
-                align: 'right',
-                verticalAlign: 'middle'
-            },
-
             plotOptions: {
-                series: {
-                    label: {
-                        connectorAllowed: false
+                line: {
+                    dataLabels: {
+                        enabled: false
                     },
-                    pointStart: 2010
+                    enableMouseTracking: true
                 }
             },
-
-            series: [{
-                name: 'Installation',
-                data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
-            }, {
-                name: 'Manufacturing',
-                data: [24916, 24064, 29742, 29851, 32490, 30282, 38121, 40434]
-            }, {
-                name: 'Sales & Distribution',
-                data: [11744, 17722, 16005, 19771, 20185, 24377, 32147, 39387]
-            }, {
-                name: 'Project Development',
-                data: [null, null, 7988, 12169, 15112, 22452, 34400, 34227]
-            }, {
-                name: 'Other',
-                data: [12908, 5948, 8105, 11248, 8989, 11816, 18274, 18111]
-            }],
-
-            responsive: {
-                rules: [{
-                    condition: {
-                        maxWidth: 500
-                    },
-                    chartOptions: {
-                        legend: {
-                            layout: 'horizontal',
-                            align: 'center',
-                            verticalAlign: 'bottom'
-                        }
-                    }
-                }]
-            }
-
+            series: series_sale
         });
-        Highcharts.chart('yearly_growth_line', {
-
+        Highcharts.chart('monthly_transaction_line', {
+            chart: {
+                type: 'line'
+            },
             title: {
-                text: 'Weekly growth'
+                text: 'Transaction count in last 30 days'
             },
-
-            subtitle: {
-                text: 'Total sales growth in last 7 days'
+            xAxis: {
+                categories: x_transaction
             },
-
             yAxis: {
                 title: {
-                    text: 'Sales [USD]'
+                    text: 'Transaction count'
                 }
             },
-            legend: {
-                layout: 'vertical',
-                align: 'right',
-                verticalAlign: 'middle'
-            },
-
             plotOptions: {
-                series: {
-                    label: {
-                        connectorAllowed: false
+                line: {
+                    dataLabels: {
+                        enabled: false
                     },
-                    pointStart: 2010
+                    enableMouseTracking: true
                 }
             },
-
-            series: [{
-                name: 'Installation',
-                data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
-            }, {
-                name: 'Manufacturing',
-                data: [24916, 24064, 29742, 29851, 32490, 30282, 38121, 40434]
-            }, {
-                name: 'Sales & Distribution',
-                data: [11744, 17722, 16005, 19771, 20185, 24377, 32147, 39387]
-            }, {
-                name: 'Project Development',
-                data: [null, null, 7988, 12169, 15112, 22452, 34400, 34227]
-            }, {
-                name: 'Other',
-                data: [12908, 5948, 8105, 11248, 8989, 11816, 18274, 18111]
-            }],
-
-            responsive: {
-                rules: [{
-                    condition: {
-                        maxWidth: 500
-                    },
-                    chartOptions: {
-                        legend: {
-                            layout: 'horizontal',
-                            align: 'center',
-                            verticalAlign: 'bottom'
-                        }
-                    }
-                }]
-            }
-
+            series: series_transaction
         });
     }
     function get_dashboard_data(start, end){
@@ -504,28 +417,42 @@ $(document).ready(function(){
             success: function(res){
                 $('.loader').addClass('hide');
                 var response = JSON.parse(res);
-                console.log(response)
                 if(response.status == 'success'){
                     add_shop_list(response.data.shops);
                     flat_process(response.data);
                     comparison_chart_process();
-                    get_daily_data(start, end);
+                    get_daily_data(end);
                 }
             }
         });
     }
-    function get_daily_data(start, end){
-        var date = {
-            start: start.format('YYYY-MM-DD'),
-            end: end.format('YYYY-MM-DD')
+    function formatDate(date) {
+        var monthNames = [
+            "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"
+        ];
+        var day = date.getDate();
+        var monthIndex = date.getMonth();
+        var year = date.getFullYear();
+
+        return year + '-' + monthNames[monthIndex] + '-' + day;
+    }
+    function get_daily_data(date){
+        var monthago = new Date(date.format('YYYY-MM-DD'));
+        var past_month = monthago.getDate() - 30;
+        monthago.setDate(past_month);
+        var month = {
+            start: formatDate(monthago),
+            end: date.format('YYYY-MM-DD')
         }
         $.ajax({
             url: '/home/daily',
             method: 'post',
-            data: date,
+            data: month,
             success: function(res){
                 var response = JSON.parse(res);
-                console.log(response);
+                if(response.status == 'success'){
+                    monthly_growth_process(response.data);
+                }
             }
         });
     }
@@ -542,6 +469,12 @@ $(document).ready(function(){
         }
         if($("#sale_comparison_bar").highcharts()){
             $("#sale_comparison_bar").highcharts().destroy();
+        }
+        if($("#monthly_growth_line").highcharts()){
+            $("#monthly_growth_line").highcharts().destroy();
+        }
+        if($("#monthly_transaction_line").highcharts()){
+            $("#monthly_transaction_line").highcharts().destroy();
         }
         $('#reportrange span').html(start.format('M.D.Y') + ' ~ ' + end.format('M.D.Y'));
         get_dashboard_data(start, end);
@@ -575,5 +508,15 @@ $(document).ready(function(){
                 window.location.assign('/');
             }
         });
+    })
+    $('#all-shops').delegate('.single-shop', 'click', function(){
+        let shop_id = $(this)[0].getAttribute('shopId');
+        if(shop_id != 0){
+            $("#comparison_pie").hide();
+            $("#comparison_bar").hide();
+        }else{
+            $("#comparison_pie").show();
+            $("#comparison_bar").show();
+        }
     })
 })

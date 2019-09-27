@@ -60,7 +60,8 @@ class Home extends MY_Controller {
 			"end"	=> $this->input->post('end')
 		);
 		$ret = array(
-			"daily_data" => $this->dashboard_model->get_daily_data($conn, $date)
+			"daily_sale" 		=> $this->dashboard_model->get_daily_sale($conn, $date),
+			"daily_transaction" => $this->dashboard_model->get_daily_transaction($conn, $date)
 		);
 		echo json_encode(array(
 			'status' => 'success',
