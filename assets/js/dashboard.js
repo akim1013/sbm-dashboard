@@ -355,9 +355,6 @@ $(document).ready(function(){
             }, {
                 name: 'Net sale',
                 data: process_one_value(netsale, 1)
-            }, {
-                name: 'Real sale',
-                data: process_one_value(realsale, 1)
             }]
         });
     }
@@ -496,6 +493,7 @@ $(document).ready(function(){
             success: function(res){
                 $('.loader').addClass('hide');
                 var response = JSON.parse(res);
+                console.log(response);
                 if(response.status == 'success'){
                     add_shop_list(response.data);
                     flat_process(response.data);

@@ -109,7 +109,7 @@
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="stats-3-block block d-flex">
-                                    <div class="stats-3"><strong class="d-block _grossale">0</strong><span class="d-block">Gros sale</span>
+                                    <div class="stats-3"><strong class="d-block _grossale">0</strong><span class="d-block">Gross sale</span>
                                         <div class="progress progress-template progress-small">
                                             <div role="progressbar" style="width: 35%;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template progress-bar-small dashbg-1"></div>
                                         </div>
