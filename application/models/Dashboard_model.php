@@ -30,9 +30,9 @@ class Dashboard_model extends CI_Model{
                 SUM( COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as discount
             FROM transactions t WITH (INDEX(idx_transactions_bookdate))
             LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id AND tk.in_statistics=1
-            LEFT JOIN trans_articles ta ON (ta.transaction_id = t.id)
-            LEFT JOIN articles a ON (a.id = ta.article_id) AND a.article_type Not In(2,3)
-            LEFT JOIN measure_units mu ON (mu.id = a.measure_unit_id)
+            INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+            INNER JOIN articles a ON (a.id = ta.article_id) AND a.article_type Not In(2,3)
+            INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
             WHERE t.delete_operator_id IS NULL
                     AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
             GROUP BY t.shop_id
@@ -98,9 +98,9 @@ class Dashboard_model extends CI_Model{
                 SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as netsale
             FROM transactions t WITH (INDEX(idx_transactions_bookdate))
             LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id AND tk.in_statistics=1
-            LEFT JOIN trans_articles ta ON (ta.transaction_id = t.id)
-            LEFT JOIN articles a ON (a.id = ta.article_id) AND a.article_type Not In(2,3)
-            LEFT JOIN measure_units mu ON (mu.id = a.measure_unit_id)
+            INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+            INNER JOIN articles a ON (a.id = ta.article_id) AND a.article_type Not In(2,3)
+            INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
             WHERE t.delete_operator_id IS NULL
                     AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
             GROUP BY t.bookkeeping_date, t.shop_id

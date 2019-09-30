@@ -217,11 +217,8 @@ $(document).ready(function(){
         for(let item of promotion){
             if(item.shop == shop) __promotion = item.value;
         }
-        $("._grossale").text(process_price(__grossale));
         $("._netsale").text(process_price(__netsale));
         $("._realsale").text(process_price(__realsale));
-        $("._vat").text(process_price(__vat));
-        $("._tax").text(process_price(__tax));
         $("._discount").text(process_price(__discount));
         $("._average_bill").text(process_price(__average_bill));
         $("._transaction_count").text(__transaction_count);
