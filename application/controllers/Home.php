@@ -41,6 +41,7 @@ class Home extends MY_Controller {
 		$ret = array(
 			"shops" 		=> $this->dashboard_model->get_shop_list($conn),
 			"sale" 			=> $this->dashboard_model->get_sale($conn, $date),
+			"discount"		=> $this->dashboard_model->get_discount($conn, $date),
 			"transaction" 	=> $this->dashboard_model->get_transaction($conn, $date),
 			"promotion"		=> $this->dashboard_model->get_promotion($conn, $date),
 			"tip"			=> $this->dashboard_model->get_tip($conn, $date)

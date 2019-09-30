@@ -2,22 +2,15 @@
 $(document).ready(function(){
     var shops               = [];
     var _shops              = [];
-    var grossale            = [];
     var netsale             = [];
-    var realsale            = [];
-    var vat                 = [];
-    var tax                 = [];
     var promotion           = [];
     var discount            = [];
     var transaction_count   = [];
     var tip                 = [];
     var average_bill        = [];
     // Total values
-    var _grossale            = 0;
     var _netsale             = 0;
     var _realsale            = 0;
-    var _vat                 = 0;
-    var _tax                 = 0;
     var _promotion           = 0;
     var _discount            = 0;
     var _transaction_count   = 0;
@@ -61,50 +54,28 @@ $(document).ready(function(){
         }
     }
     function flat_process(data){
-        grossale            = [];
         netsale             = [];
-        realsale            = [];
-        vat                 = [];
-        tax                 = [];
         promotion           = [];
         discount            = [];
         transaction_count   = [];
         tip                 = [];
         average_bill        = [];
-        _grossale            = 0;
         _netsale             = 0;
-        _realsale            = 0;
-        _vat                 = 0;
-        _tax                 = 0;
         _promotion           = 0;
         _discount            = 0;
         _transaction_count   = 0;
         _tip                 = 0;
         _average_bill        = 0;
         for(let sale of data.sale){
-            grossale.push({
-                shop: find_shop_name(sale.shop_id),
-                value: sale.grossale
-            });
             netsale.push({
                 shop: find_shop_name(sale.shop_id),
                 value: sale.netsale
             });
-            realsale.push({
-                shop: find_shop_name(sale.shop_id),
-                value: sale.realsale
-            });
-            tax.push({
-                shop: find_shop_name(sale.shop_id),
-                value: sale.tax
-            });
-            vat.push({
-                shop: find_shop_name(sale.shop_id),
-                value: sale.vat
-            });
+        }
+        for(let disc of data.discount){
             discount.push({
-                shop: find_shop_name(sale.shop_id),
-                value: sale.discount
+                shop: find_shop_name(disc.shop_id),
+                value: disc.discount
             });
         }
         for(let prom of data.promotion){
@@ -130,23 +101,11 @@ $(document).ready(function(){
                 tc: transaction.transaction_count
             });
         }
-        for(let item of grossale){
-            _grossale += item.value ? parseFloat(item.value) : 0;
-        }
         for(let item of netsale){
             _netsale += item.value ? parseFloat(item.value) : 0;
         }
-        for(let item of realsale){
-            _realsale += item.value ? parseFloat(item.value) : 0;
-        }
         for(let item of discount){
             _discount += item.value ? parseFloat(item.value) : 0;
-        }
-        for(let item of vat){
-            _vat += item.value ? parseFloat(item.value) : 0;
-        }
-        for(let item of tax){
-            _tax += item.value ? parseFloat(item.value) : 0;
         }
         for(let item of tip){
             _tip += item.value ? parseFloat(item.value) : 0;
@@ -164,11 +123,7 @@ $(document).ready(function(){
         display_flat_data();
     }
     function display_flat_data(){
-        $("._grossale").text(process_price(_grossale));
         $("._netsale").text(process_price(_netsale));
-        $("._realsale").text(process_price(_realsale));
-        $("._vat").text(process_price(_vat));
-        $("._tax").text(process_price(_tax));
         $("._discount").text(process_price(_discount));
         $("._average_bill").text(process_price(_average_bill));
         $("._transaction_count").text(_transaction_count);
@@ -176,31 +131,15 @@ $(document).ready(function(){
         $("._promotion").text(process_price(_promotion));
     }
     function display_flat_data_single(shop){
-        let __grossale = 0;
         let __netsale = 0;
-        let __realsale = 0;
-        let __vat = 0;
-        let __tax = 0;
         let __discount = 0;
         let __average_bill = 0;
         let __transaction_count = 0;
         let __tip = 0;
         let __promotion = 0;
 
-        for(let item of grossale){
-            if(item.shop == shop) __grossale = item.value;
-        }
         for(let item of netsale){
             if(item.shop == shop) __netsale = item.value;
-        }
-        for(let item of realsale){
-            if(item.shop == shop) __realsale = item.value;
-        }
-        for(let item of vat){
-            if(item.shop == shop) __vat = item.value;
-        }
-        for(let item of tax){
-            if(item.shop == shop) __tax = item.value;
         }
         for(let item of discount){
             if(item.shop == shop) __discount = item.value;
@@ -218,7 +157,6 @@ $(document).ready(function(){
             if(item.shop == shop) __promotion = item.value;
         }
         $("._netsale").text(process_price(__netsale));
-        $("._realsale").text(process_price(__realsale));
         $("._discount").text(process_price(__discount));
         $("._average_bill").text(process_price(__average_bill));
         $("._transaction_count").text(__transaction_count);
@@ -265,7 +203,7 @@ $(document).ready(function(){
                 type: 'pie'
             },
             title: {
-                text: 'Gros sale comparison of the shops'
+                text: 'Net sale comparison of the shops'
             },
             tooltip: {
                 pointFormat: '{series.name}: <b>{point.v:.1f}</b>'
@@ -283,7 +221,7 @@ $(document).ready(function(){
             },
             series: [{
                 name: 'Share',
-                data: process_percent(grossale, _grossale)
+                data: process_percent(netsale, _netsale)
             }]
         });
         Highcharts.chart('transaction_comparison_pie', {
@@ -347,9 +285,6 @@ $(document).ready(function(){
                 }
             },
             series: [{
-                name: 'Gros sale',
-                data: process_one_value(grossale, 1)
-            }, {
                 name: 'Net sale',
                 data: process_one_value(netsale, 1)
             }]

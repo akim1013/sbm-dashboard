@@ -22,12 +22,7 @@ class Dashboard_model extends CI_Model{
         $sql = "
             SELECT
                 t.shop_id as shop_id,
-                SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as netsale,
-                SUM(ta.price) as grossale,
-                SUM(ta.price * ta.vat_percent / 100) as vat,
-                (SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) - sum(ta.price * ta.vat_percent / 100)) as realsale,
-                SUM(t.tax_amount) as tax,
-                SUM( COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as discount
+                SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as netsale
             FROM transactions t WITH (INDEX(idx_transactions_bookdate))
             LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id AND tk.in_statistics=1
             INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
@@ -39,7 +34,17 @@ class Dashboard_model extends CI_Model{
         ";
         return $this->run_query($conn, $sql);
     }
-
+    // Discount
+    function get_discount($conn, $date){
+        $sql = "
+            SELECT COALESCE(SUM(ta.discount),0) as discount, t.shop_id as shop_id
+            FROM transactions t INNER JOIN trans_articles ta ON ta.transaction_id = t.id
+            WHERE t.delete_operator_id IS NULL
+                    AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+            GROUP BY t.shop_id
+        ";
+        return $this->run_query($conn, $sql);
+    }
     // Transaction numbers
     function get_transaction($conn, $date){
         $sql = "
