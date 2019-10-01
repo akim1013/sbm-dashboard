@@ -18,6 +18,10 @@
             $res = $this->db->get()->num_rows();
             return $res;
         }
+        public function users(){
+            $this->db->select('id, name, email, database');
+            return $this->db->get('users');
+        }
         private function validate($name){
             $this->db->where('name', $name);
             $this->db->from('users');

@@ -62,7 +62,6 @@
                                     <button type="submit" class="btn btn-primary">Login</button>
                                 </form>
                                 <a href="#" class="forgot-pass">Forgot Password?</a>
-                                <br><small>Do not have an account? </small><a href="/auth/signup" class="signup">Signup</a>
                             </div>
                         </div>
                     </div>

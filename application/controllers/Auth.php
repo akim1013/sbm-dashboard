@@ -24,10 +24,17 @@ class Auth extends CI_Controller {
 		$res = $this->user_model->login($data);
 		if($res == 1){
 			$this->session->set_userdata('user_name', $data['name']);
-            echo json_encode(array(
-                'status' => 'success',
-                'msg'    => 'User logged in successfully'
-            ));
+            if($data['name'] == 'admin'){
+				echo json_encode(array(
+	                'status' => 'success',
+	                'msg'    => 'Admin logged in successfully'
+	            ));
+			}else{
+				echo json_encode(array(
+	                'status' => 'success',
+	                'msg'    => 'User logged in successfully'
+	            ));
+			}
         }else{
             echo json_encode(array(
                 'status' => 'failed',
@@ -64,4 +71,24 @@ class Auth extends CI_Controller {
             ));
         }
     }
+
+	public function users(){
+		$users = $this->user_model->users();
+		if($users){
+			$res = array();
+			foreach ($users->result() as $row){
+				array_push($res, $row);
+			}
+			echo json_encode(array(
+				'status' => 'success',
+				'data' => $res,
+				'msg' => 'Read user data successfully'
+			));
+		}else{
+			echo json_encode(array(
+				'status' => 'failed',
+				'msg' => 'Read user data failed'
+			));
+		}
+	}
 }

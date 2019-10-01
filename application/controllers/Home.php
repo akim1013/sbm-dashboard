@@ -11,8 +11,11 @@ class Home extends MY_Controller {
 
 	public function index(){
 		if($this->session->has_userdata('user_name')){
-
-            $this->load->view('home');
+            if($this->session->userdata('user_name') == 'admin'){
+				$this->load->view('admin');
+			}else{
+				$this->load->view('home');
+			}
         }else{
             $this->load->view('login');
         }
