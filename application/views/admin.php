@@ -108,6 +108,11 @@
                             </select>
                         </div>
                         <div class="form-group">
+                            <select name="shop" type="text" placeholder="Shop name" class="mr-sm-3 form-control form-control">
+                                <option selected value="null">Select Shop</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <input name="password" type="text" placeholder="Password" class="mr-sm-3 form-control form-control" required>
                         </div>
                         <div class="form-group">
