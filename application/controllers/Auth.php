@@ -52,7 +52,8 @@ class Auth extends CI_Controller {
             'email'             => $this->input->post('email'),
             'verification_key'  => md5(rand()),
             'password'          => md5($this->input->post('password')),
-			'database'			=> $this->input->post('database')
+			'database'			=> $this->input->post('database'),
+			'shop'				=> $this->input->post('shop')
         );
         $res = $this->user_model->create($data);
         if($res == 1){
