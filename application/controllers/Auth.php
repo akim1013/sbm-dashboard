@@ -52,6 +52,7 @@ class Auth extends CI_Controller {
             'email'             => $this->input->post('email'),
             'verification_key'  => md5(rand()),
             'password'          => md5($this->input->post('password')),
+			'database'			=> $this->input->post('database')
         );
         $res = $this->user_model->create($data);
         if($res == 1){
@@ -77,7 +78,9 @@ class Auth extends CI_Controller {
 		if($users){
 			$res = array();
 			foreach ($users->result() as $row){
-				array_push($res, $row);
+				if($row->name != 'admin'){
+					array_push($res, $row);
+				}
 			}
 			echo json_encode(array(
 				'status' => 'success',
@@ -89,6 +92,31 @@ class Auth extends CI_Controller {
 				'status' => 'failed',
 				'msg' => 'Read user data failed'
 			));
+		}
+	}
+	public function delete(){
+		$res = $this->user_model->delete($this->input->post('id'));
+		echo $res;
+	}
+	public function db(){
+		$serverName = "47.88.53.35";
+		$connectionInfo = array( "Database"=>"master", "UID"=>"laguna", "PWD"=>"goqkdtks.1234");
+		$conn = sqlsrv_connect( $serverName, $connectionInfo);
+		if( $conn ) {
+			$sql = "SELECT name FROM master.sys.databases";
+			$query = sqlsrv_query( $conn, $sql );
+	        $ret = array();
+	        while( $row = sqlsrv_fetch_array( $query, SQLSRV_FETCH_ASSOC) ) {
+				  array_push($ret, $row);
+			}
+			echo json_encode(array(
+			   "status" => 'success',
+			   "data" => $ret
+			));
+		}else{
+		     echo json_encode(array(
+				"status" => 'failed'
+			 ));
 		}
 	}
 }

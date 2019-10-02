@@ -5,15 +5,14 @@ class MY_Controller extends CI_Controller{
 
     public function __construct(){
         parent::__construct();
+        $this->load->model('user_model');
     }
 
     protected function dbconnect(){
-        
 		$serverName = "47.88.53.35";
-
-		$connectionInfo = array( "Database"=>"meetfresh", "UID"=>"laguna", "PWD"=>"goqkdtks.1234");
+        $db = $this->user_model->get_DB($this->session->userdata('user_name'));
+		$connectionInfo = array( "Database"=>$db, "UID"=>"laguna", "PWD"=>"goqkdtks.1234");
 		$conn = sqlsrv_connect( $serverName, $connectionInfo);
-
 		if( $conn ) {
 		     return $conn;
 		}else{

@@ -27,5 +27,18 @@
             $this->db->from('users');
             return $this->db->get()->num_rows();
         }
+        public function delete($id){
+            $this->db->delete('users', array('id' => $id));
+        }
+        public function get_DB($name){
+            $data = '';
+            $this->db->select('database');
+            $this->db->where('name', $name);
+            $this->db->from('users');
+            $data = $this->db->get();
+            foreach ($data->result() as $row){
+                return $row->database;
+            }
+        }
     }
 ?>

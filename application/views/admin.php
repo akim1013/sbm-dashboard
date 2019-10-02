@@ -95,11 +95,31 @@
             </div>
             <div class="page-dashboard">
                 <div class="block margin-bottom-sm">
-                    <div class="table-responsive">
+                    <form id="new_user" class="form-inline container-fluid d-flex align-items-center justify-content-center">
+                        <div class="form-group">
+                            <input name="name" type="text" placeholder="User name" class="mr-sm-3 form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <input name="email" type="email" placeholder="Email address" class="mr-sm-3 form-control form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <select name="database" type="text" placeholder="Database name" class="mr-sm-3 form-control form-control">
+                                <option selected value="null">Select database</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <input name="password" type="text" placeholder="Password" class="mr-sm-3 form-control form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Add new user" class="btn btn-primary">
+                        </div>
+                    </form>
+                </div>
+                <div class="block margin-bottom-sm">
+                    <div class="table-responsive container-fluid d-flex align-items-center justify-content-center">
                         <table class="table user-table">
                             <thead>
                                 <tr>
-                                    <th>#</th>
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Database</th>
@@ -119,6 +139,17 @@
                     </div>
                 </div>
             </footer>
+        </div>
+    </div>
+    <div id="confirm-delete" class="confirm-modal modal fade" tabindex="-1" role="dialog" aria-labelledby="Confirm Modal" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p>Are you sure to delete this user?</p>
+                    <button type="button" name="button" class="confirm-delete btn btn-primary" data-dismiss="modal">Confirm</button>
+                    <button type="button" name="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
         </div>
     </div>
     <!-- JavaScript files-->
