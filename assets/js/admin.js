@@ -58,6 +58,30 @@ function getDB(){
         }
     });
 }
+function getShop(){
+    $.ajax({
+        url: '/auth/shop',
+        method: 'post',
+        success: function(res){
+            $('select[name="shop"]').empty();
+            let response = JSON.parse(res);
+            console.log(res);
+            // if(response.status == 'success'){
+            //     for(let item of response.data){
+            //         $('select[name="database"]').append('<option value="' + item.name + '">' + item.name + '</option>');
+            //     }
+            // }else{
+            //     $.toast({
+            //         heading: response.status,
+            //         text: response.msg,
+            //         showHideTransition: 'slide',
+            //         icon: 'error',
+            //         position: 'top-right'
+            //     })
+            // }
+        }
+    });
+}
 // Register user
 $('#new_user').submit(function(e){
     $('.loader').removeClass('hide');
