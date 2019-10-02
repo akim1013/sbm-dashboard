@@ -116,7 +116,38 @@ class Auth extends CI_Controller {
 			));
 		}else{
 		     echo json_encode(array(
-				"status" => 'failed'
+				"status" => 'failed',
+				"msg" => "DB connection error"
+			 ));
+		}
+	}
+	public function shop(){
+		$db = $this->input->post('db');
+		$serverName = "47.88.53.35";
+		$connectionInfo = array( "Database"=>$db, "UID"=>"laguna", "PWD"=>"goqkdtks.1234");
+		$conn = sqlsrv_connect( $serverName, $connectionInfo);
+		if( $conn ) {
+			$sql = "SELECT id, description FROM shops";
+			$query = sqlsrv_query( $conn, $sql );
+			if(!$query){
+				echo json_encode(array(
+				   "status" => 'failed',
+				   "msg" => "No shop detected!"
+				));
+			}else{
+				$ret = array();
+		        while( $row = sqlsrv_fetch_array( $query, SQLSRV_FETCH_ASSOC) ) {
+					  array_push($ret, $row);
+				}
+				echo json_encode(array(
+				   "status" => 'success',
+				   "data" => $ret
+				));
+			}
+		}else{
+		     echo json_encode(array(
+				"status" => 'failed',
+				"msg" => "DB connection error"
 			 ));
 		}
 	}

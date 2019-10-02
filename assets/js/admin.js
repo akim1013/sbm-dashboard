@@ -36,10 +36,12 @@ function getUsers(){
     });
 }
 function getDB(){
+    $('.loader').removeClass('hide');
     $.ajax({
         url: '/auth/db',
         method: 'post',
         success: function(res){
+            $('.loader').addClass('hide');
             $('select[name="database"]').empty();
             let response = JSON.parse(res);
             if(response.status == 'success'){
@@ -58,30 +60,36 @@ function getDB(){
         }
     });
 }
-function getShop(){
+function getShop(db){
+    $('.loader').removeClass('hide');
     $.ajax({
         url: '/auth/shop',
         method: 'post',
+        data: {db: db},
         success: function(res){
+            $('.loader').addClass('hide');
             $('select[name="shop"]').empty();
             let response = JSON.parse(res);
-            console.log(res);
-            // if(response.status == 'success'){
-            //     for(let item of response.data){
-            //         $('select[name="database"]').append('<option value="' + item.name + '">' + item.name + '</option>');
-            //     }
-            // }else{
-            //     $.toast({
-            //         heading: response.status,
-            //         text: response.msg,
-            //         showHideTransition: 'slide',
-            //         icon: 'error',
-            //         position: 'top-right'
-            //     })
-            // }
+            if(response.status == 'success'){
+                $('select[name="shop"]').append('<option value="0">All shops</option>');
+                for(let item of response.data){
+                    $('select[name="shop"]').append('<option value="' + item.id + '">' + item.description + '</option>');
+                }
+            }else{
+                $.toast({
+                    heading: response.status,
+                    text: response.msg,
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    position: 'top-right'
+                })
+            }
         }
     });
 }
+$('select[name="database"]').change(function(){
+    getShop($(this).val());
+})
 // Register user
 $('#new_user').submit(function(e){
     $('.loader').removeClass('hide');
