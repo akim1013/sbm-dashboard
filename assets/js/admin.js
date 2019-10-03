@@ -77,7 +77,7 @@ function getShop(db){
             if(response.status == 'success'){
                 $('select[name="shop"]').append('<option value="0">All shops</option>');
                 for(let item of response.data){
-                    $('select[name="shop"]').append('<option value="' + item.id + '">' + item.description + '</option>');
+                    $('select[name="shop"]').append('<option value="' + item.description + '">' + item.description + '</option>');
                 }
             }else{
                 $.toast({

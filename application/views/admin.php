@@ -113,7 +113,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <input name="password" type="text" placeholder="Password" class="mr-sm-3 form-control form-control" required>
+                            <input name="password" type="password" placeholder="Password" class="mr-sm-3 form-control form-control" required>
                         </div>
                         <div class="form-group">
                             <input type="submit" value="Add new user" class="btn btn-primary">
