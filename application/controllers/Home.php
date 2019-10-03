@@ -74,5 +74,4 @@ class Home extends MY_Controller {
 		));
 		sqlsrv_close($conn);
 	}
-
 }
