@@ -19,9 +19,13 @@ function getUsers(){
         success: function(res){
             let response = JSON.parse(res);
             if(response.status == 'success'){
+                let shop = 'All';
+                if(response.data.shop_id){
+
+                }
                 let users = response.data;
                 for(let user of users){
-                     $('.user-table tbody').append('<tr><td>' + user.name + '</td><td>' + user.email + '</td><td>' + user.database + '</td><td><button data-toggle="modal" data-target="#confirm-delete" user_id="' + user.id + '" class="delete_user btn btn-primary">Delete</button></td></tr>');
+                     $('.user-table tbody').append('<tr><td>' + user.name + '</td><td>' + user.email + '</td><td>' + user.database + '</td><td>' + shop + '</td><td><button data-toggle="modal" data-target="#confirm-delete" user_id="' + user.id + '" class="delete_user btn btn-primary">Delete</button></td></tr>');
                 }
             }else{
                 $.toast({

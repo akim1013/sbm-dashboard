@@ -128,6 +128,7 @@
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Database</th>
+                                    <th>Shop</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
