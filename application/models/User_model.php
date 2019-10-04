@@ -19,7 +19,7 @@
             return $res;
         }
         public function users(){
-            $this->db->select('id, name, email, database');
+            $this->db->select('id, name, email, database, shop_name');
             return $this->db->get('users');
         }
         private function validate($name){
