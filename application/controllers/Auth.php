@@ -24,6 +24,7 @@ class Auth extends CI_Controller {
 		$res = $this->user_model->login($data);
 		if($res == 1){
 			$this->session->set_userdata('user_name', $data['name']);
+			$this->session->set_userdata('shop_name', $data['shop_name']);
             if($data['name'] == 'admin'){
 				echo json_encode(array(
 	                'status' => 'success',
