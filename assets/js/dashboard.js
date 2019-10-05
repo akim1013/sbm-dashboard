@@ -32,6 +32,11 @@ $(document).ready(function(){
             if(id == item.id) return item.name;
         }
     }
+    function find_shop_id(name){
+        for(var item of shops){
+            if(name == item.name) return item.id;
+        }
+    }
     function add_shop_list(shop_lists){
         $('#all-shops').empty();
         shops   = [];
@@ -43,6 +48,7 @@ $(document).ready(function(){
                 name: shop.description,
                 value: shop.description
             });
+            $('#all-shops').append($('<li>').append($('<a class="single-shop" style="cursor: pointer" shopId=' + shop.id + '>' + (shop.description) + '</a>')));
         }
         for(var shop of shop_lists.sale){
             _shops.push({
@@ -50,7 +56,6 @@ $(document).ready(function(){
                 name: find_shop_name(shop.shop_id),
                 value: find_shop_name(shop.shop_id)
             });
-            $('#all-shops').append($('<li>').append($('<a class="single-shop" style="cursor: pointer" shopId=' + shop.shop_id + '>' + find_shop_name(shop.shop_id) + '</a>')));
         }
     }
     function flat_process(data){
@@ -511,6 +516,7 @@ $(document).ready(function(){
         $('.loader').removeClass('hide');
         e.stopPropagation();
         e.preventDefault();
+        localStorage.setItem('shop_name', 'All');
         $.ajax({
             url: '/auth/logout',
             method: 'post',

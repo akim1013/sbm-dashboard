@@ -29,6 +29,7 @@ $(document).ready(function(){
                         position: 'top-right'
                     })
                     setTimeout(function(){
+                        localStorage.setItem('shop_name', response.shop_name);
                         window.location.assign('/');
                     }, 3500);
                 }

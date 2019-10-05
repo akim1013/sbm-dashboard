@@ -22,9 +22,9 @@ class Auth extends CI_Controller {
 			'password' => md5($this->input->post('password'))
 		);
 		$res = $this->user_model->login($data);
-		if($res == 1){
+		if($res != '0'){
 			$this->session->set_userdata('user_name', $data['name']);
-			$this->session->set_userdata('shop_name', $data['shop_name']);
+			//$this->session->set_userdata('shop_name', $data['shop_name']);
             if($data['name'] == 'admin'){
 				echo json_encode(array(
 	                'status' => 'success',
@@ -33,13 +33,15 @@ class Auth extends CI_Controller {
 			}else{
 				echo json_encode(array(
 	                'status' => 'success',
-	                'msg'    => 'User logged in successfully'
+	                'msg'    => 'User logged in successfully',
+					'shop_name'=> $res
 	            ));
 			}
         }else{
             echo json_encode(array(
                 'status' => 'failed',
-                'msg'    => 'User name or Password incorrect'
+                'msg'    => 'User name or Password incorrect',
+				'res'	=> $res
             ));
         }
 	}

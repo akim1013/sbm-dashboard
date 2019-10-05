@@ -12,11 +12,17 @@
             }
         }
         public function login($data){
+            $this->db->select('*');
             $this->db->where('name', $data['name']);
             $this->db->where('password', $data['password']);
             $this->db->from('users');
-            $res = $this->db->get()->num_rows();
-            return $res;
+            $res = $this->db->get();
+            if($res->num_rows() == 0){
+                return '0';
+            }else{
+                $shop_name = $res->result()[0]->shop_name;
+                return $shop_name;
+            }
         }
         public function users(){
             $this->db->select('id, name, email, database, shop_name');
