@@ -30,7 +30,6 @@ $(document).ready(function(){
     function getRanks(value){
         var sorted = value.slice().sort(function(a,b){return b-a})
         var ranked = value.slice().map(function(v){ return sorted.indexOf(v)+1 });
-        console.log(ranked)
         return ranked;
     }
     function find_shop_name(id){
