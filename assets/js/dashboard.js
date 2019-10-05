@@ -421,7 +421,8 @@ $(document).ready(function(){
         $('.loader').removeClass('hide');
         var date = {
             start: start.format('YYYY-MM-DD'),
-            end: end.format('YYYY-MM-DD')
+            end: end.format('YYYY-MM-DD'),
+            shop_name: localStorage.getItem('shop_name')
         }
         $.ajax({
             url: '/home/dashboard',
@@ -457,7 +458,8 @@ $(document).ready(function(){
         monthago.setDate(past_month);
         var month = {
             start: formatDate(monthago),
-            end: date.format('YYYY-MM-DD')
+            end: date.format('YYYY-MM-DD'),
+            shop_name: localStorage.getItem('shop_name')
         }
         $.ajax({
             url: '/home/daily',

@@ -39,15 +39,16 @@ class Home extends MY_Controller {
 
 		$date = array(
 			"start" => $this->input->post('start'),
-			"end"	=> $this->input->post('end')
+			"end"	=> $this->input->post('shop_name')
 		);
+		$shop_name = $this->input->post('end');
 		$ret = array(
-			"shops" 		=> $this->dashboard_model->get_shop_list($conn),
-			"sale" 			=> $this->dashboard_model->get_sale($conn, $date),
-			"discount"		=> $this->dashboard_model->get_discount($conn, $date),
-			"transaction" 	=> $this->dashboard_model->get_transaction($conn, $date),
-			"promotion"		=> $this->dashboard_model->get_promotion($conn, $date),
-			"tip"			=> $this->dashboard_model->get_tip($conn, $date)
+			"shops" 		=> $this->dashboard_model->get_shop_list($conn, $shop_name),
+			"sale" 			=> $this->dashboard_model->get_sale($conn, $date, $shop_name),
+			"discount"		=> $this->dashboard_model->get_discount($conn, $date, $shop_name),
+			"transaction" 	=> $this->dashboard_model->get_transaction($conn, $date, $shop_name),
+			"promotion"		=> $this->dashboard_model->get_promotion($conn, $date, $shop_name),
+			"tip"			=> $this->dashboard_model->get_tip($conn, $date, $shop_name)
 		);
 		echo json_encode(array(
 			'status' => 'success',
@@ -63,9 +64,12 @@ class Home extends MY_Controller {
 			"start" => $this->input->post('start'),
 			"end"	=> $this->input->post('end')
 		);
+
+		$shop_name = $this->input->post('end');
+
 		$ret = array(
-			"daily_sale" 		=> $this->dashboard_model->get_daily_sale($conn, $date),
-			"daily_transaction" => $this->dashboard_model->get_daily_transaction($conn, $date)
+			"daily_sale" 		=> $this->dashboard_model->get_daily_sale($conn, $date, $shop_name),
+			"daily_transaction" => $this->dashboard_model->get_daily_transaction($conn, $date, $shop_name)
 		);
 		echo json_encode(array(
 			'status' => 'success',
