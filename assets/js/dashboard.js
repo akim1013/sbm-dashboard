@@ -211,7 +211,7 @@ $(document).ready(function(){
                 text: 'Net sale comparison of the shops'
             },
             tooltip: {
-                pointFormat: '{series.name}: <b>{point.v:.1f}</b>'
+                pointFormat: '{series.name}: <b>{point.percentage:.1f} %</b>'
             },
             plotOptions: {
                 pie: {
@@ -225,7 +225,7 @@ $(document).ready(function(){
                 }
             },
             series: [{
-                name: 'Share',
+                name: 'Net sale',
                 data: process_percent(netsale, _netsale)
             }]
         });
@@ -240,7 +240,7 @@ $(document).ready(function(){
                 text: 'Transaction count comparison of the shops'
             },
             tooltip: {
-                pointFormat: '{series.name}: <b>{point.v}</b>'
+                pointFormat: '{series.name}: <b>{point.percentage:.1f} %</b>'
             },
             plotOptions: {
                 pie: {
@@ -254,7 +254,7 @@ $(document).ready(function(){
                 }
             },
             series: [{
-                name: 'Share',
+                name: 'Transaction count',
                 data: process_percent(transaction_count, _transaction_count)
             }]
         });
