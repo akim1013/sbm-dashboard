@@ -39,9 +39,9 @@ class Home extends MY_Controller {
 
 		$date = array(
 			"start" => $this->input->post('start'),
-			"end"	=> $this->input->post('shop_name')
+			"end"	=> $this->input->post('end')
 		);
-		$shop_name = $this->input->post('end');
+		$shop_name = $this->input->post('shop_name');
 		$ret = array(
 			"shops" 		=> $this->dashboard_model->get_shop_list($conn, $shop_name),
 			"sale" 			=> $this->dashboard_model->get_sale($conn, $date, $shop_name),
@@ -65,7 +65,7 @@ class Home extends MY_Controller {
 			"end"	=> $this->input->post('end')
 		);
 
-		$shop_name = $this->input->post('end');
+		$shop_name = $this->input->post('shop_name');
 
 		$ret = array(
 			"daily_sale" 		=> $this->dashboard_model->get_daily_sale($conn, $date, $shop_name),
