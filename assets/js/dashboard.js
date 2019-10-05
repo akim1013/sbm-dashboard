@@ -27,6 +27,12 @@ $(document).ready(function(){
         }
         return color;
     }
+    function getRanks(value){
+        var sorted = value.slice().sort(function(a,b){return b-a})
+        var ranked = value.slice().map(function(v){ return sorted.indexOf(v)+1 });
+        console.log(ranked)
+        return ranked;
+    }
     function find_shop_name(id){
         for(var item of shops){
             if(id == item.id) return item.name;
@@ -200,6 +206,7 @@ $(document).ready(function(){
         return ret;
     }
     function comparison_chart_process(){
+        var ranks = getRanks(process_one_value(netsale, 1));
         Highcharts.chart('sale_comparison_pie', {
             chart: {
                 plotBackgroundColor: null,
@@ -287,6 +294,15 @@ $(document).ready(function(){
                 column: {
                     pointPadding: 0.2,
                     borderWidth: 0
+                },
+                series: {
+                    borderWidth: 0,
+                    dataLabels: {
+                        enabled: true,
+                        formatter: function() {
+                            return ranks[this.point.index]
+                        }
+                    }
                 }
             },
             series: [{
