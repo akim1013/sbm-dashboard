@@ -465,7 +465,7 @@ $(document).ready(() => {
     }
     function get_dashboard_data(start, end){
         $('.loader').removeClass('hide');
-        let date = {
+        let data = {
             start: start.format('YYYY-MM-DD'),
             end: end.format('YYYY-MM-DD'),
             shop_name: localStorage.getItem('shop_name')
@@ -473,7 +473,7 @@ $(document).ready(() => {
         $.ajax({
             url: '/home/dashboard',
             method: 'post',
-            data: date,
+            data: data,
             success: function(res){
                 $('.loader').addClass('hide');
                 let response = JSON.parse(res);
@@ -595,7 +595,19 @@ $(document).ready(() => {
         }else{
             $('#sale_detail_bar').addClass('hide')
         }
-        
+        let data = {
+            start: start.format('YYYY-MM-DD'),
+            end: end.format('YYYY-MM-DD'),
+            shop_name: localStorage.getItem('shop_name')
+        }
+        $.ajax({
+            url: '/home/sale_detail',
+            method: 'post',
+            data: data,
+            success: function(res){
+                console.log(res)
+            }
+        });
     })
 
 })
