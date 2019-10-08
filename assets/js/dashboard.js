@@ -1,44 +1,46 @@
 
-$(document).ready(function(){
-    var shops               = [];
-    var _shops              = [];
-    var netsale             = [];
-    var promotion           = [];
-    var discount            = [];
-    var transaction_count   = [];
-    var tip                 = [];
-    var average_bill        = [];
+$(document).ready(() => {
+    let shops               = [];   // Shop lists
+    let _shops              = [];   // Available shop lists
+    let netsale             = [];   // Netsale values of shops
+    let promotion           = [];   // Promotion values of shops
+    let discount            = [];   // Discount values of shops
+    let transaction_count   = [];   // Transaction count values of shops
+    let tip                 = [];   // Tip values of shops
+    let average_bill        = [];   // Average bill values of shops
     // Total values
-    var _netsale             = 0;
-    var _realsale            = 0;
-    var _promotion           = 0;
-    var _discount            = 0;
-    var _transaction_count   = 0;
-    var _tip                 = 0;
-    var _average_bill        = 0;
+    let _netsale             = 0;
+    let _realsale            = 0;
+    let _promotion           = 0;
+    let _discount            = 0;
+    let _transaction_count   = 0;
+    let _tip                 = 0;
+    let _average_bill        = 0;
 
-    var first_ajax;
-    var second_ajax;
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
+    let first_ajax;
+    let second_ajax;
+
+    // Generate random color
+    let getRandomColor = () => {
+        let letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
             color += letters[Math.floor(Math.random() * 16)];
         }
         return color;
     }
     function getRanks(value){
-        var sorted = value.slice().sort(function(a,b){return b-a})
-        var ranked = value.slice().map(function(v){ return sorted.indexOf(v)+1 });
+        let sorted = value.slice().sort((a,b) => {return b-a})
+        let ranked = value.slice().map((v) => { return sorted.indexOf(v)+1 });
         return ranked;
     }
     function find_shop_name(id){
-        for(var item of shops){
+        for(let item of shops){
             if(id == item.id) return item.name;
         }
     }
     function find_shop_id(name){
-        for(var item of shops){
+        for(let item of shops){
             if(name == item.name) return item.id;
         }
     }
@@ -47,7 +49,7 @@ $(document).ready(function(){
         shops   = [];
         _shops  = [];
         $('#all-shops').append($('<li>').append($('<a class="single-shop" style="cursor: pointer" shopId="0">Overall view</a>')));
-        for(var shop of shop_lists.shops){
+        for(let shop of shop_lists.shops){
             shops.push({
                 id: shop.id,
                 name: shop.description,
@@ -55,7 +57,7 @@ $(document).ready(function(){
             });
             $('#all-shops').append($('<li>').append($('<a class="single-shop" style="cursor: pointer" shopId=' + shop.id + '>' + (shop.description) + '</a>')));
         }
-        for(var shop of shop_lists.sale){
+        for(let shop of shop_lists.sale){
             _shops.push({
                 id: shop.shop_id,
                 name: find_shop_name(shop.shop_id),
@@ -205,7 +207,7 @@ $(document).ready(function(){
         return ret;
     }
     function comparison_chart_process(){
-        var ranks = getRanks(process_one_value(netsale, 1));
+        let ranks = getRanks(process_one_value(netsale, 1));
         Highcharts.chart('sale_comparison_pie', {
             chart: {
                 plotBackgroundColor: null,
@@ -434,7 +436,7 @@ $(document).ready(function(){
     }
     function get_dashboard_data(start, end){
         $('.loader').removeClass('hide');
-        var date = {
+        let date = {
             start: start.format('YYYY-MM-DD'),
             end: end.format('YYYY-MM-DD'),
             shop_name: localStorage.getItem('shop_name')
@@ -445,7 +447,7 @@ $(document).ready(function(){
             data: date,
             success: function(res){
                 $('.loader').addClass('hide');
-                var response = JSON.parse(res);
+                let response = JSON.parse(res);
                 console.log(response);
                 if(response.status == 'success'){
                     add_shop_list(response.data);
@@ -457,21 +459,21 @@ $(document).ready(function(){
         });
     }
     function formatDate(date) {
-        var monthNames = [
+        let monthNames = [
             "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"
         ];
-        var day = date.getDate();
-        var monthIndex = date.getMonth();
-        var year = date.getFullYear();
+        let day = date.getDate();
+        let monthIndex = date.getMonth();
+        let year = date.getFullYear();
 
         return year + '-' + monthNames[monthIndex] + '-' + day;
     }
     function get_daily_data(date){
         second_ajax = undefined;
-        var monthago = new Date(date.format('YYYY-MM-DD'));
-        var past_month = monthago.getDate() - 30;
+        let monthago = new Date(date.format('YYYY-MM-DD'));
+        let past_month = monthago.getDate() - 30;
         monthago.setDate(past_month);
-        var month = {
+        let month = {
             start: formatDate(monthago),
             end: date.format('YYYY-MM-DD'),
             shop_name: localStorage.getItem('shop_name')
@@ -481,7 +483,7 @@ $(document).ready(function(){
             method: 'post',
             data: month,
             success: function(res){
-                var response = JSON.parse(res);
+                let response = JSON.parse(res);
                 second_ajax = response;
                 if(response.status == 'success'){
                     monthly_growth_process(response.data, 0);
@@ -490,8 +492,8 @@ $(document).ready(function(){
         });
     }
     // Date Range Change
-    var start = moment().subtract(2, 'days');
-    var end = moment().subtract(2, 'days');
+    let start = moment().subtract(2, 'days');
+    let end = moment().subtract(2, 'days');
 
     function date_range_set(start, end) {
         if($("#sale_comparison_pie").highcharts()){
