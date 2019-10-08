@@ -21,7 +21,7 @@ class Dashboard_model extends CI_Model{
 
     // Net sale
     function get_sale($conn, $date, $shop_name){
-        $sql = " 
+        $sql = "
             SELECT
                 t.shop_id as shop_id,
                 SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as netsale
