@@ -62,3 +62,18 @@ LEFT JOIN article_causals ac ON ta.causal_id = ac.id  AND tcau.in_statistics=1
 WHERE t.bookkeeping_date BETWEEN '2019-09-20' AND '2019-09-20'
 		AND t.delete_operator_id IS NULL
 		AND shop_id = 13
+// Netsale detail
+SELECT
+	SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as price,
+	g.description as group_name
+FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+INNER JOIN shops s ON s.id = t.shop_id
+LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id AND tk.in_statistics=1
+INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+INNER JOIN articles a ON (a.id = ta.article_id) AND a.article_type Not In(2,3)
+INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
+INNER JOIN groups g ON g.id = a.group_a_id
+WHERE t.delete_operator_id IS NULL
+        AND t.bookkeeping_date BETWEEN '2019-09-20' AND '2019-09-20'
+		AND t.shop_id = '1'
+GROUP BY g.description
