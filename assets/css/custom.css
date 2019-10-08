@@ -60,3 +60,6 @@ a, a:hover{
 ._bar_chart{
     height: 500px;
 }
+.detail{
+    cursor: pointer;
+}

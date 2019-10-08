@@ -137,7 +137,7 @@ $(document).ready(() => {
     function display_flat_data(){
         $("._netsale").text(process_price(_netsale));
         $("._discount").text(process_price(_discount));
-        $("._average_bill").text(process_price(_average_bill));
+        $("._average_bill").text(process_price(_average_bill ? _average_bill : 0));
         $("._transaction_count").text(_transaction_count);
         $("._tip").text(process_price(_tip));
         $("._promotion").text(process_price(_promotion));
