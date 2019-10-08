@@ -580,8 +580,9 @@ $(document).ready(() => {
             display_flat_data_single(find_shop_name(shop_id));
             monthly_growth_process(second_ajax.data, shop_id);
         }else{
-            $("#comparison_pie").show();
-            $("#comparison_bar").show();
+            if((netsale.length != 0) && (transaction_count.length != 0)){
+                show_comparison_charts();
+            }
             display_flat_data();
             monthly_growth_process(second_ajax.data, 0);
         }
