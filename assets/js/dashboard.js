@@ -594,7 +594,7 @@ $(document).ready(() => {
         }else{
             $('#sale_detail_bar').addClass('hide')
         }
-
+        
     })
 
 })
