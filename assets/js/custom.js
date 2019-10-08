@@ -11,7 +11,6 @@ $(document).ready(function(){
             success: function(res){
                 $('.loader').addClass('hide');
                 var response = JSON.parse(res);
-                console.log(response);
                 if(response.status == 'failed'){
                     $.toast({
                         heading: 'Error',
