@@ -1,18 +1,8 @@
+// User id used to delete user
 let userId = -1;
-$('.logout').click(function(e){
-    $('.loader').removeClass('hide');
-    e.stopPropagation();
-    e.preventDefault();
-    $.ajax({
-        url: '/auth/logout',
-        method: 'post',
-        success: function(res){
-            $('.loader').addClass('hide');
-            window.location.assign('/');
-        }
-    });
-})
-function getUsers(){
+
+// Get user lists on admin side
+let getUsers = () => {
     $.ajax({
         url: '/auth/users',
         method: 'post',
@@ -40,7 +30,9 @@ function getUsers(){
         }
     });
 }
-function getDB(){
+
+// Get database lists
+let getDB = () => {
     $('.loader').removeClass('hide');
     $.ajax({
         url: '/auth/db',
@@ -65,7 +57,9 @@ function getDB(){
         }
     });
 }
-function getShop(db){
+
+// Get shop lists of a database
+let getShop = (db) => {
     $('.loader').removeClass('hide');
     $.ajax({
         url: '/auth/shop',
@@ -92,10 +86,8 @@ function getShop(db){
         }
     });
 }
-$('select[name="database"]').change(function(){
-    getShop($(this).val());
-})
-// Register user
+
+// Register a user
 $('#new_user').submit(function(e){
     $('.loader').removeClass('hide');
     e.stopPropagation();
@@ -131,9 +123,8 @@ $('#new_user').submit(function(e){
         }
     });
 })
-$('.user-table tbody').delegate('.delete_user', 'click', function(){
-    userId = $(this)[0].getAttribute('user_id');
-})
+
+// Delete confirm modal
 $('.confirm-delete').click(function(){
     $.ajax({
         url: '/auth/delete',
@@ -147,6 +138,33 @@ $('.confirm-delete').click(function(){
         }
     });
 })
+
+// Admin logout action
+$('.logout').click(function(e){
+    $('.loader').removeClass('hide');
+    e.stopPropagation();
+    e.preventDefault();
+    $.ajax({
+        url: '/auth/logout',
+        method: 'post',
+        success: function(res){
+            $('.loader').addClass('hide');
+            window.location.assign('/');
+        }
+    });
+})
+
+// Select database when admin is to add a user
+$('select[name="database"]').change(function(){
+    getShop($(this).val());
+})
+
+// Delete user pass user ID
+$('.user-table tbody').delegate('.delete_user', 'click', function(){
+    userId = $(this)[0].getAttribute('user_id');
+})
+
+// Init page
 $(document).ready(function(){
     getUsers();
     getDB();
