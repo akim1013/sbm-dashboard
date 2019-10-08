@@ -577,11 +577,13 @@ $(document).ready(() => {
     $('#all-shops').delegate('.single-shop', 'click', function(){
         let shop_id = $(this)[0].getAttribute('shopId');
         if(shop_id != 0){
+            //localStorage.setItem('shop_name', find_shop_name(shop_id));
             $("#comparison_pie").hide();
             $("#comparison_bar").hide();
             display_flat_data_single(find_shop_name(shop_id));
             monthly_growth_process(second_ajax.data, shop_id);
         }else{
+            //localStorage.setItem('shop_name', 'All');
             if((netsale.length != 0) && (transaction_count.length != 0)){
                 show_comparison_charts();
             }
