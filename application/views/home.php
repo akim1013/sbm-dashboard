@@ -109,7 +109,7 @@
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="stats-3-block block d-flex">
-                                    <div class="stats-3"><strong class="d-block _netsale">0</strong><span class="d-block detail">Turnover</span>
+                                    <div class="stats-3"><strong class="d-block _netsale">0</strong><span class="d-block detail sale_detail">Turnover</span>
                                         <div class="progress progress-template progress-small">
                                             <div role="progressbar" style="width: 35%;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template progress-bar-small dashbg-1"></div>
                                         </div>
@@ -143,7 +143,25 @@
                         </div>
                     </div>
                 </section>
-                <section id="comparison_pie" class="no-padding-top no-padding-bottom">
+
+                <!-- Detail views -->
+                <section id="sale_detail_bar" class="no-padding-top no-padding-bottom hide">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="drills-chart block">
+                                    <div id="sale_detail_line" class="_bar_chart"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- main views -->
+                <section id="comparison_none" class="no-padding-top no-padding-bottom hide text-center">
+                    <h3></h3>
+                </section>
+                <section id="comparison_pie" class="no-padding-top no-padding-bottom hide">
                     <div class="container-fluid">
                         <div class="row d-flex align-items-stretch">
                             <div class="col-md-6">
@@ -155,7 +173,7 @@
                         </div>
                     </div>
                 </section>
-                <section id="comparison_bar" class="no-padding-top no-padding-bottom">
+                <section id="comparison_bar" class="no-padding-top no-padding-bottom hide">
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-lg-12">
@@ -166,7 +184,7 @@
                         </div>
                     </div>
                 </section>
-                <section class="no-padding-top no-padding-bottom">
+                <section id="monthly_sale_bar" class="no-padding-top no-padding-bottom hide">
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-lg-12">
@@ -177,7 +195,7 @@
                         </div>
                     </div>
                 </section>
-                <section class="no-padding-top no-padding-bottom">
+                <section id="monthly_transaction_bar" class="no-padding-top no-padding-bottom hide">
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-lg-12">

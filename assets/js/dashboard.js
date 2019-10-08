@@ -1,5 +1,10 @@
 
 $(document).ready(() => {
+
+    // Date Range Change
+    let start = moment().subtract(2, 'days');
+    let end = moment().subtract(2, 'days');
+
     let shops               = [];   // Shop lists
     let _shops              = [];   // Available shop lists
     let netsale             = [];   // Netsale values of shops
@@ -28,6 +33,23 @@ $(document).ready(() => {
             color += letters[Math.floor(Math.random() * 16)];
         }
         return color;
+    }
+
+    let show_comparison_charts = () => {
+        $('#comparison_pie').removeClass('hide');
+        $('#comparison_bar').removeClass('hide');
+        $('#comparison_none').addClass('hide');
+    }
+    let hide_comparison_charts = () => {
+        $('#comparison_pie').addClass('hide');
+        $('#comparison_bar').addClass('hide');
+        $('#comparison_none').removeClass('hide');
+        $('#comparison_none h3').text('There are no transactions from ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+    }
+
+    let show_monthly_bar = () => {
+        $('#monthly_sale_bar').removeClass('hide');
+        $('#monthly_transaction_bar').removeClass('hide');
     }
     function getRanks(value){
         let sorted = value.slice().sort((a,b) => {return b-a})
@@ -207,232 +229,239 @@ $(document).ready(() => {
         return ret;
     }
     function comparison_chart_process(){
-        let ranks = getRanks(process_one_value(netsale, 1));
-        Highcharts.chart('sale_comparison_pie', {
-            chart: {
-                plotBackgroundColor: null,
-                plotBorderWidth: null,
-                plotShadow: false,
-                type: 'pie'
-            },
-            title: {
-                text: 'Net sale comparison of the shops'
-            },
-            tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f} %</b>'
-            },
-            plotOptions: {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: true,
-                        format: '<b>{point.name}</b>: {point.v:.1f}',
-                        connectorColor: 'silver'
-                    }
-                }
-            },
-            series: [{
-                name: 'Net sale',
-                data: process_percent(netsale, _netsale)
-            }]
-        });
-        Highcharts.chart('transaction_comparison_pie', {
-            chart: {
-                plotBackgroundColor: null,
-                plotBorderWidth: null,
-                plotShadow: false,
-                type: 'pie'
-            },
-            title: {
-                text: 'Transaction count comparison of the shops'
-            },
-            tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f} %</b>'
-            },
-            plotOptions: {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: true,
-                        format: '<b>{point.name}</b>: {point.v}',
-                        connectorColor: 'silver'
-                    }
-                }
-            },
-            series: [{
-                name: 'Transaction count',
-                data: process_percent(transaction_count, _transaction_count)
-            }]
-        });
-        Highcharts.chart('sale_comparison_bar', {
-            chart: {
-                type: 'column'
-            },
-            title: {
-                text: 'Sales comparison'
-            },
-            xAxis: {
-                categories: process_one_value(_shops, 0), // Error, Distorted shop names
-                crosshair: true
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Sales [USD]'
-                }
-            },
-            tooltip: {
-                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                    '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
-                footerFormat: '</table>',
-                shared: true,
-                useHTML: true
-            },
-            plotOptions: {
-                column: {
-                    pointPadding: 0.2,
-                    borderWidth: 0
+        if((netsale.length == 0) && (transaction_count.length == 0)){
+            hide_comparison_charts();
+        }else{
+            show_comparison_charts();
+            let ranks = getRanks(process_one_value(netsale, 1));
+            Highcharts.chart('sale_comparison_pie', {
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    type: 'pie'
                 },
-                series: {
-                    borderWidth: 0,
-                    dataLabels: {
-                        enabled: true,
-                        formatter: function() {
-                            return ranks[this.point.index]
+                title: {
+                    text: 'Net sale comparison of the shops'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f} %</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            format: '<b>{point.name}</b>: {point.v:.1f}',
+                            connectorColor: 'silver'
                         }
                     }
-                }
-            },
-            series: [{
-                name: 'Net sale',
-                data: process_one_value(netsale, 1)
-            }]
-        });
+                },
+                series: [{
+                    name: 'Net sale',
+                    data: process_percent(netsale, _netsale)
+                }]
+            });
+            Highcharts.chart('transaction_comparison_pie', {
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    type: 'pie'
+                },
+                title: {
+                    text: 'Transaction count comparison of the shops'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f} %</b>'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            format: '<b>{point.name}</b>: {point.v}',
+                            connectorColor: 'silver'
+                        }
+                    }
+                },
+                series: [{
+                    name: 'Transaction count',
+                    data: process_percent(transaction_count, _transaction_count)
+                }]
+            });
+            Highcharts.chart('sale_comparison_bar', {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Sales comparison'
+                },
+                xAxis: {
+                    categories: process_one_value(_shops, 0), // Error, Distorted shop names
+                    crosshair: true
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Sales [USD]'
+                    }
+                },
+                tooltip: {
+                    headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                    pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                        '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
+                    footerFormat: '</table>',
+                    shared: true,
+                    useHTML: true
+                },
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.2,
+                        borderWidth: 0
+                    },
+                    series: {
+                        borderWidth: 0,
+                        dataLabels: {
+                            enabled: true,
+                            formatter: function() {
+                                return ranks[this.point.index]
+                            }
+                        }
+                    }
+                },
+                series: [{
+                    name: 'Net sale',
+                    data: process_one_value(netsale, 1)
+                }]
+            });
+        }
     }
     function monthly_growth_process(data, id){
+        if(data.length != 0){
+            show_monthly_bar();
+            let x_sale              = []; // x Axis date
+            let s_sale              = []; // Shop names
+            let series_sale         = []; // Series of data
 
-        let x_sale              = []; // x Axis date
-        let s_sale              = []; // Shop names
-        let series_sale         = []; // Series of data
-
-        let x_transaction       = [];
-        let s_transaction       = [];
-        let series_transaction  = [];
-        if($("#monthly_growth_line").highcharts()){
-            $("#monthly_growth_line").highcharts().destroy();
-        }
-        if($("#monthly_transaction_line").highcharts()){
-            $("#monthly_transaction_line").highcharts().destroy();
-        }
-        for(let item of data.daily_sale){
-            let date = new Date(item.transaction_date.date);
-            let shop = find_shop_name(item.shop_id);
-            if(x_sale.indexOf(formatDate(date)) < 0){
-                x_sale.push(formatDate(date));
+            let x_transaction       = [];
+            let s_transaction       = [];
+            let series_transaction  = [];
+            if($("#monthly_growth_line").highcharts()){
+                $("#monthly_growth_line").highcharts().destroy();
             }
-            if(id == 0){
-                if(s_sale.indexOf(shop) < 0){
-                    s_sale.push(shop);
-                }
-            }else{
-                if(s_sale.indexOf(find_shop_name(id)) < 0){
-                    s_sale.push(find_shop_name(id));
-                }
+            if($("#monthly_transaction_line").highcharts()){
+                $("#monthly_transaction_line").highcharts().destroy();
             }
-        }
-        for(let item of data.daily_transaction){
-            let date = new Date(item.transaction_date.date);
-            let shop = find_shop_name(item.shop_id);
-            if(x_transaction.indexOf(formatDate(date)) < 0){
-                x_transaction.push(formatDate(date));
-            }
-            if(id == 0){
-                if(s_transaction.indexOf(shop) < 0){
-                    s_transaction.push(shop);
-                }
-            }else{
-                if(s_transaction.indexOf(find_shop_name(id)) < 0){
-                    s_transaction.push(find_shop_name(id));
-                }
-            }
-        }
-        for(let _s of s_sale){
-            let _data = [];
             for(let item of data.daily_sale){
-                if(_s == find_shop_name(item.shop_id)){
-                    _data.push(parseFloat(item.netsale));
+                let date = new Date(item.transaction_date.date);
+                let shop = find_shop_name(item.shop_id);
+                if(x_sale.indexOf(formatDate(date)) < 0){
+                    x_sale.push(formatDate(date));
+                }
+                if(id == 0){
+                    if(s_sale.indexOf(shop) < 0){
+                        s_sale.push(shop);
+                    }
+                }else{
+                    if(s_sale.indexOf(find_shop_name(id)) < 0){
+                        s_sale.push(find_shop_name(id));
+                    }
                 }
             }
-            series_sale.push({
-                name: _s,
-                data: _data
-            })
-        }
-        for(let _s of s_transaction){
-            let _data = [];
             for(let item of data.daily_transaction){
-                if(_s == find_shop_name(item.shop_id)){
-                    _data.push(parseFloat(item.transaction_count));
+                let date = new Date(item.transaction_date.date);
+                let shop = find_shop_name(item.shop_id);
+                if(x_transaction.indexOf(formatDate(date)) < 0){
+                    x_transaction.push(formatDate(date));
+                }
+                if(id == 0){
+                    if(s_transaction.indexOf(shop) < 0){
+                        s_transaction.push(shop);
+                    }
+                }else{
+                    if(s_transaction.indexOf(find_shop_name(id)) < 0){
+                        s_transaction.push(find_shop_name(id));
+                    }
                 }
             }
-            series_transaction.push({
-                name: _s,
-                data: _data
-            })
+            for(let _s of s_sale){
+                let _data = [];
+                for(let item of data.daily_sale){
+                    if(_s == find_shop_name(item.shop_id)){
+                        _data.push(parseFloat(item.netsale));
+                    }
+                }
+                series_sale.push({
+                    name: _s,
+                    data: _data
+                })
+            }
+            for(let _s of s_transaction){
+                let _data = [];
+                for(let item of data.daily_transaction){
+                    if(_s == find_shop_name(item.shop_id)){
+                        _data.push(parseFloat(item.transaction_count));
+                    }
+                }
+                series_transaction.push({
+                    name: _s,
+                    data: _data
+                })
+            }
+            Highcharts.chart('monthly_growth_line', {
+                chart: {
+                    type: 'line'
+                },
+                title: {
+                    text: 'Sales growth in last 30 days'
+                },
+                xAxis: {
+                    categories: x_sale
+                },
+                yAxis: {
+                    title: {
+                        text: 'USD'
+                    }
+                },
+                plotOptions: {
+                    line: {
+                        dataLabels: {
+                            enabled: false
+                        },
+                        enableMouseTracking: true
+                    }
+                },
+                series: series_sale
+            });
+            Highcharts.chart('monthly_transaction_line', {
+                chart: {
+                    type: 'line'
+                },
+                title: {
+                    text: 'Transaction count in last 30 days'
+                },
+                xAxis: {
+                    categories: x_transaction
+                },
+                yAxis: {
+                    title: {
+                        text: 'Transaction count'
+                    }
+                },
+                plotOptions: {
+                    line: {
+                        dataLabels: {
+                            enabled: false
+                        },
+                        enableMouseTracking: true
+                    }
+                },
+                series: series_transaction
+            });
         }
-        Highcharts.chart('monthly_growth_line', {
-            chart: {
-                type: 'line'
-            },
-            title: {
-                text: 'Sales growth in last 30 days'
-            },
-            xAxis: {
-                categories: x_sale
-            },
-            yAxis: {
-                title: {
-                    text: 'USD'
-                }
-            },
-            plotOptions: {
-                line: {
-                    dataLabels: {
-                        enabled: false
-                    },
-                    enableMouseTracking: true
-                }
-            },
-            series: series_sale
-        });
-        Highcharts.chart('monthly_transaction_line', {
-            chart: {
-                type: 'line'
-            },
-            title: {
-                text: 'Transaction count in last 30 days'
-            },
-            xAxis: {
-                categories: x_transaction
-            },
-            yAxis: {
-                title: {
-                    text: 'Transaction count'
-                }
-            },
-            plotOptions: {
-                line: {
-                    dataLabels: {
-                        enabled: false
-                    },
-                    enableMouseTracking: true
-                }
-            },
-            series: series_transaction
-        });
     }
     function get_dashboard_data(start, end){
         $('.loader').removeClass('hide');
@@ -491,9 +520,7 @@ $(document).ready(() => {
             }
         });
     }
-    // Date Range Change
-    let start = moment().subtract(2, 'days');
-    let end = moment().subtract(2, 'days');
+
 
     function date_range_set(start, end) {
         if($("#sale_comparison_pie").highcharts()){
@@ -559,4 +586,15 @@ $(document).ready(() => {
             monthly_growth_process(second_ajax.data, 0);
         }
     })
+
+    // Details section
+    $('.sale_detail').click(() => {
+        if($('#sale_detail_bar').hasClass('hide')){
+            $('#sale_detail_bar').removeClass('hide')
+        }else{
+            $('#sale_detail_bar').addClass('hide')
+        }
+
+    })
+
 })
