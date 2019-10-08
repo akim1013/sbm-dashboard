@@ -522,7 +522,9 @@ $(document).ready(() => {
     }
 
 
-    function date_range_set(start, end) {
+    function date_range_set(st, ed) {
+        start = st;
+        end = ed;
         if($("#sale_comparison_pie").highcharts()){
             $("#sale_comparison_pie").highcharts().destroy();
         }
@@ -600,12 +602,15 @@ $(document).ready(() => {
             end: end.format('YYYY-MM-DD'),
             shop_name: localStorage.getItem('shop_name')
         }
+        console.log(data)
         $.ajax({
             url: '/home/sale_detail',
             method: 'post',
             data: data,
             success: function(res){
-                console.log(res)
+                //console.log(res);
+                let response = JSON.parse(res);
+                console.log(response);
             }
         });
     })

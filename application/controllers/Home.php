@@ -78,4 +78,23 @@ class Home extends MY_Controller {
 		));
 		sqlsrv_close($conn);
 	}
+	public function sale_detail(){
+		$conn = parent::dbconnect();
+
+		$date = array(
+			"start" => $this->input->post('start'),
+			"end"	=> $this->input->post('end')
+		);
+
+		$shop_name = $this->input->post('shop_name');
+		$ret = array(
+			"sale_detail" => $this->dashboard_model->get_sale_detail($conn, $date, $shop_name)
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
 }
