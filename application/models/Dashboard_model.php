@@ -196,16 +196,10 @@ class Dashboard_model extends CI_Model{
     }
     function get_transaction_detail($conn, $date, $shop_name){
         $sql = "
-            SELECT
-                SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as price,
-                g.description as group_name
+            SELECT DATEPART(hour, t.trans_date) h, COUNT(*) transaction_count
             FROM transactions t WITH (INDEX(idx_transactions_bookdate))
-            INNER JOIN shops s ON s.id = t.shop_id
-            LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id AND tk.in_statistics=1
-            INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
-            INNER JOIN articles a ON (a.id = ta.article_id) AND a.article_type Not In(2,3)
-            INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
-            INNER JOIN groups g ON g.id = a.group_a_id
+            LEFT JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id
             WHERE t.delete_operator_id IS NULL
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                 ";
@@ -213,7 +207,8 @@ class Dashboard_model extends CI_Model{
             $sql = $sql . " AND s.description = '" . $shop_name . "'";
         }
         $sql = $sql . "
-            GROUP BY g.description
+            GROUP BY DATEPART(hour, t.trans_date)
+            ORDER BY h
         ";
         return $this->run_query($conn, $sql);
     }
