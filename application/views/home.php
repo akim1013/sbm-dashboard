@@ -127,7 +127,7 @@
                             <div class="col-lg-6">
                                 <div class="stats-2-block block d-flex">
                                     <div class="stats-2 d-flex">
-                                        <div class="stats-2-content"><strong class="d-block _transaction_count">0</strong><span class="d-block detail">Transaction count</span>
+                                        <div class="stats-2-content"><strong class="d-block _transaction_count">0</strong><span class="d-block detail transaction_detail">Transaction count</span>
                                         </div>
                                     </div>
                                     <div class="stats-2 d-flex">
@@ -145,12 +145,23 @@
                 </section>
 
                 <!-- Detail views -->
-                <section id="sale_detail_bar" class="no-padding-top no-padding-bottom hide">
+                <section id="sale_detail" class="no-padding-top no-padding-bottom hide">
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="drills-chart block">
                                     <div id="sale_detail_line" class="_bar_chart"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section id="transaction_detail" class="no-padding-top no-padding-bottom hide">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="drills-chart block">
+                                    <div id="transaction_detail_line" class="_bar_chart"></div>
                                 </div>
                             </div>
                         </div>
@@ -178,7 +189,7 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="drills-chart block">
-                                    <div id="sale_comparison_bar" class="_bar_chart"></div>
+                                    <div id="sale_comparison_bar" class="_line_chart"></div>
                                 </div>
                             </div>
                         </div>
@@ -189,7 +200,7 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="drills-chart block">
-                                    <div id="monthly_growth_line" class="_bar_chart"></div>
+                                    <div id="monthly_growth_line" class="_line_chart"></div>
                                 </div>
                             </div>
                         </div>
@@ -200,7 +211,7 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="drills-chart block">
-                                    <div id="monthly_transaction_line" class="_bar_chart"></div>
+                                    <div id="monthly_transaction_line" class="_line_chart"></div>
                                 </div>
                             </div>
                         </div>

@@ -58,6 +58,9 @@ a, a:hover{
     height: 500px;
 }
 ._bar_chart{
+    height: 400px;
+}
+._line_chart{
     height: 500px;
 }
 .detail{

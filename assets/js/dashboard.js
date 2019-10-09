@@ -594,27 +594,92 @@ $(document).ready(() => {
 
     // Details section
     $('.sale_detail').click(() => {
-        if($('#sale_detail_bar').hasClass('hide')){
-            $('#sale_detail_bar').removeClass('hide')
-        }else{
-            $('#sale_detail_bar').addClass('hide')
-        }
-        let data = {
-            start: start.format('YYYY-MM-DD'),
-            end: end.format('YYYY-MM-DD'),
-            shop_name: localStorage.getItem('shop_name')
-        }
-        console.log(data)
-        $.ajax({
-            url: '/home/sale_detail',
-            method: 'post',
-            data: data,
-            success: function(res){
-                //console.log(res);
-                let response = JSON.parse(res);
-                console.log(response);
+        if($('#sale_detail').hasClass('hide')){
+            let data = {
+                start: start.format('YYYY-MM-DD'),
+                end: end.format('YYYY-MM-DD'),
+                shop_name: localStorage.getItem('shop_name')
             }
-        });
+            $('.loader').removeClass('hide');
+            $.ajax({
+                url: '/home/sale_detail',
+                method: 'post',
+                data: data,
+                success: function(res){
+                    $('#sale_detail').removeClass('hide');
+                    $('.loader').addClass('hide');
+                    let response = JSON.parse(res);
+                    let d_price = [];
+                    let d_group = [];
+                    for(let item of response.data.sale_detail){
+                        d_price.push(parseFloat(item.price));
+                        d_group.push(item.group_name);
+                    }
+                    Highcharts.chart('sale_detail_line', {
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: 'Turnover detail'
+                        },
+                        xAxis: {
+                            categories: d_group, // Error, Distorted shop names
+                            crosshair: true
+                        },
+                        yAxis: {
+                            min: 0,
+                            title: {
+                                text: 'Price [USD]'
+                            }
+                        },
+                        tooltip: {
+                            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                                '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
+                            footerFormat: '</table>',
+                            shared: true,
+                            useHTML: true
+                        },
+                        series: [{
+                            name: 'Product',
+                            data: d_price,
+                            dataLabels: {
+                                enabled: true,
+                                color: '#FFFFFF',
+                                align: 'center',
+                                format: '{point.y:.1f}', // one decimal
+                                style: {
+                                    fontSize: '7px',
+                                    fontFamily: 'Verdana, sans-serif'
+                                }
+                            }
+                        }]
+                    });
+                }
+            });
+        }else{
+            $('#sale_detail').addClass('hide')
+        }
     })
-
+    $('.transaction_detail').click(() => {
+        if($('#transaction_detail').hasClass('hide')){
+            let data = {
+                start: start.format('YYYY-MM-DD'),
+                end: end.format('YYYY-MM-DD'),
+                shop_name: localStorage.getItem('shop_name')
+            }
+            $('.loader').removeClass('hide');
+            $.ajax({
+                url: '/home/transaction_detail',
+                method: 'post',
+                data: data,
+                success: function(res){
+                    $('.loader').addClass('hide');
+                    console.log(JSON.parse(res));
+                }
+            });
+        }else{
+            $('#transaction_detail').addClass('hide')
+        }
+    })
 })
