@@ -107,7 +107,7 @@ class Home extends MY_Controller {
 
 		$shop_name = $this->input->post('shop_name');
 		$ret = array(
-			"sale_detail" => $this->dashboard_model->get_transaction_detail($conn, $date, $shop_name)
+			"transaction_detail" => $this->dashboard_model->get_transaction_detail($conn, $date, $shop_name)
 		);
 		echo json_encode(array(
 			'status' => 'success',

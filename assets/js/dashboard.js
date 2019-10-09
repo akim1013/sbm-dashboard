@@ -623,7 +623,7 @@ $(document).ready(() => {
                             text: 'Turnover detail'
                         },
                         xAxis: {
-                            categories: d_group, // Error, Distorted shop names
+                            categories: d_group,
                             crosshair: true
                         },
                         yAxis: {
@@ -664,7 +664,7 @@ $(document).ready(() => {
     $('.transaction_detail').click(() => {
         if($('#transaction_detail').hasClass('hide')){
             let data = {
-                start: start.format('YYYY-MM-DD'),
+                start: end.format('YYYY-MM-DD'),
                 end: end.format('YYYY-MM-DD'),
                 shop_name: localStorage.getItem('shop_name')
             }
@@ -675,7 +675,62 @@ $(document).ready(() => {
                 data: data,
                 success: function(res){
                     $('.loader').addClass('hide');
-                    console.log(JSON.parse(res));
+                    $('#transaction_detail').removeClass('hide');
+                    let response = JSON.parse(res);
+                    let d_hours = [];
+                    let d_count = [];
+                    for(let i = 0; i < 24; i++){
+                        d_hours.push(i);
+                        let flag = false;
+                        for(let item of response.data.transaction_detail){
+                            if(item.h == i){
+                                d_count.push(item.transaction_count);
+                                flag = true;
+                            }
+                        }
+                        if(!flag){
+                            d_count.push(0);
+                        }
+                    }
+                    Highcharts.chart('transaction_detail_line', {
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: 'Transaction count detail by hours'
+                        },
+                        xAxis: {
+                            categories: d_hours,
+                            crosshair: true
+                        },
+                        yAxis: {
+                            min: 0,
+                            title: {
+                                text: 'Number of transactions'
+                            }
+                        },
+                        tooltip: {
+                            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                                '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
+                            footerFormat: '</table>',
+                            shared: true,
+                            useHTML: true
+                        },
+                        series: [{
+                            name: 'Transaction count',
+                            data: d_count,
+                            dataLabels: {
+                                enabled: true,
+                                color: '#FFFFFF',
+                                align: 'center',
+                                style: {
+                                    fontSize: '9px',
+                                    fontFamily: 'Verdana, sans-serif'
+                                }
+                            }
+                        }]
+                    });
                 }
             });
         }else{
