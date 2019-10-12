@@ -1,6 +1,6 @@
 
 $(document).ready(() => {
-
+    localStorage.setItem('_shop_name', 'All');
     // Date Range Change
     let start = moment().subtract(2, 'days');
     let end = moment().subtract(2, 'days');
@@ -50,6 +50,21 @@ $(document).ready(() => {
     let show_monthly_bar = () => {
         $('#monthly_sale_bar').removeClass('hide');
         $('#monthly_transaction_bar').removeClass('hide');
+    }
+
+    let hide_detail_charts = () => {
+        if(!$('#transaction_detail').hasClass('hide')){
+            $('#transaction_detail').addClass('hide');
+        }
+        if(!$('#sale_detail').hasClass('hide')){
+            $('#sale_detail').addClass('hide');
+        }
+        if($("#transaction_detail_line").highcharts()){
+            $("#transaction_detail_line").highcharts().destroy();
+        }
+        if($("#sale_detail_line").highcharts()){
+            $("#sale_detail_line").highcharts().destroy();
+        }
     }
     function getRanks(value){
         let sorted = value.slice().sort((a,b) => {return b-a})
@@ -575,15 +590,16 @@ $(document).ready(() => {
         });
     })
     $('#all-shops').delegate('.single-shop', 'click', function(){
+        hide_detail_charts();
         let shop_id = $(this)[0].getAttribute('shopId');
         if(shop_id != 0){
-            //localStorage.setItem('shop_name', find_shop_name(shop_id));
+            localStorage.setItem('_shop_name', find_shop_name(shop_id)); // Temp shop name store for detail view
             $("#comparison_pie").hide();
             $("#comparison_bar").hide();
             display_flat_data_single(find_shop_name(shop_id));
             monthly_growth_process(second_ajax.data, shop_id);
         }else{
-            //localStorage.setItem('shop_name', 'All');
+            localStorage.setItem('_shop_name', 'All');
             if((netsale.length != 0) && (transaction_count.length != 0)){
                 show_comparison_charts();
             }
@@ -598,7 +614,7 @@ $(document).ready(() => {
             let data = {
                 start: start.format('YYYY-MM-DD'),
                 end: end.format('YYYY-MM-DD'),
-                shop_name: localStorage.getItem('shop_name')
+                shop_name: localStorage.getItem('_shop_name')
             }
             $('.loader').removeClass('hide');
             $.ajax({
@@ -666,7 +682,7 @@ $(document).ready(() => {
             let data = {
                 start: end.format('YYYY-MM-DD'),
                 end: end.format('YYYY-MM-DD'),
-                shop_name: localStorage.getItem('shop_name')
+                shop_name: localStorage.getItem('_shop_name')
             }
             $('.loader').removeClass('hide');
             $.ajax({
