@@ -16,7 +16,7 @@ a, a:hover{
 .page-header{
     position: sticky;
     top: 81px;
-    z-index: 999;
+    z-index: 998;
 }
 .loader{
     position: fixed;

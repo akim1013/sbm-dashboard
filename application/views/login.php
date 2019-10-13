@@ -40,9 +40,9 @@
                         <div class="info d-flex align-items-center">
                             <div class="content">
                                 <div class="logo">
-                                    <h1>SBM Dashboard Login</h1>
+                                    <h1><?php echo lang('auth_heading');?></h1>
                                 </div>
-                                <p>The goal is to turn data into information,<br> and information into insight</p>
+                                <p><?php echo lang('auth_subtitle_1');?><br> <?php echo lang('auth_subtitle_2');?></p>
                             </div>
                         </div>
                     </div>
@@ -53,15 +53,14 @@
                                 <form id="login-form" class="form-validate mb-4">
                                     <div class="form-group">
                                         <input id="login-username" type="text" name="name" required data-msg="Please enter your username" class="input-material">
-                                        <label for="login-username" class="label-material">User Name</label>
+                                        <label for="login-username" class="label-material"><?php echo lang('auth_username');?></label>
                                     </div>
                                     <div class="form-group">
                                         <input id="login-password" type="password" name="password" required data-msg="Please enter your password" class="input-material">
-                                        <label for="login-password" class="label-material">Password</label>
+                                        <label for="login-password" class="label-material"><?php echo lang('auth_password');?></label>
                                     </div>
-                                    <button type="submit" class="btn btn-primary">Login</button>
+                                    <button type="submit" class="btn btn-primary"><?php echo lang('auth_login');?></button>
                                 </form>
-                                <a href="#" class="forgot-pass">Forgot Password?</a>
                             </div>
                         </div>
                     </div>

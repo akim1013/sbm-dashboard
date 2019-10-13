@@ -1,5 +1,7 @@
 <?php
 
+$lang['site_lang']          = '中文';
+
 $lang['auth_username']      = '用戶名';
 $lang['auth_password']      = '密碼';
 $lang['auth_login']         = '登錄';

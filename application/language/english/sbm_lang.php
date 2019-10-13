@@ -1,5 +1,7 @@
 <?php
 
+$lang['site_lang']          = 'English';
+
 $lang['auth_username']      = 'Username';
 $lang['auth_password']      = 'Password';
 $lang['auth_login']         = 'Login';

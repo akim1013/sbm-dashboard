@@ -9,21 +9,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="all,follow">
     <!-- Bootstrap CSS-->
-    <link rel="stylesheet" href="/assets/vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/assets/css/daterangepicker.css" />
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/daterangepicker.css" />
     <!-- Font Awesome CSS-->
-    <link rel="stylesheet" href="/assets/vendor/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/vendor/font-awesome/css/font-awesome.min.css">
     <!-- Custom Font Icons CSS-->
-    <link rel="stylesheet" href="/assets/css/font.css">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/font.css">
     <!-- Google fonts - Muli-->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Muli:300,400,700">
     <!-- theme stylesheet-->
-    <link rel="stylesheet" href="/assets/css/style.default.css" id="theme-stylesheet">
-    <link rel="stylesheet" href="/assets/css/jquery.toast.min.css">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/style.default.css" id="theme-stylesheet">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/jquery.toast.min.css">
     <!-- Custom stylesheet - for your changes-->
-    <link rel="stylesheet" href="/assets/css/custom.css">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/custom.css">
     <!-- Favicon-->
-    <link rel="shortcut icon" href="/assets/img/favicon.ico">
+    <link rel="shortcut icon" href="<?php echo base_url(); ?>assets/img/favicon.ico">
     <!-- Tweaks for older IEs-->
     <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -57,6 +57,29 @@
                 </div>
 
                 <div class="right-menu d-flex align-items-center no-margin-bottom">
+                    <div class="list-inline-item dropdown">
+                        <a id="languages" rel="nofollow" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link language dropdown-toggle">
+                            <img src="<?php echo base_url(); ?>assets/img/<?php
+                                if(lang('site_lang') == 'English'){
+                                    echo 'US';
+                                }else{
+                                    echo 'TW';
+                                }
+                            ?>.png"
+                            alt="English">
+                            <span class="d-none d-sm-inline-block"><?php echo lang('site_lang')?></span>
+                        </a>
+                        <div aria-labelledby="languages" class="dropdown-menu" style="z-index: 1000">
+                            <a style="z-index: 1000" rel="nofollow" href="<?php echo base_url(); ?>langswitch/switchLanguage/english" class="dropdown-item">
+                                <img src="<?php echo base_url(); ?>assets/img/US.png" alt="English" class="mr-2">
+                                <span>English</span>
+                            </a>
+                            <a style="z-index: 1000" rel="nofollow" href="<?php echo base_url(); ?>langswitch/switchLanguage/chinese" class="dropdown-item">
+                                <img src="<?php echo base_url(); ?>assets/img/TW.png" alt="English" class="mr-2">
+                                <span>中文</span>
+                            </a>
+                        </div>
+                    </div>
                     <!-- Log out               -->
                     <div class="list-inline-item logout">
                         <a class="logout" href="#" class="nav-link"> <span class="d-none d-sm-inline">Logout </span><i class="icon-logout"></i></a>
@@ -159,17 +182,17 @@
         </div>
     </div>
     <!-- JavaScript files-->
-    <script src="/assets/vendor/jquery/jquery.min.js"></script>
-    <script src="/assets/vendor/jquery/moment.min.js"></script>
-    <script src="/assets/vendor/popper.js/umd/popper.min.js">
+    <script src="<?php echo base_url(); ?>assets/vendor/jquery/jquery.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/vendor/jquery/moment.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/vendor/popper.js/umd/popper.min.js">
     </script>
-    <script src="/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
-    <script src="/assets/vendor/jquery.cookie/jquery.cookie.js">
+    <script src="<?php echo base_url(); ?>assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/vendor/jquery.cookie/jquery.cookie.js">
     </script>
-    <script src="/assets/vendor/jquery-validation/jquery.validate.min.js"></script>
-    <script src="/assets/js/jquery.toast.min.js"></script>
-    <script src="/assets/js/front.js"></script>
-    <script src="/assets/js/admin.js"></script>
+    <script src="<?php echo base_url(); ?>assets/vendor/jquery-validation/jquery.validate.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/js/jquery.toast.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/js/front.js"></script>
+    <script src="<?php echo base_url(); ?>assets/js/admin.js"></script>
 </body>
 
 </html>
