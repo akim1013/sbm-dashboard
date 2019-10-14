@@ -17,7 +17,7 @@ $lang['sbm_tech']           = 'Tech';
 $lang['btn_close']          = 'Close';
 $lang['btn_search']         = 'Search';
 
-$lang['logout']             = 'Logout';
+$lang['lb_logout']             = 'Logout';
 
 $lang['lb_main']            = 'Main';
 $lang['lb_users']           = 'Users';
@@ -33,6 +33,14 @@ $lang['delete_ask']         = 'Are you sure to delete this user?';
 $lang['delete_confirm']     = 'Confirm';
 $lang['delete_cancel']      = 'Cancel';
 
-
-$lang['']    = '';
-$lang['']    = '';
+$lang['lb_all_shops']       = 'All shops';
+$lang['lb_refresh']         = 'Refresh';
+$lang['lb_extras']          = 'Extras';
+$lang['lb_export']          = 'Export';
+$lang['lb_overview']        = 'Sales and transaction overview';
+$lang['lb_turnover']        = 'Turnover';
+$lang['lb_discount']        = 'Discount';
+$lang['lb_promotion']       = 'Promotion';
+$lang['lb_transaction_count']      = 'Transaction count';
+$lang['lb_average_bill']    = 'Average bill';
+$lang['lb_tips']    = 'Tips';

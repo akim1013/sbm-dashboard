@@ -82,7 +82,7 @@
                     </div>
                     <!-- Log out               -->
                     <div class="list-inline-item logout">
-                        <a class="logout" href="#" class="nav-link"> <span class="d-none d-sm-inline"><?php echo lang('logout')?> </span><i class="icon-logout"></i></a>
+                        <a class="logout" href="#" class="nav-link"> <span class="d-none d-sm-inline"><?php echo lang('lb_logout');?> </span><i class="icon-logout"></i></a>
                     </div>
                 </div>
             </div>
@@ -105,7 +105,7 @@
                     <a href="#all-shops" aria-expanded="false" data-toggle="collapse"> <i class="icon-user"></i><?php echo lang('lb_users');?></a>
                 </li>
                 <li>
-                    <a class="logout" href="#"> <i class="icon-logout"></i><?php echo lang('logout');?> </a>
+                    <a class="logout" href="#"> <i class="icon-logout"></i><?php echo lang('lb_logout');?> </a>
                 </li>
             </ul>
         </nav>
