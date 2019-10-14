@@ -95,17 +95,17 @@
             <div class="sidebar-header d-flex align-items-center">
                 <div class="avatar"><img src="http://sbmtec.com/wp-content/uploads/2019/03/VariPOS-819-front-VFD-500x500.jpg" alt="..." class="img-fluid rounded-circle"></div>
                 <div class="title">
-                    <h1 class="h5">SBM technology</h1>
-                    <p>Dashboard</p>
+                    <h1 class="h5">SBM <?php echo lang('sbm_technology');?></h1>
+                    <p><?php echo lang('sbm_dashboard');?></p>
                 </div>
             </div>
-            <!-- Sidebar Navidation Menus--><span class="heading">Main</span>
+            <!-- Sidebar Navidation Menus--><span class="heading"><?php echo lang('lb_main');?></span>
             <ul class="list-unstyled">
                 <li class="active">
-                    <a href="#all-shops" aria-expanded="false" data-toggle="collapse"> <i class="icon-user"></i>Users</a>
+                    <a href="#all-shops" aria-expanded="false" data-toggle="collapse"> <i class="icon-user"></i><?php echo lang('lb_users');?></a>
                 </li>
                 <li>
-                    <a class="logout" href="#"> <i class="icon-logout"></i>Logout </a>
+                    <a class="logout" href="#"> <i class="icon-logout"></i><?php echo lang('logout');?> </a>
                 </li>
             </ul>
         </nav>
@@ -113,7 +113,7 @@
         <div class="page-content">
             <div class="page-header">
                 <div class="container-fluid">
-                    <div class="h5 no-margin-bottom">User management</div>
+                    <div class="h5 no-margin-bottom"><?php echo lang('lb_user_mgnt');?></div>
                 </div>
             </div>
             <div class="page-dashboard">
@@ -127,12 +127,12 @@
                         </div>
                         <div class="form-group">
                             <select name="database" type="text" placeholder="Database name" class="mr-sm-3 form-control form-control">
-                                <option selected value="null">Select database</option>
+                                <option selected value="null"><?php echo lang('lb_select_database');?></option>
                             </select>
                         </div>
                         <div class="form-group">
                             <select name="shop" type="text" placeholder="Shop name" class="mr-sm-3 form-control form-control">
-                                <option selected value="null">Select Shop</option>
+                                <option selected value="null"><?php echo lang('lb_select_shop');?></option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -148,11 +148,11 @@
                         <table class="table user-table">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Database</th>
-                                    <th>Shop</th>
-                                    <th>Action</th>
+                                    <th><?php echo lang('lb_name');?></th>
+                                    <th><?php echo lang('lb_email');?></th>
+                                    <th><?php echo lang('lb_database');?></th>
+                                    <th><?php echo lang('lb_shop');?></th>
+                                    <th><?php echo lang('lb_action');?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -174,9 +174,9 @@
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-body">
-                    <p>Are you sure to delete this user?</p>
-                    <button type="button" name="button" class="confirm-delete btn btn-primary" data-dismiss="modal">Confirm</button>
-                    <button type="button" name="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <p><?php echo lang('delete_ask');?></p>
+                    <button type="button" name="button" class="confirm-delete btn btn-primary" data-dismiss="modal"><?php echo lang('delete_confirm');?></button>
+                    <button type="button" name="button" class="btn btn-secondary" data-dismiss="modal"><?php echo lang('delete_cancel');?></button>
                 </div>
             </div>
         </div>
