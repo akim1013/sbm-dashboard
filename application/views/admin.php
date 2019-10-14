@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>SBM | Dashboard</title>
+    <title><?php echo lang('site_title');?></title>
     <meta name="description" content="SBM tech, MeetFresh">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="all,follow">
@@ -36,11 +36,11 @@
         <nav class="navbar navbar-expand-lg">
             <div class="search-panel">
                 <div class="search-inner d-flex align-items-center justify-content-center">
-                    <div class="close-btn">Close <i class="fa fa-close"></i></div>
+                    <div class="close-btn"><?php echo lang('btn_close');?> <i class="fa fa-close"></i></div>
                     <form id="searchForm" action="#">
                         <div class="form-group">
                             <input type="search" name="search" placeholder="What are you searching for...">
-                            <button type="submit" class="submit">Search</button>
+                            <button type="submit" class="submit"><?php echo lang('btn_search');?></button>
                         </div>
                     </form>
                 </div>
@@ -49,8 +49,8 @@
                 <div class="navbar-header">
                     <!-- Navbar Header-->
                     <a href="index.html" class="navbar-brand">
-                        <div class="brand-text brand-big visible text-uppercase"><strong class="text-primary">SBM</strong><strong>Tech</strong></div>
-                        <div class="brand-text brand-sm"><strong class="text-primary">SBM</strong><strong>Tech</strong></div>
+                        <div class="brand-text brand-big visible text-uppercase"><strong class="text-primary">SBM</strong><strong><?php echo lang('sbm_tech');?></strong></div>
+                        <div class="brand-text brand-sm"><strong class="text-primary">SBM</strong><strong><?php echo lang('sbm_tech');?></strong></div>
                     </a>
                     <!-- Sidebar Toggle Btn-->
                     <button class="sidebar-toggle"><i class="fa fa-long-arrow-left"></i></button>
@@ -82,7 +82,7 @@
                     </div>
                     <!-- Log out               -->
                     <div class="list-inline-item logout">
-                        <a class="logout" href="#" class="nav-link"> <span class="d-none d-sm-inline">Logout </span><i class="icon-logout"></i></a>
+                        <a class="logout" href="#" class="nav-link"> <span class="d-none d-sm-inline"><?php echo lang('logout')?> </span><i class="icon-logout"></i></a>
                     </div>
                 </div>
             </div>
@@ -164,7 +164,7 @@
             <footer class="footer">
                 <div class="footer__block block no-margin-bottom">
                     <div class="container-fluid text-center">
-                        <p class="no-margin-bottom">2019 &copy; <a href="http://sbmtec.com" target="_blank">SBM</a> technology.</p>
+                        <p class="no-margin-bottom">2019 &copy; <a href="http://sbmtec.com" target="_blank">SBM</a> <?php echo lang('sbm_technology');?>.</p>
                     </div>
                 </div>
             </footer>
