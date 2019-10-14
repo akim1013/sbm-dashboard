@@ -17,6 +17,8 @@ $lang['sbm_tech']           = 'Tech';
 $lang['btn_close']          = 'Close';
 $lang['btn_search']         = 'Search';
 
+$lang['lb_search']          = 'What are you searching for';
+
 $lang['lb_logout']             = 'Logout';
 
 $lang['lb_main']            = 'Main';
