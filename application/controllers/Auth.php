@@ -149,7 +149,7 @@ class Auth extends CI_Controller {
 		}else{
 		     echo json_encode(array(
 				"status" => 'failed',
-				"msg" => "DB connection error"
+				"msg" => lang('db_error')
 			 ));
 		}
 	}
