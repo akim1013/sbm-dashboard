@@ -60,23 +60,13 @@
                     <div class="list-inline-item"><a href="#" class="search-open nav-link"><i class="icon-magnifying-glass-browser"></i></a></div>
                     <div class="list-inline-item dropdown">
                         <a id="languages" rel="nofollow" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link language dropdown-toggle">
-                            <img src="<?php echo base_url(); ?>assets/img/<?php
-                                if(lang('site_lang') == 'English'){
-                                    echo 'US';
-                                }else{
-                                    echo 'TW';
-                                }
-                            ?>.png"
-                            alt="English">
                             <span class="d-none d-sm-inline-block"><?php echo lang('site_lang')?></span>
                         </a>
                         <div aria-labelledby="languages" class="dropdown-menu" style="z-index: 1000">
                             <a style="z-index: 1000" rel="nofollow" href="<?php echo base_url(); ?>langswitch/switchLanguage/english" class="dropdown-item">
-                                <img src="<?php echo base_url(); ?>assets/img/US.png" alt="English" class="mr-2">
                                 <span>English</span>
                             </a>
                             <a style="z-index: 1000" rel="nofollow" href="<?php echo base_url(); ?>langswitch/switchLanguage/chinese" class="dropdown-item">
-                                <img src="<?php echo base_url(); ?>assets/img/TW.png" alt="English" class="mr-2">
                                 <span>中文</span>
                             </a>
                         </div>
