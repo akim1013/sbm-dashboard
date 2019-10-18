@@ -27,19 +27,19 @@ class Auth extends CI_Controller {
             if($data['name'] == 'admin'){
 				echo json_encode(array(
 	                'status' => 'success',
-	                'msg'    => 'Admin logged in successfully'
+	                'msg'    => lang('admin_login_success')
 	            ));
 			}else{
 				echo json_encode(array(
 	                'status' => 'success',
-	                'msg'    => 'User logged in successfully',
+	                'msg'    => lang('user_login_success'),
 					'shop_name'=> $res
 	            ));
 			}
         }else{
             echo json_encode(array(
                 'status' => 'failed',
-                'msg'    => 'User name or Password incorrect',
+                'msg'    => lang('login_error'),
 				'res'	=> $res
             ));
         }
@@ -61,17 +61,17 @@ class Auth extends CI_Controller {
         if($res == 1){
             echo json_encode(array(
                 'status' => 'success',
-                'msg'    => 'User created successfully'
+                'msg'    => lang('user_created_success')
             ));
         }else if($res == 0){
             echo json_encode(array(
                 'status' => 'failed',
-                'msg'    => 'User name exists. Please try with different name'
+                'msg'    => lang('user_name_exist')
             ));
         }else{
             echo json_encode(array(
                 'status' => 'failed',
-                'msg'    => 'User created successfully'
+                'msg'    => lang('user_name_exist')
             ));
         }
     }
@@ -88,12 +88,12 @@ class Auth extends CI_Controller {
 			echo json_encode(array(
 				'status' => 'success',
 				'data' => $res,
-				'msg' => 'Read user data successfully'
+				'msg' => lang('user_read_success')
 			));
 		}else{
 			echo json_encode(array(
 				'status' => 'failed',
-				'msg' => 'Read user data failed'
+				'msg' => lang('user_read_failed')
 			));
 		}
 	}
@@ -119,7 +119,7 @@ class Auth extends CI_Controller {
 		}else{
 		     echo json_encode(array(
 				"status" => 'failed',
-				"msg" => "DB connection error"
+				"msg" => lang('db_error')
 			 ));
 		}
 	}
@@ -134,7 +134,7 @@ class Auth extends CI_Controller {
 			if(!$query){
 				echo json_encode(array(
 				   "status" => 'failed',
-				   "msg" => "No shop detected!"
+				   "msg" => lang('not_found_shop')
 				));
 			}else{
 				$ret = array();

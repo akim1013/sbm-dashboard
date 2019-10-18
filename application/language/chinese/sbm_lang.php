@@ -46,3 +46,13 @@ $lang['lb_promotion']       = '促銷';
 $lang['lb_transaction_count']      = '交易計數';
 $lang['lb_average_bill']    = '平均帳單價';
 $lang['lb_tips']    = '小費';
+
+$lang['admin_login_success']            = 'Admin logged in successfully';
+$lang['user_login_success']            = 'User logged in successfully';
+$lang['login_error']            = 'User name or Password incorrect';
+$lang['user_created_success']            = 'User created successfully';
+$lang['user_name_exist']            = 'User name exists. Please try with different name';
+$lang['user_read_success']            = 'Read user data successfully';
+$lang['user_read_failed']            = 'Read user data failed';
+$lang['db_error']            = 'DB connection error';
+$lang['not_found_shop']            = 'No shop detected!';
