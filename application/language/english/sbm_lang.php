@@ -56,4 +56,4 @@ $lang['lb_tips']            = 'Tips';
 // $lang['lb_tips']            = 'Read user data successfully';
 // $lang['lb_tips']            = 'Read user data failed';
 // $lang['db_error']            = 'DB connection error';
-// $lang['lb_tips']            = 'No shop detected!';
+// $lang['lb_tips']            = 'No shop detected!'; 
