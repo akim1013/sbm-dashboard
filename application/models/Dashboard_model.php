@@ -212,5 +212,38 @@ class Dashboard_model extends CI_Model{
         ";
         return $this->run_query($conn, $sql);
     }
+
+    function get_payment_total($conn, $date, $shop_name){
+        $sql = "
+            SELECT sum(tp.amount) total
+            FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+            LEFT JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN trans_payments tp ON tp.transaction_id = t.id
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                ";
+        if($shop_name != 'All'){
+            $sql = $sql . " AND s.description = '" . $shop_name . "'";
+        }
+        return $this->run_query($conn, $sql);
+    }
+    function get_payment_detail($conn, $date, $shop_name){
+        $sql = "
+            SELECT sum(COALESCE(tp.amount, 0)) amount, p.description pd
+            FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+            LEFT JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN trans_payments tp ON tp.transaction_id = t.id
+            INNER JOIN payments p ON p.id = tp.payment_id
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                ";
+        if($shop_name != 'All'){
+            $sql = $sql . " AND s.description = '" . $shop_name . "'";
+        }
+        $sql = $sql . "
+            GROUP BY p.description
+        ";
+        return $this->run_query($conn, $sql);
+    }
 }
 ?>
