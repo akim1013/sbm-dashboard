@@ -836,6 +836,8 @@ $(document).ready(() => {
         hide_detail_charts();
         let shop_id = $(this)[0].getAttribute('shopId');
         if(shop_id != 0){
+            $("#comparison_pie").hide();
+            $("#comparison_bar").hide();
             _shop_name = _shop_name.filter((item) => {
                 return item != "All";
             })
@@ -853,8 +855,6 @@ $(document).ready(() => {
             }
             //localStorage.setItem('_shop_name', _shop_name);
             localStorage.setItem('_shop_name', find_shop_name(shop_id)); // Temp shop name store for detail view
-            $("#comparison_pie").hide();
-            $("#comparison_bar").hide();
             display_flat_data_single();
             monthly_growth_process(second_ajax.data, -1);
         }else{
