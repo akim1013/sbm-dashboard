@@ -15,7 +15,7 @@ a, a:hover{
 }
 .page-header{
     position: sticky;
-    top: 81px;
+    top: 83px;
     z-index: 998;
 }
 .loader{
@@ -52,7 +52,7 @@ a, a:hover{
 }
 .page-dashboard{
     position: sticky;
-    top: -100px;
+    top: 153px;
 }
 ._pie_chart{
     height: 500px;
