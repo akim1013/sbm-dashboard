@@ -4,7 +4,7 @@ $(document).ready(() => {
     // Date Range Change
     let start = moment().subtract(2, 'days');
     let end = moment().subtract(2, 'days');
-
+    let _shop_name          = [];
     let shops               = [];   // Shop lists
     let _shops              = [];   // Available shop lists
     let netsale             = [];   // Netsale values of shops
@@ -182,31 +182,51 @@ $(document).ready(() => {
         $("._tip").text(process_price(_tip));
         $("._promotion").text(process_price(_promotion));
     }
-    function display_flat_data_single(shop){
+    function display_flat_data_single(){
+
         let __netsale = 0;
         let __discount = 0;
         let __average_bill = 0;
         let __transaction_count = 0;
         let __tip = 0;
         let __promotion = 0;
-
         for(let item of netsale){
-            if(item.shop == shop) __netsale = item.value;
+            for(let name of _shop_name){
+                if(item.shop == name){
+                    __netsale += parseFloat(item.value ? item.value : 0);
+                }
+            }
         }
         for(let item of discount){
-            if(item.shop == shop) __discount = item.value;
+            for(let name of _shop_name){
+                if(item.shop == name){
+                    __discount += parseFloat(item.value ? item.value : 0);
+                }
+            }
         }
         for(let item of average_bill){
-            if(item.shop == shop) __average_bill = item.value;
+            //if(item.shop == name) __average_bill = item.value;
         }
         for(let item of transaction_count){
-            if(item.shop == shop) __transaction_count = item.value;
+            for(let name of _shop_name){
+                if(item.shop == name){
+                    __transaction_count += parseFloat(item.value ? item.value : 0);
+                }
+            }
         }
         for(let item of tip){
-            if(item.shop == shop) __tip = item.value;
+            for(let name of _shop_name){
+                if(item.shop == name){
+                    __tip += parseFloat(item.value ? item.value : 0);
+                }
+            }
         }
         for(let item of promotion){
-            if(item.shop == shop) __promotion = item.value;
+            for(let name of _shop_name){
+                if(item.shop == name){
+                    __promotion += parseFloat(item.value ? item.value : 0);
+                }
+            }
         }
         $("._netsale").text(process_price(__netsale));
         $("._discount").text(process_price(__discount));
@@ -367,6 +387,12 @@ $(document).ready(() => {
             let x_transaction       = [];
             let s_transaction       = [];
             let series_transaction  = [];
+
+            _shop_id = [];
+
+            for(let item of _shop_name){
+                _shop_id.push(find_shop_id(item));
+            }
             if($("#monthly_growth_line").highcharts()){
                 $("#monthly_growth_line").highcharts().destroy();
             }
@@ -384,8 +410,10 @@ $(document).ready(() => {
                         s_sale.push(shop);
                     }
                 }else{
-                    if(s_sale.indexOf(find_shop_name(id)) < 0){
-                        s_sale.push(find_shop_name(id));
+                    for(let _id of _shop_id){
+                        if(s_sale.indexOf(find_shop_name(_id)) < 0){
+                            s_sale.push(find_shop_name(_id));
+                        }
                     }
                 }
             }
@@ -400,8 +428,10 @@ $(document).ready(() => {
                         s_transaction.push(shop);
                     }
                 }else{
-                    if(s_transaction.indexOf(find_shop_name(id)) < 0){
-                        s_transaction.push(find_shop_name(id));
+                    for(let _id of _shop_id){
+                        if(s_transaction.indexOf(find_shop_name(_id)) < 0){
+                            s_transaction.push(find_shop_name(_id));
+                        }
                     }
                 }
             }
@@ -591,24 +621,6 @@ $(document).ready(() => {
                 window.location.assign('/');
             }
         });
-    })
-    $('#all-shops').delegate('.single-shop', 'click', function(){
-        hide_detail_charts();
-        let shop_id = $(this)[0].getAttribute('shopId');
-        if(shop_id != 0){
-            localStorage.setItem('_shop_name', find_shop_name(shop_id)); // Temp shop name store for detail view
-            $("#comparison_pie").hide();
-            $("#comparison_bar").hide();
-            display_flat_data_single(find_shop_name(shop_id));
-            monthly_growth_process(second_ajax.data, shop_id);
-        }else{
-            localStorage.setItem('_shop_name', 'All');
-            if((netsale.length != 0) && (transaction_count.length != 0)){
-                show_comparison_charts();
-            }
-            display_flat_data();
-            monthly_growth_process(second_ajax.data, 0);
-        }
     })
 
     // Details section
@@ -818,5 +830,43 @@ $(document).ready(() => {
         }else{
             $('#transaction_detail').addClass('hide')
         }
+    })
+    $('#all-shops').delegate('.single-shop', 'click', function(){
+
+        hide_detail_charts();
+        let shop_id = $(this)[0].getAttribute('shopId');
+        if(shop_id != 0){
+            _shop_name = _shop_name.filter((item) => {
+                return item != "All";
+            })
+            if($(this).hasClass('selected')){
+                $(this).removeClass('selected');
+                _shop_name = _shop_name.filter((item) => {
+                    return item != find_shop_name(shop_id);
+                })
+            }else{
+                $(this).addClass('selected');
+                _shop_name.push(find_shop_name(shop_id));
+            }
+            if(_shop_name.length == 0){
+                _shop_name.push('All');
+            }
+            //localStorage.setItem('_shop_name', _shop_name);
+            localStorage.setItem('_shop_name', find_shop_name(shop_id)); // Temp shop name store for detail view
+            $("#comparison_pie").hide();
+            $("#comparison_bar").hide();
+            display_flat_data_single();
+            monthly_growth_process(second_ajax.data, -1);
+        }else{
+            $('.single-shop').removeClass('selected');
+            _shop_name = ['All'];
+            localStorage.setItem('_shop_name', 'All');
+            if((netsale.length != 0) && (transaction_count.length != 0)){
+                show_comparison_charts();
+            }
+            display_flat_data();
+            monthly_growth_process(second_ajax.data, 0);
+        }
+        console.log(_shop_name);
     })
 })
