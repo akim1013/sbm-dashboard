@@ -72,3 +72,47 @@ li a.selected{
 div.shop-name{
     display: inline;
 }
+@media(max-width: 575px){
+    .brand-text strong{
+        font-size: 15px !important;
+    }
+    section{
+        padding: 0 !important;
+    }
+    .page-header{
+        top: 80px;
+        margin-bottom: 15px !important;
+    }
+    .stats-3-block{
+        margin-bottom: 15px !important;
+        height: 80px !important;
+    }
+    .stats-2-block{
+        margin-bottom: 15px !important;
+        height: 80px !important;
+    }
+    .stats-2-block strong, .stats-3-block strong{
+        font-size: 14px !important;
+    }
+    .stats-2-block span, .stats-3-block span{
+        font-size: 10px !important;
+    }
+    #comparison_none h3{
+        font-size: 12px;
+    }
+    #all-shops li a{
+        font-size: 13px !important;
+    }
+    #reportrange{
+        text-align: right;
+    }
+    #reportrange span{
+        font-size: 13px !important;
+    }
+    .navbar .right-menu{
+        width: 220px !important;
+    }
+    .stats-2-block .stats-2{
+        height: 40px;
+    }
+}

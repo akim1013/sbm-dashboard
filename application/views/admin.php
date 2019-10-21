@@ -34,17 +34,6 @@
     <div class="loader hide"></div>
     <header class="header">
         <nav class="navbar navbar-expand-lg">
-            <div class="search-panel">
-                <div class="search-inner d-flex align-items-center justify-content-center">
-                    <div class="close-btn"><?php echo lang('btn_close');?> <i class="fa fa-close"></i></div>
-                    <form id="searchForm" action="#">
-                        <div class="form-group">
-                            <input type="search" name="search" placeholder="<?php echo lang('lb_search');?>...">
-                            <button type="submit" class="submit"><?php echo lang('btn_search');?></button>
-                        </div>
-                    </form>
-                </div>
-            </div>
             <div class="container-fluid d-flex align-items-center justify-content-between">
                 <div class="navbar-header">
                     <!-- Navbar Header-->

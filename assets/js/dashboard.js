@@ -1,6 +1,6 @@
 
 $(document).ready(() => {
-
+    let isMobile = false;
     localStorage.setItem('_shop_name', 'All');
     $('.shop-name').text('All shops');
     // Date Range Change
@@ -26,6 +26,12 @@ $(document).ready(() => {
 
     let first_ajax;
     let second_ajax;
+
+    if(window.innerWidth < 575){
+        isMobile = true;
+    }else{
+        isMobile = false;
+    }
 
     // Generate random color
     let getRandomColor = () => {
@@ -292,7 +298,7 @@ $(document).ready(() => {
                         allowPointSelect: true,
                         cursor: 'pointer',
                         dataLabels: {
-                            enabled: true,
+                            enabled: !isMobile,
                             format: '<b>{point.name}</b>: {point.v:.1f}',
                             connectorColor: 'silver'
                         }
@@ -300,7 +306,12 @@ $(document).ready(() => {
                 },
                 series: [{
                     name: 'Net sale',
-                    data: process_percent(netsale, _netsale)
+                    data: process_percent(netsale, _netsale),
+                    dataLabels: {
+                        style: {
+                            fontSize: 12
+                        }
+                    },
                 }]
             });
             Highcharts.chart('transaction_comparison_pie', {
@@ -321,7 +332,7 @@ $(document).ready(() => {
                         allowPointSelect: true,
                         cursor: 'pointer',
                         dataLabels: {
-                            enabled: true,
+                            enabled: !isMobile,
                             format: '<b>{point.name}</b>: {point.v}',
                             connectorColor: 'silver'
                         }
@@ -329,7 +340,12 @@ $(document).ready(() => {
                 },
                 series: [{
                     name: 'Transaction count',
-                    data: process_percent(transaction_count, _transaction_count)
+                    data: process_percent(transaction_count, _transaction_count),
+                    dataLabels: {
+                        style: {
+                            fontSize: 12
+                        }
+                    },
                 }]
             });
             Highcharts.chart('sale_comparison_bar', {
@@ -476,6 +492,9 @@ $(document).ready(() => {
                         text: 'USD'
                     }
                 },
+                legend: {
+                    enabled: !isMobile
+                },
                 plotOptions: {
                     line: {
                         dataLabels: {
@@ -500,6 +519,9 @@ $(document).ready(() => {
                     title: {
                         text: 'Transaction count'
                     }
+                },
+                legend: {
+                    enabled: !isMobile
                 },
                 plotOptions: {
                     line: {

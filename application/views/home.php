@@ -33,17 +33,6 @@
     <div class="loader hide"></div>
     <header class="header">
         <nav class="navbar navbar-expand-lg">
-            <div class="search-panel">
-                <div class="search-inner d-flex align-items-center justify-content-center">
-                    <div class="close-btn"><?php echo lang('btn_close');?> <i class="fa fa-close"></i></div>
-                    <form id="searchForm" action="#">
-                        <div class="form-group">
-                            <input type="search" name="search" placeholder="<?php echo lang('lb_search');?>...">
-                            <button type="submit" class="submit"><?php echo lang('btn_search');?></button>
-                        </div>
-                    </form>
-                </div>
-            </div>
             <div class="container-fluid d-flex align-items-center justify-content-between">
                 <div class="navbar-header">
                     <!-- Navbar Header-->
@@ -57,7 +46,6 @@
 
                 <div class="right-menu d-flex align-items-center no-margin-bottom">
                     <div id="reportrange"><span></span></div>
-                    <div class="list-inline-item"><a href="#" class="search-open nav-link"><i class="icon-magnifying-glass-browser"></i></a></div>
                     <div class="list-inline-item dropdown">
                         <a id="languages" rel="nofollow" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link language dropdown-toggle">
                             <span class="d-none d-sm-inline-block"><?php echo lang('site_lang')?></span>
