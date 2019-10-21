@@ -115,4 +115,7 @@ div.shop-name{
     .stats-2-block .stats-2{
         height: 40px;
     }
+    .h5{
+        font-size: 15px !important;
+    }
 }
