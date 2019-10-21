@@ -69,3 +69,6 @@ a, a:hover{
 li a.selected{
     background: #333 !important;
 }
+div.shop-name{
+    display: inline;
+}

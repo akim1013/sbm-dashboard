@@ -113,7 +113,7 @@
         <div class="page-content">
             <div class="page-header">
                 <div class="container-fluid">
-                    <div class="h5 no-margin-bottom"><?php echo lang('lb_overview');?></div>
+                    <div class="h5 no-margin-bottom"><?php echo lang('lb_overview');?> - <div class="shop-name"></div></div>
                 </div>
             </div>
             <div class="page-dashboard">

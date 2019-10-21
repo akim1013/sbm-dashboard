@@ -1,6 +1,8 @@
 
 $(document).ready(() => {
+
     localStorage.setItem('_shop_name', 'All');
+    $('.shop-name').text('All shops');
     // Date Range Change
     let start = moment().subtract(2, 'days');
     let end = moment().subtract(2, 'days');
@@ -852,7 +854,9 @@ $(document).ready(() => {
             }
             if(_shop_name.length == 0){
                 _shop_name.push('All');
+                $('.shop-name').text('All shops');
             }
+            $('.shop-name').text(_shop_name.toString());
             //localStorage.setItem('_shop_name', _shop_name);
             localStorage.setItem('_shop_name', find_shop_name(shop_id)); // Temp shop name store for detail view
             display_flat_data_single();
@@ -860,6 +864,7 @@ $(document).ready(() => {
         }else{
             $('.single-shop').removeClass('selected');
             _shop_name = ['All'];
+            $('.shop-name').text('All shops');
             localStorage.setItem('_shop_name', 'All');
             if((netsale.length != 0) && (transaction_count.length != 0)){
                 show_comparison_charts();
@@ -867,6 +872,5 @@ $(document).ready(() => {
             display_flat_data();
             monthly_growth_process(second_ajax.data, 0);
         }
-        console.log(_shop_name);
     })
 })
