@@ -65,6 +65,9 @@ $(document).ready(() => {
         if($("#sale_detail_line").highcharts()){
             $("#sale_detail_line").highcharts().destroy();
         }
+        if($("#payment_detail_line").highcharts()){
+            $("#payment_detail_line").highcharts().destroy();
+        }
     }
     function getRanks(value){
         let sorted = value.slice().sort((a,b) => {return b-a})
@@ -617,6 +620,69 @@ $(document).ready(() => {
                 shop_name: localStorage.getItem('_shop_name')
             }
             $('.loader').removeClass('hide');
+            // Payment detail
+            $.ajax({
+                url: '/home/payment',
+                method: 'post',
+                data: data,
+                success: function(res){
+                    let response = JSON.parse(res);
+                    let p_description = []; // payment description
+                    let p_amount = []; // amount of money
+                    let p_detail = [];
+                    for(let item of response.data.payment_detail){
+                        p_description.push(item.pd);
+                        p_amount.push(parseFloat(item.amount));
+                        p_detail.push({
+                            name: item.pd,
+                            value: parseFloat(item.amount)
+                        })
+                    }
+
+                    // Draw pie chart for payment details
+                    Highcharts.chart('payment_detail_line', {
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: 'Payment detail'
+                        },
+                        xAxis: {
+                            categories: p_description,
+                            crosshair: true
+                        },
+                        yAxis: {
+                            min: 0,
+                            title: {
+                                text: 'Price [USD]'
+                            }
+                        },
+                        tooltip: {
+                            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                                '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
+                            footerFormat: '</table>',
+                            shared: true,
+                            useHTML: true
+                        },
+                        series: [{
+                            name: 'Payment type',
+                            data: p_amount,
+                            dataLabels: {
+                                enabled: true,
+                                color: '#FFFFFF',
+                                align: 'center',
+                                format: '{point.y:.1f}', // one decimal
+                                style: {
+                                    fontSize: '7px',
+                                    fontFamily: 'Verdana, sans-serif'
+                                }
+                            }
+                        }]
+                    });
+                }
+            })
+            // Sale detail
             $.ajax({
                 url: '/home/sale_detail',
                 method: 'post',

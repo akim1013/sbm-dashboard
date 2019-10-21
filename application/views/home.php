@@ -161,9 +161,14 @@
                 <section id="sale_detail" class="no-padding-top no-padding-bottom hide">
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="col-lg-12">
+                            <div class="col-lg-8">
                                 <div class="drills-chart block">
                                     <div id="sale_detail_line" class="_bar_chart"></div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="drills-chart block">
+                                    <div id="payment_detail_line" class="_bar_chart"></div>
                                 </div>
                             </div>
                         </div>
