@@ -59,7 +59,7 @@
                 <div class="right-menu d-flex align-items-center no-margin-bottom">
                     <div class="list-inline-item dropdown">
                         <a id="languages" rel="nofollow" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link language dropdown-toggle">
-                            
+
                             <span class="d-none d-sm-inline-block"><?php echo lang('site_lang')?></span>
                         </a>
                         <div aria-labelledby="languages" class="dropdown-menu" style="z-index: 1000">
@@ -84,7 +84,7 @@
         <nav id="sidebar">
             <!-- Sidebar Header-->
             <div class="sidebar-header d-flex align-items-center">
-                <div class="avatar"><img src="http://sbmtec.com/wp-content/uploads/2019/03/VariPOS-819-front-VFD-500x500.jpg" alt="..." class="img-fluid rounded-circle"></div>
+                <div class="avatar"><img src="<?php echo base_url(); ?>assets/img/logo.jpg" alt="..." class="img-fluid rounded-circle"></div>
                 <div class="title">
                     <h1 class="h5">SBM <?php echo lang('sbm_technology');?></h1>
                     <p><?php echo lang('sbm_dashboard');?></p>

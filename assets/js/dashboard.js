@@ -527,7 +527,6 @@ $(document).ready(() => {
             success: function(res){
                 $('.loader').addClass('hide');
                 let response = JSON.parse(res);
-                console.log(response);
                 if(response.status == 'success'){
                     add_shop_list(response.data);
                     flat_process(response.data);
@@ -834,7 +833,6 @@ $(document).ready(() => {
         }
     })
     $('#all-shops').delegate('.single-shop', 'click', function(){
-
         hide_detail_charts();
         let shop_id = $(this)[0].getAttribute('shopId');
         if(shop_id != 0){
