@@ -55,13 +55,13 @@ a, a:hover{
     top: 153px;
 }
 ._pie_chart{
-    height: 500px;
+    height: 412px;
 }
 ._bar_chart{
-    height: 400px;
+    height: 412px;
 }
 ._line_chart{
-    height: 500px;
+    height: 412px;
 }
 .detail{
     cursor: pointer;
@@ -72,12 +72,24 @@ li a.selected{
 div.shop-name{
     display: inline;
 }
+.block{
+    margin-bottom: 20px !important;
+}
+.footer__block.block{
+    margin-bottom: 0 !important;
+}
+.sort{
+    cursor: pointer;
+}
 @media(max-width: 575px){
     .brand-text strong{
         font-size: 15px !important;
     }
     section{
         padding: 0 !important;
+    }
+    table{
+        font-size: 12px !important;
     }
     .page-header{
         top: 80px;
@@ -91,7 +103,7 @@ div.shop-name{
         margin-bottom: 15px !important;
         height: 80px !important;
     }
-    .stats-2-block strong, .stats-3-block strong{
+    strong{
         font-size: 14px !important;
     }
     .stats-2-block span, .stats-3-block span{

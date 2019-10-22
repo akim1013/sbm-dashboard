@@ -24,6 +24,8 @@ $(document).ready(() => {
     let _tip                 = 0;
     let _average_bill        = 0;
 
+    let sorted_netsale      = []; // For storing sorted netsale value
+
     let first_ajax;
     let second_ajax;
 
@@ -288,7 +290,7 @@ $(document).ready(() => {
                     type: 'pie'
                 },
                 title: {
-                    text: 'Net sale comparison of the shops'
+                    text: 'Turnover comparison of the shops'
                 },
                 tooltip: {
                     pointFormat: '{series.name}: <b>{point.percentage:.1f} %</b>'
@@ -305,7 +307,7 @@ $(document).ready(() => {
                     }
                 },
                 series: [{
-                    name: 'Net sale',
+                    name: 'Turnover',
                     data: process_percent(netsale, _netsale),
                     dataLabels: {
                         style: {
@@ -353,7 +355,7 @@ $(document).ready(() => {
                     type: 'column'
                 },
                 title: {
-                    text: 'Sales comparison'
+                    text: 'Turnover comparison'
                 },
                 xAxis: {
                     categories: process_one_value(_shops, 0), // Error, Distorted shop names
@@ -389,10 +391,34 @@ $(document).ready(() => {
                     }
                 },
                 series: [{
-                    name: 'Net sale',
+                    name: 'Turnover',
                     data: process_one_value(netsale, 1)
                 }]
             });
+            sorted_netsale = [ ...netsale];
+            sorted_netsale.sort((a,b) => (Math.floor(a.value) > Math.floor(b.value)) ? -1 : ((Math.floor(b.value) > Math.floor(a.value)) ? 1 : 0));
+            sale_comparison_table(sorted_netsale);
+        }
+    }
+    let sale_comparison_reverse = () => {
+        let _sorted_netsale = [];
+        for(let i = sorted_netsale.length - 1; i >= 0; i --){
+            _sorted_netsale.push(sorted_netsale[i]);
+        }
+        sorted_netsale = _sorted_netsale;
+        sale_comparison_table(sorted_netsale);
+    }
+    let sale_comparison_table = (val) => {
+        let idx = 0;
+        $('.sale_comparison_table').empty();
+        for(let item of val){
+            idx ++;
+            let tr = $('<tr></tr>');
+            tr.append($('<td>' + idx + '</td>'));
+            tr.append($('<td>' + item.shop + '</td>'));
+            tr.append($('<td>' + item.value + '</td>'));
+            $('.sale_comparison_table').append(tr);
+            if(idx == 10) break;
         }
     }
     function monthly_growth_process(data, id){
@@ -853,6 +879,10 @@ $(document).ready(() => {
         }else{
             $('#transaction_detail').addClass('hide')
         }
+    })
+    //sale_comparison_reverse
+    $('.sale_comparison_sort').click(function(){
+        sale_comparison_reverse();
     })
     $('#all-shops').delegate('.single-shop', 'click', function(){
         hide_detail_charts();
