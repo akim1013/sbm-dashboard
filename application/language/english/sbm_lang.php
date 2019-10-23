@@ -43,6 +43,7 @@ $lang['lb_overview']        = 'Turnover and transaction overview';
 $lang['lb_turnover']        = 'Turnover';
 $lang['lb_discount']        = 'Discount';
 $lang['lb_promotion']       = 'Promotion';
+$lang['lb_transaction']      = 'Transaction';
 $lang['lb_transaction_count']      = 'Transaction count';
 $lang['lb_average_bill']    = 'Average bill';
 $lang['lb_tips']            = 'Tips';

@@ -43,6 +43,7 @@ $lang['lb_overview']        = '銷售和交易分析';
 $lang['lb_turnover']        = '營收';
 $lang['lb_discount']        = '折扣';
 $lang['lb_promotion']       = '促銷';
+$lang['lb_transaction']      = '交易';
 $lang['lb_transaction_count']      = '交易計數';
 $lang['lb_average_bill']    = '平均帳單價';
 $lang['lb_tips']    = '小費';

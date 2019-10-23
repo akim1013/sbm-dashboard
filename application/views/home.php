@@ -181,15 +181,16 @@
                 <section id="comparison_bar" class="no-padding-top no-padding-bottom hide">
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="col-lg-4">
+                            <div class="col-lg-6">
                                 <div class="block">
                                     <div class="title"><strong>Details by shops</strong></div>
                                     <table class="table table-striped table-sm">
                                         <thead>
                                             <tr>
                                                 <th width="10%">#</th>
-                                                <th width="60%"><?php echo lang('lb_shop');?></th>
-                                                <th width="30%"><?php echo lang('lb_turnover');?> [$] <i class="fa fa-sort sort sale_comparison_sort"></i></th>
+                                                <th width="50%"><?php echo lang('lb_shop');?></th>
+                                                <th width="20%"><?php echo lang('lb_turnover');?> [$] <i class="fa fa-sort sort turnover_comparison_sort"></i></th>
+                                                <th width="20%"><?php echo lang('lb_transaction');?> <i class="fa fa-sort sort transaction_comparison_sort"></i></th>
                                             </tr>
                                         </thead>
                                         <tbody class="sale_comparison_table">
@@ -198,22 +199,10 @@
                                     </table>
                                 </div>
                             </div>
-                            <div class="col-lg-8">
+                            <div class="col-lg-6">
                                 <div class="drills-chart block">
                                     <div id="sale_comparison_bar" class="_line_chart"></div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-                <section id="comparison_pie" class="no-padding-top no-padding-bottom hide">
-                    <div class="container-fluid">
-                        <div class="row d-flex align-items-stretch">
-                            <div class="col-md-6">
-                                <div id="sale_comparison_pie" class="stats-with-chart-1 block _pie_chart"></div>
-                            </div>
-                            <div class="col-md-6">
-                                <div id="transaction_comparison_pie" class="stats-with-chart-1 block _pie_chart"></div>
                             </div>
                         </div>
                     </div>

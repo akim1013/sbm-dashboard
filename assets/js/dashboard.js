@@ -1,11 +1,11 @@
-
+let api_path = '/';
 $(document).ready(() => {
     let isMobile = false;
     localStorage.setItem('_shop_name', 'All');
     $('.shop-name').text('All shops');
     // Date Range Change
-    let start = moment().subtract(2, 'days');
-    let end = moment().subtract(2, 'days');
+    let start = moment().subtract(365, 'days');
+    let end = moment().subtract(365, 'days');
     let _shop_name          = [];
     let shops               = [];   // Shop lists
     let _shops              = [];   // Available shop lists
@@ -46,12 +46,10 @@ $(document).ready(() => {
     }
 
     let show_comparison_charts = () => {
-        $('#comparison_pie').removeClass('hide');
         $('#comparison_bar').removeClass('hide');
         $('#comparison_none').addClass('hide');
     }
     let hide_comparison_charts = () => {
-        $('#comparison_pie').addClass('hide');
         $('#comparison_bar').addClass('hide');
         $('#comparison_none').removeClass('hide');
         $('#comparison_none h3').text('There are no transactions from ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
@@ -276,89 +274,46 @@ $(document).ready(() => {
         }
         return ret;
     }
-    function comparison_chart_process(){
+    let comparison_chart_process = () => {
         if((netsale.length == 0) && (transaction_count.length == 0)){
             hide_comparison_charts();
         }else{
             show_comparison_charts();
-            let ranks = getRanks(process_one_value(netsale, 1));
-            Highcharts.chart('sale_comparison_pie', {
-                chart: {
-                    plotBackgroundColor: null,
-                    plotBorderWidth: null,
-                    plotShadow: false,
-                    type: 'pie'
-                },
-                title: {
-                    text: 'Turnover comparison of the shops'
-                },
-                tooltip: {
-                    pointFormat: '{series.name}: <b>{point.percentage:.1f} %</b>'
-                },
-                plotOptions: {
-                    pie: {
-                        allowPointSelect: true,
-                        cursor: 'pointer',
-                        dataLabels: {
-                            enabled: !isMobile,
-                            format: '<b>{point.name}</b>: {point.v:.1f}',
-                            connectorColor: 'silver'
-                        }
+            let _sorted_netsale = [ ...netsale];
+            for(let item of _sorted_netsale){
+                for(let _item of transaction_count){
+                    if(item.shop == _item.shop){
+                        item.transaction = _item.value;
                     }
-                },
-                series: [{
-                    name: 'Turnover',
-                    data: process_percent(netsale, _netsale),
-                    dataLabels: {
-                        style: {
-                            fontSize: 12
-                        }
-                    },
-                }]
-            });
-            Highcharts.chart('transaction_comparison_pie', {
-                chart: {
-                    plotBackgroundColor: null,
-                    plotBorderWidth: null,
-                    plotShadow: false,
-                    type: 'pie'
-                },
-                title: {
-                    text: 'Transaction count comparison of the shops'
-                },
-                tooltip: {
-                    pointFormat: '{series.name}: <b>{point.percentage:.1f} %</b>'
-                },
-                plotOptions: {
-                    pie: {
-                        allowPointSelect: true,
-                        cursor: 'pointer',
-                        dataLabels: {
-                            enabled: !isMobile,
-                            format: '<b>{point.name}</b>: {point.v}',
-                            connectorColor: 'silver'
-                        }
-                    }
-                },
-                series: [{
-                    name: 'Transaction count',
-                    data: process_percent(transaction_count, _transaction_count),
-                    dataLabels: {
-                        style: {
-                            fontSize: 12
-                        }
-                    },
-                }]
-            });
+                }
+            }
+            sorted_netsale = [..._sorted_netsale];
+
+            let temp_shop = [];
+            let temp_turnover = [];
+            let temp_transaction = [];
+
+            for(let item of sorted_netsale){
+                temp_shop.push(item.shop);
+                temp_turnover.push(parseFloat(item.value));
+                temp_transaction.push(item.transaction);
+            }
+            sale_comparison_reverse();
+            sale_comparison_table(sorted_netsale);
+
+
+
+            let turnover_ranks = getRanks(temp_turnover);
+            let transaction_ranks = getRanks(temp_transaction);
             Highcharts.chart('sale_comparison_bar', {
                 chart: {
                     type: 'column'
                 },
                 title: {
-                    text: 'Turnover comparison'
+                    text: 'Turnover and transaction comparison by shops'
                 },
                 xAxis: {
-                    categories: process_one_value(_shops, 0), // Error, Distorted shop names
+                    categories: temp_shop, // Error, Distorted shop names
                     crosshair: true
                 },
                 yAxis: {
@@ -370,7 +325,7 @@ $(document).ready(() => {
                 tooltip: {
                     headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
                     pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                        '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
+                        '<td style="padding:0"><b>{point.y}</b></td></tr>',
                     footerFormat: '</table>',
                     shared: true,
                     useHTML: true
@@ -385,27 +340,39 @@ $(document).ready(() => {
                         dataLabels: {
                             enabled: true,
                             formatter: function() {
-                                return ranks[this.point.index]
+                                if(this.colorIndex == 0){
+                                    return turnover_ranks[this.point.index]
+                                }else{
+                                    return transaction_ranks[this.point.index]
+                                }
                             }
                         }
                     }
                 },
                 series: [{
                     name: 'Turnover',
-                    data: process_one_value(netsale, 1)
+                    data: temp_turnover
+                },{
+                    name: 'Transaction',
+                    data: temp_transaction
                 }]
             });
-            sorted_netsale = [ ...netsale];
-            sorted_netsale.sort((a,b) => (Math.floor(a.value) > Math.floor(b.value)) ? -1 : ((Math.floor(b.value) > Math.floor(a.value)) ? 1 : 0));
-            sale_comparison_table(sorted_netsale);
         }
     }
     let sale_comparison_reverse = () => {
-        let _sorted_netsale = [];
-        for(let i = sorted_netsale.length - 1; i >= 0; i --){
-            _sorted_netsale.push(sorted_netsale[i]);
+        if(parseFloat(sorted_netsale[0].value) < parseFloat(sorted_netsale[1].value)){
+            sorted_netsale.sort((a,b) => (parseFloat(a.value) > parseFloat(b.value)) ? -1 : ((parseFloat(b.value) > parseFloat(a.value)) ? 1 : 0));
+        }else{
+            sorted_netsale.sort((a,b) => (parseFloat(a.value) > parseFloat(b.value)) ? 1 : ((parseFloat(b.value) > parseFloat(a.value)) ? -1 : 0));
         }
-        sorted_netsale = _sorted_netsale;
+        sale_comparison_table(sorted_netsale);
+    }
+    let transaction_comparison_reverse = () => {
+        if(parseInt(sorted_netsale[0].transaction) < parseInt(sorted_netsale[1].transaction)){
+            sorted_netsale.sort((a,b) => (parseInt(a.transaction) > parseInt(b.transaction)) ? -1 : ((parseInt(b.transaction) > parseInt(a.transaction)) ? 1 : 0));
+        }else{
+            sorted_netsale.sort((a,b) => (parseInt(a.transaction) > parseInt(b.transaction)) ? 1 : ((parseInt(b.transaction) > parseInt(a.transaction)) ? -1 : 0));
+        }
         sale_comparison_table(sorted_netsale);
     }
     let sale_comparison_table = (val) => {
@@ -413,10 +380,18 @@ $(document).ready(() => {
         $('.sale_comparison_table').empty();
         for(let item of val){
             idx ++;
-            let tr = $('<tr></tr>');
+            let tr;
+            if(idx <= 3){
+                tr = $('<tr class="top3"></tr>');
+            }else if(idx > 3 && idx <=5 ){
+                tr = $('<tr class="top5"></tr>');
+            }else{
+                tr = $('<tr></tr>');
+            }
             tr.append($('<td>' + idx + '</td>'));
             tr.append($('<td>' + item.shop + '</td>'));
             tr.append($('<td>' + item.value + '</td>'));
+            tr.append($('<td>' + item.transaction + '</td>'));
             $('.sale_comparison_table').append(tr);
             if(idx == 10) break;
         }
@@ -569,7 +544,7 @@ $(document).ready(() => {
             shop_name: localStorage.getItem('shop_name')
         }
         $.ajax({
-            url: '/home/dashboard',
+            url: api_path + 'home/dashboard',
             method: 'post',
             data: data,
             success: function(res){
@@ -605,7 +580,7 @@ $(document).ready(() => {
             shop_name: localStorage.getItem('shop_name')
         }
         $.ajax({
-            url: '/home/daily',
+            url: api_path + 'home/daily',
             method: 'post',
             data: month,
             success: function(res){
@@ -663,11 +638,11 @@ $(document).ready(() => {
         e.preventDefault();
         localStorage.setItem('shop_name', 'All');
         $.ajax({
-            url: '/auth/logout',
+            url: api_path + 'auth/logout',
             method: 'post',
             success: function(res){
                 $('.loader').addClass('hide');
-                window.location.assign('/');
+                window.location.assign(api_path);
             }
         });
     })
@@ -683,7 +658,7 @@ $(document).ready(() => {
             $('.loader').removeClass('hide');
             // Payment detail
             $.ajax({
-                url: '/home/payment',
+                url: api_path + 'home/payment',
                 method: 'post',
                 data: data,
                 success: function(res){
@@ -745,7 +720,7 @@ $(document).ready(() => {
             })
             // Sale detail
             $.ajax({
-                url: '/home/sale_detail',
+                url: api_path + 'home/sale_detail',
                 method: 'post',
                 data: data,
                 success: function(res){
@@ -813,7 +788,7 @@ $(document).ready(() => {
             }
             $('.loader').removeClass('hide');
             $.ajax({
-                url: '/home/transaction_detail',
+                url: api_path + 'home/transaction_detail',
                 method: 'post',
                 data: data,
                 success: function(res){
@@ -881,14 +856,16 @@ $(document).ready(() => {
         }
     })
     //sale_comparison_reverse
-    $('.sale_comparison_sort').click(function(){
+    $('.turnover_comparison_sort').click(function(){
         sale_comparison_reverse();
+    })
+    $('.transaction_comparison_sort').click(function(){
+        transaction_comparison_reverse();
     })
     $('#all-shops').delegate('.single-shop', 'click', function(){
         hide_detail_charts();
         let shop_id = $(this)[0].getAttribute('shopId');
         if(shop_id != 0){
-            $("#comparison_pie").hide();
             $("#comparison_bar").hide();
             _shop_name = _shop_name.filter((item) => {
                 return item != "All";
@@ -903,14 +880,24 @@ $(document).ready(() => {
                 _shop_name.push(find_shop_name(shop_id));
             }
             if(_shop_name.length == 0){
-                _shop_name.push('All');
+                $('.single-shop').removeClass('selected');
+                _shop_name = ['All'];
                 $('.shop-name').text('All shops');
+                localStorage.setItem('_shop_name', 'All');
+                if((netsale.length != 0) && (transaction_count.length != 0)){
+                    show_comparison_charts();
+                }
+                display_flat_data();
+                monthly_growth_process(second_ajax.data, 0);
+                $("#comparison_bar").show();
+            }else{
+                $('.shop-name').text(_shop_name.toString());
+                localStorage.setItem('_shop_name', find_shop_name(shop_id)); // Temp shop name store for detail view
+                display_flat_data_single();
+                monthly_growth_process(second_ajax.data, -1);
             }
-            $('.shop-name').text(_shop_name.toString());
             //localStorage.setItem('_shop_name', _shop_name);
-            localStorage.setItem('_shop_name', find_shop_name(shop_id)); // Temp shop name store for detail view
-            display_flat_data_single();
-            monthly_growth_process(second_ajax.data, -1);
+
         }else{
             $('.single-shop').removeClass('selected');
             _shop_name = ['All'];
