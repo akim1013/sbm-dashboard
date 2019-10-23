@@ -13,8 +13,9 @@ let getUsers = () => {
                 let users = response.data;
                 for(let user of users){
                     shop = 'All';
-                    if(user.shop_name != '0'){
-                        shop = user.shop_name;
+                    if(user.shop_name.indexOf('"') > 0){
+                        shop = JSON.parse(user.shop_name);
+                        console.log(shop)
                     }
                      $('.user-table tbody').append(
                          '<tr><td>' + user.name +
