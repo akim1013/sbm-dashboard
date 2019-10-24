@@ -681,7 +681,7 @@ $(document).ready(() => {
                             type: 'column'
                         },
                         title: {
-                            text: 'Payment detail'
+                            text: 'Payment details'
                         },
                         xAxis: {
                             categories: p_description,
@@ -738,7 +738,7 @@ $(document).ready(() => {
                             type: 'column'
                         },
                         title: {
-                            text: 'Turnover detail'
+                            text: 'Turnover details by items'
                         },
                         xAxis: {
                             categories: d_group,

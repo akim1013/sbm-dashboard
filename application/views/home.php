@@ -196,7 +196,7 @@
                 <section id="transaction_detail" class="no-padding-top no-padding-bottom hide">
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="col-lg-12">
+                            <div class="col-lg-6">
                                 <div class="drills-chart block">
                                     <div id="transaction_detail_line" class="_bar_chart"></div>
                                 </div>
@@ -214,7 +214,7 @@
                         <div class="row">
                             <div class="col-lg-6">
                                 <div class="block">
-                                    <div class="title"><strong>Details by shops</strong></div>
+                                    <div class="title"><strong>Turnover details by shops</strong></div>
                                     <table class="table table-striped table-sm">
                                         <thead>
                                             <tr>
