@@ -108,37 +108,70 @@
                 <section class="no-padding-top no-padding-bottom">
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="col-lg-6">
-                                <div class="stats-3-block block d-flex">
-                                    <div class="stats-3"><strong class="d-block _netsale">0</strong><span class="d-block detail sale_detail"><?php echo lang('lb_turnover');?></span>
-                                        <div class="progress progress-template progress-small">
-                                            <div role="progressbar" style="width: 35%;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" class="progress-bar progress-bar-template progress-bar-small dashbg-1"></div>
-                                        </div>
-                                    </div>
-                                    <div class="stats-3 d-flex justify-content-between text-center">
-                                        <div class="item"><strong class="d-block strong-sm _discount">0</strong><span class="d-block span-sm detail"><?php echo lang('lb_discount');?></span>
-                                            <div class="line"></div><small><span class=""></span></small>
-                                        </div>
-                                        <div class="item"><strong class="d-block strong-sm _promotion">0</strong><span class="d-block span-sm detail"><?php echo lang('lb_promotion');?></span>
-                                            <div class="line"></div><small><span class=""></span></small>
-                                        </div>
-                                    </div>
+                            <div class="col-lg-12">
+                                <div class="d-desktop block">
+                                    <div class="title"><strong>Total values</strong></div>
+                                    <table class="table table-striped table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th><?php echo lang('lb_turnover');?>[$]</th>
+                                                <th><?php echo lang('lb_discount');?>[$]</th>
+                                                <th><?php echo lang('lb_promotion');?>[$]</th>
+                                                <th><?php echo lang('lb_transaction_count');?></th>
+                                                <th><?php echo lang('lb_average_bill');?>[$]</th>
+                                                <th><?php echo lang('lb_tips');?>[$]</th>
+                                                <th><?php echo lang('lb_tax');?>[$]</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td style="color: #f55; cursor: pointer" class="_netsale">0</td>
+                                                <td class="_discount">0</td>
+                                                <td class="_promotion">0</td>
+                                                <td style="color: #f55; cursor: pointer" class="_transaction_count">0</td>
+                                                <td class="_average_bill">0</td>
+                                                <td class="_tip">0</td>
+                                                <td class="_tax">0</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="stats-2-block block d-flex">
-                                    <div class="stats-2 d-flex">
-                                        <div class="stats-2-content"><strong class="d-block _transaction_count">0</strong><span class="d-block detail transaction_detail"><?php echo lang('lb_transaction_count');?></span>
-                                        </div>
-                                    </div>
-                                    <div class="stats-2 d-flex">
-                                        <div class="stats-2-content"><strong class="d-block _average_bill">0</strong><span class="d-block detail"><?php echo lang('lb_average_bill');?></span>
-                                        </div>
-                                    </div>
-                                    <div class="stats-2 d-flex">
-                                        <div class="stats-2-content"><strong class="d-block _tip">0</strong><span class="d-block detail"><?php echo lang('lb_tips');?></span>
-                                        </div>
-                                    </div>
+                                <div class="d-mobile block">
+                                    <div class="title"><strong>Total values</strong></div>
+                                    <table class="table table-striped table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th><?php echo lang('lb_turnover');?>[$]</th>
+                                                <th><?php echo lang('lb_discount');?>[$]</th>
+                                                <th><?php echo lang('lb_promotion');?>[$]</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td style="color: #f55; cursor: pointer" class="_netsale">0</td>
+                                                <td class="_discount">0</td>
+                                                <td class="_promotion">0</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <table class="table table-striped table-sm" style="margin-top: 10px;">
+                                        <thead>
+                                            <tr>
+                                                <th><?php echo lang('lb_transaction_count');?></th>
+                                                <th><?php echo lang('lb_average_bill');?>[$]</th>
+                                                <th><?php echo lang('lb_tips');?>[$]</th>
+                                                <th><?php echo lang('lb_tax');?>[$]</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td style="color: #f55; cursor: pointer" class="_transaction_count">0</td>
+                                                <td class="_average_bill">0</td>
+                                                <td class="_tip">0</td>
+                                                <td class="_tax">0</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -148,14 +181,12 @@
                 <!-- Detail views -->
                 <section id="sale_detail" class="no-padding-top no-padding-bottom hide">
                     <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-lg-8">
-                                <div class="drills-chart block">
+                        <div class="block">
+                            <div class="row">
+                                <div class="col-lg-8">
                                     <div id="sale_detail_line" class="_bar_chart"></div>
                                 </div>
-                            </div>
-                            <div class="col-lg-4">
-                                <div class="drills-chart block">
+                                <div class="col-lg-4">
                                     <div id="payment_detail_line" class="_bar_chart"></div>
                                 </div>
                             </div>

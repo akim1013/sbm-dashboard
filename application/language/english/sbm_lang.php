@@ -44,9 +44,10 @@ $lang['lb_turnover']        = 'Turnover';
 $lang['lb_discount']        = 'Discount';
 $lang['lb_promotion']       = 'Promotion';
 $lang['lb_transaction']      = 'Transaction';
-$lang['lb_transaction_count']      = 'Transaction count';
+$lang['lb_transaction_count']      = 'Transactions';
 $lang['lb_average_bill']    = 'Average bill';
 $lang['lb_tips']            = 'Tips';
+$lang['lb_tax']    = 'Tax';
 
 $lang['admin_login_success']            = 'Admin logged in successfully';
 $lang['user_login_success']            = 'User logged in successfully';

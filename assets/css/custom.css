@@ -89,6 +89,15 @@ div.shop-name{
     font-weight: 500;
     color: #57b;
 }
+.d-desktop{
+    display: block !important;
+}
+.d-mobile{
+    display: none !important;
+}
+td{
+    font-weight: 700;
+}
 @media(max-width: 575px){
     .brand-text strong{
         font-size: 15px !important;
@@ -137,5 +146,11 @@ div.shop-name{
     }
     .h5{
         font-size: 15px !important;
+    }
+    .d-desktop{
+        display: none !important;
+    }
+    .d-mobile{
+        display: block !important;
     }
 }

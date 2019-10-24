@@ -648,7 +648,7 @@ $(document).ready(() => {
     })
 
     // Details section
-    $('.sale_detail').click(() => {
+    $('._netsale').click(() => {
         if($('#sale_detail').hasClass('hide')){
             let data = {
                 start: start.format('YYYY-MM-DD'),
@@ -779,7 +779,7 @@ $(document).ready(() => {
             $('#sale_detail').addClass('hide')
         }
     })
-    $('.transaction_detail').click(() => {
+    $('._transaction_count').click(() => {
         if($('#transaction_detail').hasClass('hide')){
             let data = {
                 start: end.format('YYYY-MM-DD'),

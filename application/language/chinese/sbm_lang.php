@@ -47,6 +47,7 @@ $lang['lb_transaction']      = '交易';
 $lang['lb_transaction_count']      = '交易計數';
 $lang['lb_average_bill']    = '平均帳單價';
 $lang['lb_tips']    = '小費';
+$lang['lb_tax']    = 'Tax';
 
 $lang['admin_login_success']            = 'Admin logged in successfully';
 $lang['user_login_success']            = 'User logged in successfully';
