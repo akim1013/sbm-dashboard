@@ -9,7 +9,7 @@ class MY_Controller extends CI_Controller{
     }
 
     protected function dbconnect(){
-		$serverName = "47.88.53.35";
+		$serverName = "198.11.172.117";
         $db = $this->user_model->get_DB($this->session->userdata('user_name'));
 		$connectionInfo = array( "Database"=>$db, "UID"=>"laguna", "PWD"=>"goqkdtks.1234");
 		$conn = sqlsrv_connect( $serverName, $connectionInfo);

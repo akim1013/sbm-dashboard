@@ -4,8 +4,8 @@ $(document).ready(() => {
     localStorage.setItem('_shop_name', 'All');
     $('.shop-name').text('All shops');
     // Date Range Change
-    let start = moment().subtract(365, 'days');
-    let end = moment().subtract(365, 'days');
+    let start = moment().subtract(1, 'days');
+    let end = moment().subtract(1, 'days');
     let _shop_name          = [];
     let shops               = [];   // Shop lists
     let _shops              = [];   // Available shop lists

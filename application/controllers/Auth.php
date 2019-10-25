@@ -102,7 +102,7 @@ class Auth extends CI_Controller {
 		echo $res;
 	}
 	public function db(){
-		$serverName = "47.88.53.35";
+		$serverName = "198.11.172.117";
 		$connectionInfo = array( "Database"=>"master", "UID"=>"laguna", "PWD"=>"goqkdtks.1234");
 		$conn = sqlsrv_connect( $serverName, $connectionInfo);
 		if( $conn ) {
@@ -125,7 +125,7 @@ class Auth extends CI_Controller {
 	}
 	public function shop(){
 		$db = $this->input->post('db');
-		$serverName = "47.88.53.35";
+		$serverName = "198.11.172.117";
 		$connectionInfo = array( "Database"=>$db, "UID"=>"laguna", "PWD"=>"goqkdtks.1234");
 		$conn = sqlsrv_connect( $serverName, $connectionInfo);
 		if( $conn ) {

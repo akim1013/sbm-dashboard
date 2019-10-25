@@ -21,7 +21,7 @@ class Home extends MY_Controller {
         }
 	}
 	public function dbtest(){
-		$serverName = "47.88.53.35";
+		$serverName = "198.11.172.117";
 
 		$connectionInfo = array( "Database"=>"meetfresh", "UID"=>"laguna", "PWD"=>"goqkdtks.1234");
 		$conn = sqlsrv_connect( $serverName, $connectionInfo);
