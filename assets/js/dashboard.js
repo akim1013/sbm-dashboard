@@ -575,6 +575,7 @@ $(document).ready(() => {
                 }
             }
         });
+        get_detail_turnover();
     }
     function formatDate(date) {
         let monthNames = [
@@ -609,23 +610,23 @@ $(document).ready(() => {
             }
         });
     }
-    let get_daily_turnover = () => {
+    let get_detail_turnover = () => {
         let data = {
-            start: end.subtract(15, 'days').format('YYYY-MM-DD'),
-            end: end.format('YYYY-MM-DD'),
+            d_start: moment().subtract(15, 'days').format('YYYY-MM-DD'),
+            m_start: (new Date().getFullYear().toString() + '-01-01'),
+            end: moment().format('YYYY-MM-DD'),
             shop_name: localStorage.getItem('shop_name')
         }
         $.ajax({
-            url: api_path + 'home/daily_turnover',
+            url: api_path + 'home/detail_turnover',
             method: 'post',
             data: data,
             success: function(res){
-                console.log(res);
-                // let response = JSON.parse(res);
-                //
-                // if(response.status == 'success'){
-                //
-                // }
+                let response = JSON.parse(res);
+                console.log(response);
+                if(response.status == 'success'){
+                    $('#turnover_detail').removeClass('hide');
+                }
             }
         });
     }

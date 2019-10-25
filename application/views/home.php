@@ -177,29 +177,21 @@
                         </div>
                     </div>
                 </section>
-                <section id="turnover_detail" class="no-padding-top no-padding-bottom">
+                <section id="turnover_detail" class="no-padding-top no-padding-bottom hide">
                     <div class="container-fluid">
                         <div class="block">
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div id="yt_comparison" class="t_comparison">
-                                        
-                                    </div>
+                                    <div id="yt_comparison" class="t_comparison"></div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div id="w_comparison" class="t_comparison">
-
-                                    </div>
+                                    <div id="w_comparison" class="t_comparison"></div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div id="m_comparison" class="t_comparison">
-
-                                    </div>
+                                    <div id="m_comparison" class="t_comparison"></div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div id="y_comparison" class="t_comparison">
-
-                                    </div>
+                                    <div id="y_comparison" class="t_comparison"></div>
                                 </div>
                             </div>
                         </div>

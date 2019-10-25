@@ -249,7 +249,7 @@ class Dashboard_model extends CI_Model{
     function get_daily_turnover($conn, $date, $shop_name){
         $sql = "
             SELECT
-            DATEPART(day, t.bookkeeping_date),
+            DATEPART(day, t.bookkeeping_date) d,
             SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as netsale
             FROM transactions t
             INNER JOIN shops s ON s.id = t.shop_id
@@ -258,7 +258,7 @@ class Dashboard_model extends CI_Model{
             INNER JOIN articles a ON (a.id = ta.article_id) AND a.article_type Not In(2,3)
             INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
             WHERE t.delete_operator_id IS NULL
-            AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
             ";
         if($shop_name != 'All'){
             $sql = $sql . " AND s.description = '" . $shop_name . "'";
@@ -273,7 +273,7 @@ class Dashboard_model extends CI_Model{
     function get_monthly_turnover($conn, $date, $shop_name){
         $sql = "
             SELECT
-            DATEPART(month, t.bookkeeping_date),
+            DATEPART(month, t.bookkeeping_date) m,
             SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as netsale
             FROM transactions t
             INNER JOIN shops s ON s.id = t.shop_id
@@ -297,7 +297,7 @@ class Dashboard_model extends CI_Model{
     function get_yearly_turnover($conn, $date, $shop_name){
         $sql = "
             SELECT
-            DATEPART(month, t.bookkeeping_date),
+            DATEPART(year, t.bookkeeping_date) y,
             SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as netsale
             FROM transactions t
             INNER JOIN shops s ON s.id = t.shop_id
@@ -311,8 +311,8 @@ class Dashboard_model extends CI_Model{
             $sql = $sql . " AND s.description = '" . $shop_name . "'";
         }
         $sql = $sql . "
-            GROUP BY DATEPART(month, t.bookkeeping_date)
-            ORDER BY DATEPART(month, t.bookkeeping_date)
+            GROUP BY DATEPART(year, t.bookkeeping_date)
+            ORDER BY DATEPART(year, t.bookkeeping_date)
         ";
         return $this->run_query($conn, $sql);
     }
