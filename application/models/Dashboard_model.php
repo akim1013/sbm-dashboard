@@ -294,7 +294,7 @@ class Dashboard_model extends CI_Model{
         return $this->run_query($conn, $sql);
     }
 
-    function get_yearly_turnover($conn, $date, $shop_name){
+    function get_yearly_turnover($conn, $shop_name){
         $sql = "
             SELECT
             DATEPART(year, t.bookkeeping_date) y,

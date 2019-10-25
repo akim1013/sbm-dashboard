@@ -182,9 +182,37 @@
                         <div class="block">
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div id="yt_comparison" class="t_comparison"></div>
+                                    <div class="t_comparison">
+                                        <div class="row" style="height: 100%;">
+                                            <div class="col-6">
+                                                <div id="yt_comparison"></div>
+                                            </div>
+                                            <div class="col-6 text-center">
+                                                <div class="row" style="height: 50%;">
+                                                    <div class="col-6" style="text-align: center">
+                                                        <div class="dashtext-3" style="margin-bottom: 20px;">
+                                                            <strong>Yesterday</strong>
+                                                        </div>
+                                                        <span class="yt_val" style="font-size: 25px;">0</span>
+                                                    </div>
+                                                    <div class="col-6" style="text-align: center">
+                                                        <div class="dashtext-3" style="margin-bottom: 20px;">
+                                                            <strong>Today</strong>
+                                                        </div>
+                                                        <span class="t_val" style="font-size: 25px;">0</span>
+                                                    </div>
+                                                </div>
+                                                <span class="t_growth_percent dashtext-2" style="font-size: 25px;">+0%</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-md-3">
+                                    <div class="weeks text-center">
+                                        <button class="btn btn-sm btn-primary" type="button" name="button">Last week</button>
+                                        <button class="btn btn-sm btn-primary" type="button" name="button">This week</button>
+                                        <button class="btn btn-sm btn-primary" type="button" name="button">Last 7 days</button>
+                                    </div>
                                     <div id="w_comparison" class="t_comparison"></div>
                                 </div>
                                 <div class="col-md-3">

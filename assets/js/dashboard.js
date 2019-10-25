@@ -575,7 +575,9 @@ $(document).ready(() => {
                 }
             }
         });
-        get_detail_turnover();
+        get_daily_turnover();
+        get_monthly_turnover();
+        get_yearly_turnover();
     }
     function formatDate(date) {
         let monthNames = [
@@ -610,15 +612,50 @@ $(document).ready(() => {
             }
         });
     }
-    let get_detail_turnover = () => {
+    let get_daily_turnover = () => {
         let data = {
-            d_start: moment().subtract(15, 'days').format('YYYY-MM-DD'),
-            m_start: (new Date().getFullYear().toString() + '-01-01'),
+            start: moment().subtract(15, 'days').format('YYYY-MM-DD'),
             end: moment().format('YYYY-MM-DD'),
             shop_name: localStorage.getItem('shop_name')
         }
         $.ajax({
-            url: api_path + 'home/detail_turnover',
+            url: api_path + 'home/daily_turnover',
+            method: 'post',
+            data: data,
+            success: function(res){
+                let response = JSON.parse(res);
+                console.log(response);
+                if(response.status == 'success'){
+                    $('#turnover_detail').removeClass('hide');
+                }
+            }
+        });
+    }
+    let get_monthly_turnover = () => {
+        let data = {
+            start: (new Date().getFullYear().toString() + '-01-01'),
+            end: moment().format('YYYY-MM-DD'),
+            shop_name: localStorage.getItem('shop_name')
+        }
+        $.ajax({
+            url: api_path + 'home/monthly_turnover',
+            method: 'post',
+            data: data,
+            success: function(res){
+                let response = JSON.parse(res);
+                console.log(response);
+                if(response.status == 'success'){
+                    $('#turnover_detail').removeClass('hide');
+                }
+            }
+        });
+    }
+    let get_yearly_turnover = () => {
+        let data = {
+            shop_name: localStorage.getItem('shop_name')
+        }
+        $.ajax({
+            url: api_path + 'home/yearly_turnover',
             method: 'post',
             data: data,
             success: function(res){
