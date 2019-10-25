@@ -39,7 +39,9 @@ a, a:hover{
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
-
+.t_comparison{
+    height: 200px !important;
+}
 #reportrange{
     margin-right: 10px;
     width: 180px;

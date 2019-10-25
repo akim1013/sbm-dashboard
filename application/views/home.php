@@ -177,7 +177,34 @@
                         </div>
                     </div>
                 </section>
+                <section id="turnover_detail" class="no-padding-top no-padding-bottom">
+                    <div class="container-fluid">
+                        <div class="block">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div id="yt_comparison" class="t_comparison">
+                                        
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div id="w_comparison" class="t_comparison">
 
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div id="m_comparison" class="t_comparison">
+
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div id="y_comparison" class="t_comparison">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
                 <!-- Detail views -->
                 <section id="sale_detail" class="no-padding-top no-padding-bottom hide">
                     <div class="container-fluid">

@@ -24,6 +24,12 @@ $(document).ready(() => {
     let _tip                 = 0;
     let _average_bill        = 0;
 
+    let daily_turnover      = []; // Yesterday, 2 days ago, last week, this week, last 7 days || 15 days of turnover data groupby day
+    let weekly_turnover     = []; // Weekly turnover for this month and last month
+    let monthly_turnover    = []; // Monthly turnover for this year
+    let yearly_turnover     = []; // Yearly turnover
+
+
     let sorted_netsale      = []; // For storing sorted netsale value
 
     let first_ajax;
@@ -418,12 +424,15 @@ $(document).ready(() => {
             if($("#monthly_transaction_line").highcharts()){
                 $("#monthly_transaction_line").highcharts().destroy();
             }
+            x_sale = [];
+            s_sale = [];
             for(let item of data.daily_sale){
                 let date = new Date(item.transaction_date.date);
                 let shop = find_shop_name(item.shop_id);
                 if(x_sale.indexOf(formatDate(date)) < 0){
                     x_sale.push(formatDate(date));
                 }
+
                 if(id == 0){
                     if(s_sale.indexOf(shop) < 0){
                         s_sale.push(shop);
@@ -436,6 +445,11 @@ $(document).ready(() => {
                     }
                 }
             }
+            x_sale.sort((a, b) => {
+                return new Date(a) - new Date(b)
+            });
+            x_transaction = [];
+            s_transaction = [];
             for(let item of data.daily_transaction){
                 let date = new Date(item.transaction_date.date);
                 let shop = find_shop_name(item.shop_id);
@@ -454,6 +468,9 @@ $(document).ready(() => {
                     }
                 }
             }
+            x_transaction.sort((a, b) => {
+                return new Date(a) - new Date(b)
+            });
             for(let _s of s_sale){
                 let _data = [];
                 for(let item of data.daily_sale){
@@ -483,7 +500,7 @@ $(document).ready(() => {
                     type: 'line'
                 },
                 title: {
-                    text: 'Sales growth in last 30 days'
+                    text: 'Turnover comparison in last 30 days'
                 },
                 xAxis: {
                     categories: x_sale
@@ -511,7 +528,7 @@ $(document).ready(() => {
                     type: 'line'
                 },
                 title: {
-                    text: 'Transaction count in last 30 days'
+                    text: 'Transaction count comparison in last 30 days'
                 },
                 xAxis: {
                     categories: x_transaction
@@ -592,7 +609,26 @@ $(document).ready(() => {
             }
         });
     }
-
+    let get_daily_turnover = () => {
+        let data = {
+            start: end.subtract(15, 'days').format('YYYY-MM-DD'),
+            end: end.format('YYYY-MM-DD'),
+            shop_name: localStorage.getItem('shop_name')
+        }
+        $.ajax({
+            url: api_path + 'home/daily_turnover',
+            method: 'post',
+            data: data,
+            success: function(res){
+                console.log(res);
+                // let response = JSON.parse(res);
+                //
+                // if(response.status == 'success'){
+                //
+                // }
+            }
+        });
+    }
 
     function date_range_set(st, ed) {
         start = st;
