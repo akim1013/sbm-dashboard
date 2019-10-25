@@ -85,7 +85,7 @@
                     <ul id="all-shops" class="collapse list-unstyled "></ul>
                 </li>
                 <li>
-                    <a href="#"> <i class="fa fa-refresh"></i><?php echo lang('lb_refresh');?> </a>
+                    <a id="refresh" style="cursor: pointer;"> <i class="fa fa-refresh"></i><?php echo lang('lb_refresh');?> </a>
                 </li>
                 <li>
                     <a class="logout" href="#"> <i class="icon-logout"></i><?php echo lang('lb_logout');?> </a>

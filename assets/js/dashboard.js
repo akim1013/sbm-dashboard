@@ -984,4 +984,7 @@ $(document).ready(() => {
             monthly_growth_process(second_ajax.data, 0);
         }
     })
+    $('#refresh').click(function(){
+        window.location.reload();
+    })
 })
