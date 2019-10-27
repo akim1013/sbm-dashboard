@@ -612,6 +612,7 @@ $(document).ready(() => {
             }
         });
     }
+    /////////////////////////////////////////////////////////////////////////
     let get_daily_turnover = () => {
         let data = {
             start: moment().subtract(15, 'days').format('YYYY-MM-DD'),
@@ -627,6 +628,59 @@ $(document).ready(() => {
                 console.log(response);
                 if(response.status == 'success'){
                     $('#turnover_detail').removeClass('hide');
+                    Highcharts.chart('yt_comparison', {
+                        chart: {
+                            height: 235,
+                            type: 'column'
+                        },
+                        title: {
+                            text: ''
+                        },
+                        subtitle: {
+                            text: ''
+                        },
+                        xAxis: {
+                            categories: [
+                                ''
+                            ],
+                            crosshair: true
+                        },
+                        yAxis: {
+                            min: 0,
+                            title: {
+                                text: ''
+                            }
+                        },
+                        legend: {
+                            enabled: true,
+                            itemStyle: {
+                                'fontSize': '10px'
+                            }
+                        },
+                        tooltip: {
+                            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                            pointFormat: '<tr><td style="font-size:10px; color:{series.color};padding:0">{series.name}: </td>' +
+                                '<td style="padding:0;font-size:10px;"><b>{point.y:.1f} $</b></td></tr>',
+                            footerFormat: '</table>',
+                            shared: true,
+                            useHTML: true
+                        },
+                        plotOptions: {
+                            column: {
+                                pointPadding: 0.2,
+                                borderWidth: 0
+                            }
+                        },
+                        series: [{
+                            name: 'Yesterday',
+                            data: [49.9]
+
+                        }, {
+                            name: 'Today',
+                            data: [83.6]
+
+                        }]
+                    });
                 }
             }
         });
@@ -646,6 +700,7 @@ $(document).ready(() => {
                 console.log(response);
                 if(response.status == 'success'){
                     $('#turnover_detail').removeClass('hide');
+
                 }
             }
         });
