@@ -923,6 +923,7 @@ $(document).ready(() => {
                 console.log(response);
                 if(response.status == 'success'){
                     $('#turnover_detail').removeClass('hide');
+                    
                 }
             }
         });
