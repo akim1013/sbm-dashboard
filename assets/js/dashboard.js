@@ -252,7 +252,9 @@ $(document).ready(() => {
     function process_price(val){
 
         let value = parseFloat(val);
-        if(Math.abs(value) > 1000){
+        if(Math.abs(value) > 1000 * 1000){
+            return (value / 1000).toFixed(2) + ' m';
+        }else if(Math.abs(value) > 1000){
             return (value / 1000).toFixed(2) + ' k';
         }else{
             return value.toFixed(2);
@@ -627,6 +629,19 @@ $(document).ready(() => {
                 let response = JSON.parse(res);
                 console.log(response);
                 if(response.status == 'success'){
+                    let d_data = response.data.daily_turnover;
+                    let d_today = [];
+                    let d_yesterday = [];
+                    if(d_data[d_data.length - 1].d - d_data[0].d > 15){
+
+                    }else{
+                        d_yesterday.push(parseFloat(d_data[d_data.length - 2].netsale));
+                        d_today.push(parseFloat(d_data[d_data.length - 1].netsale));
+                    }
+                    let percent = ((d_today[0] - d_yesterday[0]) / d_yesterday[0]) * 100;
+                    $('.yt_val').text(process_price(d_yesterday[0]));
+                    $('.t_val').text(process_price(d_today[0]));
+                    $('.t_growth_percent').text(percent.toFixed(2) + ' %');
                     $('#turnover_detail').removeClass('hide');
                     Highcharts.chart('yt_comparison', {
                         chart: {
@@ -673,11 +688,11 @@ $(document).ready(() => {
                         },
                         series: [{
                             name: 'Yesterday',
-                            data: [49.9]
+                            data: d_yesterday
 
                         }, {
                             name: 'Today',
-                            data: [83.6]
+                            data: d_today
 
                         }]
                     });

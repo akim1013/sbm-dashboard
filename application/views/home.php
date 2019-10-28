@@ -193,13 +193,13 @@
                                                         <div class="dashtext-3" style="margin-bottom: 20px;">
                                                             <strong>Yesterday</strong>
                                                         </div>
-                                                        <span class="yt_val" style="font-size: 25px;">0</span>
+                                                        <span class="yt_val" style="font-size: 17px; font-weight: 800;">0</span>
                                                     </div>
                                                     <div class="col-6" style="text-align: center">
                                                         <div class="dashtext-3" style="margin-bottom: 20px;">
                                                             <strong>Today</strong>
                                                         </div>
-                                                        <span class="t_val" style="font-size: 25px;">0</span>
+                                                        <span class="t_val" style="font-size: 17px; font-weight: 800;">0</span>
                                                     </div>
                                                 </div>
                                                 <span class="t_growth_percent dashtext-2" style="font-size: 25px;">+0%</span>
