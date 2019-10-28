@@ -841,10 +841,65 @@ $(document).ready(() => {
             success: function(res){
                 get_yearly_turnover();
                 let response = JSON.parse(res);
-                console.log(response);
                 if(response.status == 'success'){
                     $('#turnover_detail').removeClass('hide');
-                    
+                    let m_data = response.data.monthly_turnover;
+                    let m_label = [];
+                    let m_sale = [];
+                    for(let i = 0; i < 12; i++){
+                        m_label.push(months[i]);
+                        if(item.length <= i + 1){
+                            m_sale.push(parseFloat(item.netsale));
+                        }else{
+                            m_sale.push(0);
+                        }
+                    }
+                    Highcharts.chart('m_comparison', {
+                        chart: {
+                            height: 200,
+                            type: 'column'
+                        },
+                        title: {
+                            text: ''
+                        },
+                        subtitle: {
+                            text: 'This year\'s turnover'
+                        },
+                        xAxis: {
+                            categories: m_label,
+                            crosshair: true
+                        },
+                        yAxis: {
+                            min: 0,
+                            title: {
+                                text: ''
+                            }
+                        },
+                        legend: {
+                            enabled: false,
+                            itemStyle: {
+                                'fontSize': '10px'
+                            }
+                        },
+                        tooltip: {
+                            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                            pointFormat: '<tr><td style="font-size:10px; color:{series.color};padding:0">{series.name}: </td>' +
+                                '<td style="padding:0;font-size:10px;"><b>{point.y:.1f} $</b></td></tr>',
+                            footerFormat: '</table>',
+                            shared: true,
+                            useHTML: true
+                        },
+                        plotOptions: {
+                            column: {
+                                pointPadding: 0.2,
+                                borderWidth: 0
+                            }
+                        },
+                        series: [{
+                            name: 'Turnover',
+                            data: m_sale
+                        }]
+                    });
                 }
             }
         });
