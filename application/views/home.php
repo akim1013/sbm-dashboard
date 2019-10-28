@@ -188,7 +188,7 @@
                                                 <div id="yt_comparison"></div>
                                             </div>
                                             <div class="col-6 text-center">
-                                                <div class="row" style="height: 50%;">
+                                                <div class="row" style="height: 50%; margin-top: 30px;">
                                                     <div class="col-6" style="text-align: center">
                                                         <div class="dashtext-3" style="margin-bottom: 20px;">
                                                             <strong>Yesterday</strong>
