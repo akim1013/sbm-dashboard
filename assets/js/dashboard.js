@@ -1,5 +1,5 @@
 let api_path = '/';
-let weeks = ['First', 'Second', 'Third', 'Forth', 'Fifth'];
+let weeks = ['First week', 'Second week', 'Third week', 'Forth week', 'Fifth week'];
 let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 $(document).ready(() => {
     let isMobile = false;
@@ -778,6 +778,10 @@ $(document).ready(() => {
                         w_sale.push(parseFloat(item.netsale));
                         idx ++;
                     }
+                    for(let i = 0; i < 5 - w_data.length; i++){
+                        w_days.push(weeks[idx + i]);
+                        w_sale.push(0);
+                    }
                     Highcharts.chart('wl_comparison', {
                         chart: {
                             height: 200,
@@ -846,13 +850,15 @@ $(document).ready(() => {
                     let m_data = response.data.monthly_turnover;
                     let m_label = [];
                     let m_sale = [];
-                    for(let i = 0; i < 12; i++){
-                        m_label.push(months[i]);
-                        if(item.length <= i + 1){
-                            m_sale.push(parseFloat(item.netsale));
-                        }else{
-                            m_sale.push(0);
-                        }
+                    let idx = 0;
+                    for(let item of m_data){
+                        m_label.push(months[idx]);
+                        m_sale.push(parseFloat(item.netsale));
+                        idx ++;
+                    }
+                    for(let i = 0; i < 12 - m_data.length; i++){
+                        m_label.push(months[idx + i]);
+                        m_sale.push(0);
                     }
                     Highcharts.chart('m_comparison', {
                         chart: {
