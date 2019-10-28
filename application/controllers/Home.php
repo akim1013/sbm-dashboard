@@ -154,6 +154,23 @@ class Home extends MY_Controller {
 		));
 		sqlsrv_close($conn);
 	}
+	public function weekly_turnover(){
+		$conn = parent::dbconnect();
+		$date = array(
+			"start" => $this->input->post('start'),
+			"end"	=> $this->input->post('end')
+		);
+		$shop_name = $this->input->post('shop_name');
+		$ret = array(
+			"weekly_turnover" => $this->dashboard_model->get_weekly_turnover($conn, $date, $shop_name)
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
 	public function monthly_turnover(){
 		$conn = parent::dbconnect();
 		$date = array(

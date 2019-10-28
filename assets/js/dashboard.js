@@ -1,4 +1,6 @@
 let api_path = '/';
+let weeks = ['First', 'Second', 'Third', 'Forth', 'Fifth'];
+let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 $(document).ready(() => {
     let isMobile = false;
     localStorage.setItem('_shop_name', 'All');
@@ -40,7 +42,10 @@ $(document).ready(() => {
     }else{
         isMobile = false;
     }
-
+    let dateFromDay = (year, day) => {
+        let date = new Date(year, 0); // initialize a date in `year-01-01`
+        return new Date(date.setDate(day)); // add the number of days
+    }
     // Generate random color
     let getRandomColor = () => {
         let letters = '0123456789ABCDEF';
@@ -578,8 +583,6 @@ $(document).ready(() => {
             }
         });
         get_daily_turnover();
-        get_monthly_turnover();
-        get_yearly_turnover();
     }
     function formatDate(date) {
         let monthNames = [
@@ -617,7 +620,7 @@ $(document).ready(() => {
     /////////////////////////////////////////////////////////////////////////
     let get_daily_turnover = () => {
         let data = {
-            start: moment().subtract(15, 'days').format('YYYY-MM-DD'),
+            start: moment().subtract(7, 'days').format('YYYY-MM-DD'),
             end: moment().format('YYYY-MM-DD'),
             shop_name: localStorage.getItem('shop_name')
         }
@@ -626,26 +629,30 @@ $(document).ready(() => {
             method: 'post',
             data: data,
             success: function(res){
+                get_weekly_turnover();
                 let response = JSON.parse(res);
-                console.log(response);
                 if(response.status == 'success'){
                     let d_data = response.data.daily_turnover;
-                    let d_today = [];
+                    let d_today     = [];
                     let d_yesterday = [];
-                    if(d_data[d_data.length - 1].d - d_data[0].d > 15){
-
-                    }else{
-                        d_yesterday.push(parseFloat(d_data[d_data.length - 2].netsale));
-                        d_today.push(parseFloat(d_data[d_data.length - 1].netsale));
+                    let d_last_7    = [];
+                    let d_w_7       = []; // Week
+                    for(let item of d_data){
+                        d_last_7.push(parseFloat(item.netsale));
+                        d_w_7.push(moment(dateFromDay(moment().format('Y'), item.d)).format('ddd'));
                     }
+
+                    d_yesterday.push(parseFloat(d_data[d_data.length - 2].netsale));
+                    d_today.push(parseFloat(d_data[d_data.length - 1].netsale));
+
                     let percent = ((d_today[0] - d_yesterday[0]) / d_yesterday[0]) * 100;
                     $('.yt_val').text(process_price(d_yesterday[0]));
                     $('.t_val').text(process_price(d_today[0]));
-                    $('.t_growth_percent').text(percent.toFixed(2) + ' %');
+                    $('.t_growth_percent').text((percent > 0) ? '+' + percent.toFixed(2) + ' %' : percent.toFixed(2) + ' %');
                     $('#turnover_detail').removeClass('hide');
                     Highcharts.chart('yt_comparison', {
                         chart: {
-                            height: 235,
+                            height: 200,
                             type: 'column'
                         },
                         title: {
@@ -696,6 +703,127 @@ $(document).ready(() => {
 
                         }]
                     });
+                    Highcharts.chart('w_comparison', {
+                        chart: {
+                            height: 200,
+                            type: 'column'
+                        },
+                        title: {
+                            text: ''
+                        },
+                        subtitle: {
+                            text: 'Last 7 days'
+                        },
+                        xAxis: {
+                            categories: d_w_7,
+                            crosshair: true
+                        },
+                        yAxis: {
+                            min: 0,
+                            title: {
+                                text: ''
+                            }
+                        },
+                        legend: {
+                            enabled: false,
+                            itemStyle: {
+                                'fontSize': '10px'
+                            }
+                        },
+                        tooltip: {
+                            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                            pointFormat: '<tr><td style="font-size:10px; color:{series.color};padding:0">{series.name}: </td>' +
+                                '<td style="padding:0;font-size:10px;"><b>{point.y:.1f} $</b></td></tr>',
+                            footerFormat: '</table>',
+                            shared: true,
+                            useHTML: true
+                        },
+                        plotOptions: {
+                            column: {
+                                pointPadding: 0.2,
+                                borderWidth: 0
+                            }
+                        },
+                        series: [{
+                            name: 'Turnover',
+                            data: d_last_7
+                        }]
+                    });
+                }
+            }
+        });
+    }
+    let get_weekly_turnover = () => {
+        let data = {
+            start: (new Date().getFullYear().toString() + '-' + (new Date().getMonth() + 1).toString() + '-01'),
+            end: moment().format('YYYY-MM-DD'),
+            shop_name: localStorage.getItem('shop_name')
+        }
+        $.ajax({
+            url: api_path + 'home/weekly_turnover',
+            method: 'post',
+            data: data,
+            success: function(res){
+                get_monthly_turnover();
+                let response = JSON.parse(res);
+                console.log(response);
+                if(response.status == 'success'){
+                    $('#turnover_detail').removeClass('hide');
+                    let w_data = response.data.weekly_turnover;
+                    let w_days = [];
+                    let w_sale = [];
+                    let idx = 0;
+                    for(let item of w_data){
+                        w_days.push(weeks[idx]);
+                        w_sale.push(parseFloat(item.netsale));
+                        idx ++;
+                    }
+                    Highcharts.chart('wl_comparison', {
+                        chart: {
+                            height: 200,
+                            type: 'column'
+                        },
+                        title: {
+                            text: ''
+                        },
+                        subtitle: {
+                            text: 'This month\'s turnover'
+                        },
+                        xAxis: {
+                            categories: w_days,
+                            crosshair: true
+                        },
+                        yAxis: {
+                            min: 0,
+                            title: {
+                                text: ''
+                            }
+                        },
+                        legend: {
+                            enabled: false,
+                            itemStyle: {
+                                'fontSize': '10px'
+                            }
+                        },
+                        tooltip: {
+                            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                            pointFormat: '<tr><td style="font-size:10px; color:{series.color};padding:0">{series.name}: </td>' +
+                                '<td style="padding:0;font-size:10px;"><b>{point.y:.1f} $</b></td></tr>',
+                            footerFormat: '</table>',
+                            shared: true,
+                            useHTML: true
+                        },
+                        plotOptions: {
+                            column: {
+                                pointPadding: 0.2,
+                                borderWidth: 0
+                            }
+                        },
+                        series: [{
+                            name: 'Turnover',
+                            data: w_sale
+                        }]
+                    });
                 }
             }
         });
@@ -711,11 +839,12 @@ $(document).ready(() => {
             method: 'post',
             data: data,
             success: function(res){
+                get_yearly_turnover();
                 let response = JSON.parse(res);
                 console.log(response);
                 if(response.status == 'success'){
                     $('#turnover_detail').removeClass('hide');
-
+                    
                 }
             }
         });

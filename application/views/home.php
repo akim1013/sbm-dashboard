@@ -208,18 +208,13 @@
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="weeks text-center">
-                                        <button style="font-size: 12px" class="btn btn-sm btn-primary" type="button" name="button">Last week</button>
-                                        <button style="font-size: 12px" class="btn btn-sm btn-primary" type="button" name="button">This week</button>
-                                        <button style="font-size: 12px" class="btn btn-sm btn-primary" type="button" name="button">Last 7 days</button>
-                                    </div>
                                     <div id="w_comparison" class="t_comparison"></div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div id="m_comparison" class="t_comparison"></div>
+                                    <div id="wl_comparison" class="t_comparison"></div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div id="y_comparison" class="t_comparison"></div>
+                                    <div id="m_comparison" class="t_comparison"></div>
                                 </div>
                             </div>
                         </div>
