@@ -66,22 +66,26 @@ let getDB = () => {
 // Get shop lists of a database
 let getShop = (db) => {
     $('.loader').removeClass('hide');
+    $('.shop_multiselect').remove();
     $.ajax({
         url: '/auth/shop',
         method: 'post',
         data: {db: db},
         success: function(res){
             $('.loader').addClass('hide');
-            $('#shop_select').empty();
             let response = JSON.parse(res);
             if(response.status == 'success'){
-                $('#shop_select').append('<option value="0">All shops</option>');
+                let select = $('<select name="shop[]" class="mr-sm-3 form-control form-control shop_multiselect" multiple="multiple"></select>');
                 for(let item of response.data){
-                    $('#shop_select').append('<option value="' + item.description + '">' + item.description + '</option>');
+                    select.append('<option value="' + item.description + '">' + item.description + '</option>');
                 }
-                $('#shop_select').multiselect({
+                $('#shop_multiselect').append(select);
+                select.multiselect({
+                    buttonWidth: '223px',
+                    buttonClass: 'multishop-btn',
                     includeSelectAllOption: true,
-                    enableFiltering: true
+                    maxHeight: 200,
+                    numberDisplayed: 2
                 });
             }else{
                 $.toast({
@@ -98,40 +102,42 @@ let getShop = (db) => {
 
 // Register a user
 $('#new_user').submit(function(e){
-    $('.loader').removeClass('hide');
+    //$('.loader').removeClass('hide');
     e.stopPropagation();
     e.preventDefault();
-    console.log($(this).serialize())
-    // $.ajax({
-    //     url: '/auth/register',
-    //     method: 'post',
-    //     data: $(this).serialize(),
-    //     success: function(res){
-    //         $('.loader').addClass('hide');
-    //         var response = JSON.parse(res);
-    //         if(response.status == 'failed'){
-    //             $.toast({
-    //                 heading: 'Error',
-    //                 text: response.msg,
-    //                 showHideTransition: 'fade',
-    //                 icon: 'error',
-    //                 position: 'top-right'
-    //             })
-    //         }else{
-    //             $.toast({
-    //                 heading: 'Success',
-    //                 text: response.msg,
-    //                 showHideTransition: 'slide',
-    //                 icon: 'success',
-    //                 position: 'top-right'
-    //             })
-    //             setTimeout(function(){
-    //                 $('.user-table tbody').empty();
-    //                 getUsers();
-    //             }, 3500);
-    //         }
-    //     }
-    // });
+    console.log($('select[name="shop[]"]').val())
+
+    $.ajax({
+        url: '/auth/register',
+        method: 'post',
+        data: $(this).serialize(),
+        success: function(res){
+            $('.loader').addClass('hide');
+            var response = JSON.parse(res);
+            console.log(res);
+            // if(response.status == 'failed'){
+            //     $.toast({
+            //         heading: 'Error',
+            //         text: response.msg,
+            //         showHideTransition: 'fade',
+            //         icon: 'error',
+            //         position: 'top-right'
+            //     })
+            // }else{
+            //     $.toast({
+            //         heading: 'Success',
+            //         text: response.msg,
+            //         showHideTransition: 'slide',
+            //         icon: 'success',
+            //         position: 'top-right'
+            //     })
+            //     setTimeout(function(){
+            //         $('.user-table tbody').empty();
+            //         getUsers();
+            //     }, 3500);
+            // }
+        }
+    });
 })
 
 // Delete confirm modal

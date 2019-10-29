@@ -100,6 +100,16 @@ div.shop-name{
 td{
     font-weight: 700;
 }
+select{
+    width: 223px !important;
+}
+.multishop-btn{
+    color: #999;
+    margin-right: 15px;
+    height: 40px;
+    text-align: left;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
 @media(max-width: 575px){
     .brand-text strong{
         font-size: 15px !important;
@@ -155,7 +165,13 @@ td{
     .d-mobile{
         display: block !important;
     }
-    #new_user .form-group, #new_user .form-group input{
+    #new_user .form-group, #new_user .form-group select, #new_user .form-group span{
         width: 100%;
+    }
+    select{
+        width: 100% !important;
+    }
+    .page-dashboard{
+        top: 130px;
     }
 }
