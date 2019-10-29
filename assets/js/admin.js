@@ -16,7 +16,7 @@ let getUsers = () => {
                     if(user.shop_name != '0'){
                         shop = user.shop_name;
                     }
-                     $('.user-table tbody').append('<tr><td>' + user.name + '</td><td>' + user.email + '</td><td>' + user.database + '</td><td>' + shop + '</td><td><button class="edit_user btn btn-primary" style="margin-right: 10px">Edit</button><button data-toggle="modal" data-target="#confirm-delete" user_id="' + user.id + '" class="delete_user btn btn-primary">Delete</button></td></tr>');
+                     $('.user-table tbody').append('<tr><td>' + user.name + '</td><td>' + user.email + '</td><td>' + user.database + '</td><td>' + shop + '</td><td><button class="edit_user btn btn-primary" style="margin-right: 10px" user_id="' + user.id + '" data-toggle="modal" data-target="#edit-user">Edit</button><button data-toggle="modal" data-target="#confirm-delete" user_id="' + user.id + '" class="delete_user btn btn-primary">Delete</button></td></tr>');
                 }
             }else{
                 $.toast({

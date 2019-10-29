@@ -161,6 +161,33 @@
             </div>
         </div>
     </div>
+    <div id="edit-user" class="edit-user-modal modal fade" tabindex="-1" role="dialog" aria-labelledby="Confirm Modal" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form id="edit_user" class="form-inline container-fluid d-flex align-items-center justify-content-center">
+                        <div class="form-group">
+                            <input name="name" type="text" placeholder="User name" class="mr-sm-3 form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <input name="email" type="email" placeholder="Email address" class="mr-sm-3 form-control form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <select name="shop" type="text" placeholder="Shop name" class="mr-sm-3 form-control form-control">
+                                <option selected value="null"><?php echo lang('lb_select_shop');?></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <input name="password" type="password" placeholder="Password" class="mr-sm-3 form-control form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Edit user" class="btn btn-primary">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- JavaScript files-->
     <script src="<?php echo base_url(); ?>assets/vendor/jquery/jquery.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/vendor/jquery/moment.min.js"></script>
