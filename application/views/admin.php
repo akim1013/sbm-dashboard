@@ -20,6 +20,7 @@
     <!-- theme stylesheet-->
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/style.default.css" id="theme-stylesheet">
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/jquery.toast.min.css">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/multiselect.css">
     <!-- Custom stylesheet - for your changes-->
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/custom.css">
     <!-- Favicon-->
@@ -111,7 +112,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <select name="shop" type="text" placeholder="Shop name" class="mr-sm-3 form-control form-control">
+                            <select id="shop_select" name="shop" type="text" placeholder="Shop name" class="mr-sm-3 form-control form-control" multiple="multiple">
                                 <option selected value="null"><?php echo lang('lb_select_shop');?></option>
                             </select>
                         </div>
@@ -194,10 +195,10 @@
     <script src="<?php echo base_url(); ?>assets/vendor/popper.js/umd/popper.min.js">
     </script>
     <script src="<?php echo base_url(); ?>assets/vendor/bootstrap/js/bootstrap.min.js"></script>
-    <script src="<?php echo base_url(); ?>assets/vendor/jquery.cookie/jquery.cookie.js">
-    </script>
+    <script src="<?php echo base_url(); ?>assets/vendor/jquery.cookie/jquery.cookie.js"></script>
     <script src="<?php echo base_url(); ?>assets/vendor/jquery-validation/jquery.validate.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/js/jquery.toast.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/js/multiselect.js"></script>
     <script src="<?php echo base_url(); ?>assets/js/front.js"></script>
     <script src="<?php echo base_url(); ?>assets/js/admin.js"></script>
 </body>

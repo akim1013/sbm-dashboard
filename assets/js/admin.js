@@ -74,6 +74,7 @@ let getShop = (db) => {
                 for(let item of response.data){
                     $('select[name="shop"]').append('<option value="' + item.description + '">' + item.description + '</option>');
                 }
+                $('select[name="shop"]').multiselect();
             }else{
                 $.toast({
                     heading: response.status,
@@ -166,6 +167,7 @@ $('.user-table tbody').delegate('.delete_user', 'click', function(){
 
 // Init page
 $(document).ready(function(){
+    $('select[name="shop"]').multiselect();
     getUsers();
     getDB();
 })
