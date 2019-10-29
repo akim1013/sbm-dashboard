@@ -165,7 +165,7 @@ select{
     .d-mobile{
         display: block !important;
     }
-    #new_user .form-group, #new_user .form-group select, #new_user .form-group span{
+    #new_user .form-group, #new_user .form-group select, #new_user .form-group button, #new_user .form-group span, #new_user .form-group input[type="submit"]{
         width: 100%;
     }
     select{
@@ -173,5 +173,11 @@ select{
     }
     .page-dashboard{
         top: 130px;
+    }
+    .multishop-btn{
+        margin-right: 0px;
+    }
+    .multishop-btn span{
+        width: 90% !important;
     }
 }

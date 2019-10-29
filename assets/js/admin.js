@@ -66,7 +66,7 @@ let getDB = () => {
 // Get shop lists of a database
 let getShop = (db) => {
     $('.loader').removeClass('hide');
-    $('.shop_multiselect').remove();
+    $('#shop_multiselect').empty();
     $.ajax({
         url: '/auth/shop',
         method: 'post',
@@ -81,11 +81,11 @@ let getShop = (db) => {
                 }
                 $('#shop_multiselect').append(select);
                 select.multiselect({
-                    buttonWidth: '223px',
+                    buttonWidth: window.width > 512 ? '223px' : '100%',
                     buttonClass: 'multishop-btn',
                     includeSelectAllOption: true,
                     maxHeight: 200,
-                    numberDisplayed: 2
+                    numberDisplayed: 1
                 });
             }else{
                 $.toast({
@@ -114,28 +114,27 @@ $('#new_user').submit(function(e){
         success: function(res){
             $('.loader').addClass('hide');
             var response = JSON.parse(res);
-            console.log(res);
-            // if(response.status == 'failed'){
-            //     $.toast({
-            //         heading: 'Error',
-            //         text: response.msg,
-            //         showHideTransition: 'fade',
-            //         icon: 'error',
-            //         position: 'top-right'
-            //     })
-            // }else{
-            //     $.toast({
-            //         heading: 'Success',
-            //         text: response.msg,
-            //         showHideTransition: 'slide',
-            //         icon: 'success',
-            //         position: 'top-right'
-            //     })
-            //     setTimeout(function(){
-            //         $('.user-table tbody').empty();
-            //         getUsers();
-            //     }, 3500);
-            // }
+            if(response.status == 'failed'){
+                $.toast({
+                    heading: 'Error',
+                    text: response.msg,
+                    showHideTransition: 'fade',
+                    icon: 'error',
+                    position: 'top-right'
+                })
+            }else{
+                $.toast({
+                    heading: 'Success',
+                    text: response.msg,
+                    showHideTransition: 'slide',
+                    icon: 'success',
+                    position: 'top-right'
+                })
+                setTimeout(function(){
+                    $('.user-table tbody').empty();
+                    getUsers();
+                }, 3500);
+            }
         }
     });
 })

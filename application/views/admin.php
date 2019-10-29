@@ -115,7 +115,7 @@
                             </select>
                         </div>
                         <div class="form-group" id="shop_multiselect">
-                            
+
                         </div>
                         <div class="form-group">
                             <input type="submit" value="Add new user" class="btn btn-primary">
@@ -125,7 +125,7 @@
                 <div class="block margin-bottom-sm">
                     <div class="h5 margin-bottom text-center">User lists</div>
                     <div class="table-responsive container-fluid d-flex align-items-center justify-content-center">
-                        <table class="table user-table table-sm text-center">
+                        <table class="table user-table text-center">
                             <thead>
                                 <tr>
                                     <th width="25%"><?php echo lang('lb_name');?></th>
