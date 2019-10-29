@@ -16,7 +16,12 @@ let getUsers = () => {
                     if(user.shop_name != '0'){
                         shop = user.shop_name;
                     }
-                     $('.user-table tbody').append('<tr><td>' + user.name + '</td><td>' + user.email + '</td><td>' + user.database + '</td><td>' + shop + '</td><td><button class="edit_user btn btn-primary" style="margin-right: 10px" user_id="' + user.id + '" data-toggle="modal" data-target="#edit-user">Edit</button><button data-toggle="modal" data-target="#confirm-delete" user_id="' + user.id + '" class="delete_user btn btn-primary">Delete</button></td></tr>');
+                     $('.user-table tbody').append(
+                         '<tr><td>' + user.name +
+                         '</td><td>' + user.database +
+                         '</td><td>' + '2 shops' +
+                         '</td><td><span class="edit_user" style="margin-right: 10px" user_id="' + user.id + '" data-toggle="modal" data-target="#edit-user"><i class="fa fa-edit"></i></span><span data-toggle="modal" data-target="#confirm-delete" user_id="' + user.id + '" class="delete_user"><i class="fa fa-remove"></i></span></td></tr>'
+                     );
                 }
             }else{
                 $.toast({
@@ -67,14 +72,17 @@ let getShop = (db) => {
         data: {db: db},
         success: function(res){
             $('.loader').addClass('hide');
-            $('select[name="shop"]').empty();
+            $('#shop_select').empty();
             let response = JSON.parse(res);
             if(response.status == 'success'){
-                $('select[name="shop"]').append('<option value="0">All shops</option>');
+                $('#shop_select').append('<option value="0">All shops</option>');
                 for(let item of response.data){
-                    $('select[name="shop"]').append('<option value="' + item.description + '">' + item.description + '</option>');
+                    $('#shop_select').append('<option value="' + item.description + '">' + item.description + '</option>');
                 }
-                $('select[name="shop"]').multiselect();
+                $('#shop_select').multiselect({
+                    includeSelectAllOption: true,
+                    enableFiltering: true
+                });
             }else{
                 $.toast({
                     heading: response.status,
@@ -93,36 +101,37 @@ $('#new_user').submit(function(e){
     $('.loader').removeClass('hide');
     e.stopPropagation();
     e.preventDefault();
-    $.ajax({
-        url: '/auth/register',
-        method: 'post',
-        data: $(this).serialize(),
-        success: function(res){
-            $('.loader').addClass('hide');
-            var response = JSON.parse(res);
-            if(response.status == 'failed'){
-                $.toast({
-                    heading: 'Error',
-                    text: response.msg,
-                    showHideTransition: 'fade',
-                    icon: 'error',
-                    position: 'top-right'
-                })
-            }else{
-                $.toast({
-                    heading: 'Success',
-                    text: response.msg,
-                    showHideTransition: 'slide',
-                    icon: 'success',
-                    position: 'top-right'
-                })
-                setTimeout(function(){
-                    $('.user-table tbody').empty();
-                    getUsers();
-                }, 3500);
-            }
-        }
-    });
+    console.log($(this).serialize())
+    // $.ajax({
+    //     url: '/auth/register',
+    //     method: 'post',
+    //     data: $(this).serialize(),
+    //     success: function(res){
+    //         $('.loader').addClass('hide');
+    //         var response = JSON.parse(res);
+    //         if(response.status == 'failed'){
+    //             $.toast({
+    //                 heading: 'Error',
+    //                 text: response.msg,
+    //                 showHideTransition: 'fade',
+    //                 icon: 'error',
+    //                 position: 'top-right'
+    //             })
+    //         }else{
+    //             $.toast({
+    //                 heading: 'Success',
+    //                 text: response.msg,
+    //                 showHideTransition: 'slide',
+    //                 icon: 'success',
+    //                 position: 'top-right'
+    //             })
+    //             setTimeout(function(){
+    //                 $('.user-table tbody').empty();
+    //                 getUsers();
+    //             }, 3500);
+    //         }
+    //     }
+    // });
 })
 
 // Delete confirm modal
@@ -167,7 +176,10 @@ $('.user-table tbody').delegate('.delete_user', 'click', function(){
 
 // Init page
 $(document).ready(function(){
-    $('select[name="shop"]').multiselect();
+    $('#shop_select').multiselect({
+        includeSelectAllOption: true,
+        enableFiltering: true
+    });
     getUsers();
     getDB();
 })

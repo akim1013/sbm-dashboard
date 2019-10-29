@@ -155,4 +155,7 @@ td{
     .d-mobile{
         display: block !important;
     }
+    #new_user .form-group, #new_user .form-group input{
+        width: 100%;
+    }
 }

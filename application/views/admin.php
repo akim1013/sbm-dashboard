@@ -99,7 +99,7 @@
             </div>
             <div class="page-dashboard">
                 <div class="block margin-bottom-sm">
-                    <form id="new_user" class="form-inline container-fluid d-flex align-items-center justify-content-center">
+                    <form id="new_user" class="form-inline container-fluid d-flex align-items-center justify-content-left">
                         <div class="form-group">
                             <input name="name" type="text" placeholder="User name" class="mr-sm-3 form-control" required>
                         </div>
@@ -107,17 +107,15 @@
                             <input name="email" type="email" placeholder="Email address" class="mr-sm-3 form-control form-control" required>
                         </div>
                         <div class="form-group">
+                            <input name="password" type="password" placeholder="Password" class="mr-sm-3 form-control form-control" required>
+                        </div>
+                        <div class="form-group">
                             <select name="database" type="text" placeholder="Database name" class="mr-sm-3 form-control form-control">
                                 <option selected value="null"><?php echo lang('lb_select_database');?></option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <select id="shop_select" name="shop" type="text" placeholder="Shop name" class="mr-sm-3 form-control form-control" multiple="multiple">
-                                <option selected value="null"><?php echo lang('lb_select_shop');?></option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <input name="password" type="password" placeholder="Password" class="mr-sm-3 form-control form-control" required>
+                        <div class="form-group" id="shop_multiselect">
+
                         </div>
                         <div class="form-group">
                             <input type="submit" value="Add new user" class="btn btn-primary">
@@ -126,14 +124,13 @@
                 </div>
                 <div class="block margin-bottom-sm">
                     <div class="table-responsive container-fluid d-flex align-items-center justify-content-center">
-                        <table class="table user-table">
+                        <table class="table user-table table-sm">
                             <thead>
                                 <tr>
-                                    <th><?php echo lang('lb_name');?></th>
-                                    <th><?php echo lang('lb_email');?></th>
-                                    <th><?php echo lang('lb_database');?></th>
-                                    <th><?php echo lang('lb_shop');?></th>
-                                    <th><?php echo lang('lb_action');?></th>
+                                    <th width="25%"><?php echo lang('lb_name');?></th>
+                                    <th width="25%"><?php echo lang('lb_database');?></th>
+                                    <th width="25%"><?php echo lang('lb_shop');?></th>
+                                    <th width="25%"><?php echo lang('lb_action');?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -174,7 +171,7 @@
                             <input name="email" type="email" placeholder="Email address" class="mr-sm-3 form-control form-control" required>
                         </div>
                         <div class="form-group">
-                            <select name="shop" type="text" placeholder="Shop name" class="mr-sm-3 form-control form-control">
+                            <select name="multiselect[]" type="text" placeholder="Shop name" class="mr-sm-3 form-control form-control shop_select">
                                 <option selected value="null"><?php echo lang('lb_select_shop');?></option>
                             </select>
                         </div>
