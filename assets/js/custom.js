@@ -29,7 +29,7 @@ $('#login-form').submit(function(e){
                     if(response.shop_name != 'admin'){
                         localStorage.setItem('shop_name', response.shop_name);
                     }
-                    window.location.assign('/');
+                    window.location.reload();
                 }, 3000);
             }
         }

@@ -165,7 +165,7 @@ $('.logout').click(function(e){
         method: 'post',
         success: function(res){
             $('.loader').addClass('hide');
-            window.location.assign('/');
+            window.location.reload();
         }
     });
 })
