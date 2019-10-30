@@ -128,10 +128,10 @@
                         <table class="table user-table text-center">
                             <thead>
                                 <tr>
-                                    <th width="25%"><?php echo lang('lb_name');?></th>
-                                    <th width="25%"><?php echo lang('lb_database');?></th>
-                                    <th width="25%"><?php echo lang('lb_shop');?></th>
-                                    <th width="25%"><?php echo lang('lb_action');?></th>
+                                    <th width="15%"><?php echo lang('lb_name');?></th>
+                                    <th width="15%"><?php echo lang('lb_database');?></th>
+                                    <th width="55%"><?php echo lang('lb_shop');?></th>
+                                    <th width="15%"><?php echo lang('lb_action');?></th>
                                 </tr>
                             </thead>
                             <tbody>

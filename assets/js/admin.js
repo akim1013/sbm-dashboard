@@ -14,13 +14,13 @@ let getUsers = () => {
                 for(let user of users){
                     shop = 'All';
                     if(user.shop_name.indexOf('"') > 0){
-                        shop = JSON.parse(user.shop_name);
+                        shop = JSON.parse(user.shop_name).toString();
                         console.log(shop)
                     }
                      $('.user-table tbody').append(
                          '<tr><td>' + user.name +
                          '</td><td>' + user.database +
-                         '</td><td>' + '2 shops' +
+                         '</td><td>' + shop +
                          '</td><td><span class="edit_user" style="margin-right: 10px" user_id="' + user.id + '" data-toggle="modal" data-target="#edit-user"><i class="fa fa-edit"></i></span><span data-toggle="modal" data-target="#confirm-delete" user_id="' + user.id + '" class="delete_user"><i class="fa fa-remove"></i></span></td></tr>'
                      );
                 }
@@ -82,7 +82,7 @@ let getShop = (db) => {
                 }
                 $('#shop_multiselect').append(select);
                 select.multiselect({
-                    buttonWidth: window.width > 512 ? '223px' : '100%',
+                    buttonWidth: (window.width > 512) ? '223px' : '100%',
                     buttonClass: 'multishop-btn',
                     includeSelectAllOption: true,
                     maxHeight: 200,
