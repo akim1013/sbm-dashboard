@@ -111,6 +111,12 @@ select{
     border: 1px solid rgba(255, 255, 255, 0.15);
     min-width: 223px;
 }
+#edit_user .shop_multiselect>span{
+    width: 100%;
+}
+#edit_user .shop_multiselect .multishop-btn{
+    margin-right: 0px;
+}
 @media(max-width: 575px){
     .brand-text strong{
         font-size: 15px !important;

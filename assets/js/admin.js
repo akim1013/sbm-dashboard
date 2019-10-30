@@ -1,21 +1,61 @@
 // User id used to delete user
 let userId = -1;
-
+let api_path = '/';
+let all_data = [];
 // Get user lists on admin side
+let user_array = [];
+let edit_user = (id) => {
+    let user = user_array.filter(item => item.id == id)[0];
+    $('.shop_multiselect').empty();
+    $.ajax({
+        url: api_path + 'auth/shop',
+        method: 'post',
+        data: {db: user.database},
+        success: function(res){
+            let response = JSON.parse(res);
+            if(response.status == 'success'){
+                let select = $('<select name="shop[]" class="mr-sm-3 form-control form-control shop_multiselect" multiple="multiple"></select>');
+                for(let item of response.data){
+                    let option = '';
+                    for(let _item of JSON.parse(user.shop_name)){
+                        if(item.description == _item){
+                            option = '<option value="' + item.description + '" selected>' + item.description + '</option>';
+                            break;
+                        }
+                        option = '<option value="' + item.description + '">' + item.description + '</option>';
+                    }
+                    select.append(option);
+                }
+                $('.shop_multiselect').append(select);
+                select.multiselect({
+                    buttonWidth: (window.width > 512) ? '223px' : '100%',
+                    buttonClass: 'multishop-btn',
+                    includeSelectAllOption: true,
+                    maxHeight: 200,
+                    numberDisplayed: 1
+                });
+            }
+        }
+    });
+
+
+
+}
 let getUsers = () => {
     $.ajax({
-        url: '/auth/users',
+        url: api_path + 'auth/users',
         method: 'post',
         success: function(res){
             let response = JSON.parse(res);
             if(response.status == 'success'){
                 let shop = 'All';
                 let users = response.data;
+                user_array = [...response.data];
                 for(let user of users){
                     shop = '';
                     if(user.shop_name.indexOf('"') > 0){
                         if(JSON.parse(user.shop_name).length > 1){
-                            shop = JSON.parse(user.shop_name).length.toString() + ' shops selected';
+                            shop = JSON.parse(user.shop_name).length.toString() + ' shops';
                         }else{
                             shop = JSON.parse(user.shop_name).toString();
                         }
@@ -24,7 +64,7 @@ let getUsers = () => {
                          '<tr><td>' + user.name +
                          '</td><td>' + user.database +
                          '</td><td>' + shop +
-                         '</td><td><span class="edit_user" style="margin-right: 10px" user_id="' + user.id + '" data-toggle="modal" data-target="#edit-user"><i class="fa fa-edit"></i></span><span data-toggle="modal" data-target="#confirm-delete" user_id="' + user.id + '" class="delete_user"><i class="fa fa-remove"></i></span></td></tr>'
+                         '</td><td><span onclick="edit_user(' + user.id + ')" class="edit_user" style="margin-right: 10px" user_id="' + user.id + '" data-toggle="modal" data-target="#edit-user"><i class="fa fa-edit"></i></span><span data-toggle="modal" data-target="#confirm-delete" user_id="' + user.id + '" class="delete_user"><i class="fa fa-remove"></i></span></td></tr>'
                      );
                 }
             }else{
@@ -44,7 +84,7 @@ let getUsers = () => {
 let getDB = () => {
     $('.loader').removeClass('hide');
     $.ajax({
-        url: '/auth/db',
+        url: api_path + 'auth/db',
         method: 'post',
         success: function(res){
             $('.loader').addClass('hide');
@@ -72,7 +112,7 @@ let getShop = (db) => {
     $('.loader').removeClass('hide');
     $('#shop_multiselect').empty();
     $.ajax({
-        url: '/auth/shop',
+        url: api_path + 'auth/shop',
         method: 'post',
         data: {db: db},
         success: function(res){
@@ -110,7 +150,7 @@ $('#new_user').submit(function(e){
     e.stopPropagation();
     e.preventDefault();
     $.ajax({
-        url: '/auth/register',
+        url: api_path + 'auth/register',
         method: 'post',
         data: $(this).serialize(),
         success: function(res){
@@ -143,7 +183,7 @@ $('#new_user').submit(function(e){
 // Delete confirm modal
 $('.confirm-delete').click(function(){
     $.ajax({
-        url: '/auth/delete',
+        url: api_path + 'auth/delete',
         method: 'post',
         data: {
             id: userId
@@ -161,7 +201,7 @@ $('.logout').click(function(e){
     e.stopPropagation();
     e.preventDefault();
     $.ajax({
-        url: '/auth/logout',
+        url: api_path + 'auth/logout',
         method: 'post',
         success: function(res){
             $('.loader').addClass('hide');

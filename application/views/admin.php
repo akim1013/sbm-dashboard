@@ -164,23 +164,14 @@
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-body">
-                    <form id="edit_user" class="form-inline container-fluid d-flex align-items-center justify-content-center">
+                    <form id="edit_user">
                         <div class="form-group">
                             <input name="name" type="text" placeholder="User name" class="mr-sm-3 form-control" required>
                         </div>
-                        <div class="form-group">
-                            <input name="email" type="email" placeholder="Email address" class="mr-sm-3 form-control form-control" required>
+                        <div class="form-group shop_multiselect" style="height: 40px;">
                         </div>
                         <div class="form-group">
-                            <select name="multiselect[]" type="text" placeholder="Shop name" class="mr-sm-3 form-control form-control shop_select">
-                                <option selected value="null"><?php echo lang('lb_select_shop');?></option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <input name="password" type="password" placeholder="Password" class="mr-sm-3 form-control form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="submit" value="Edit user" class="btn btn-primary">
+                            <input type="submit" value="Update user" class="btn btn-primary" style="width: 100%;">
                         </div>
                     </form>
                 </div>
