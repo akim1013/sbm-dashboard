@@ -26,9 +26,11 @@ $('#login-form').submit(function(e){
                     position: 'top-right'
                 })
                 setTimeout(function(){
-                    localStorage.setItem('shop_name', response.shop_name);
+                    if(response.shop_name != 'admin'){
+                        localStorage.setItem('shop_name', response.shop_name);
+                    }
                     window.location.assign('/');
-                }, 3500);
+                }, 3000);
             }
         }
     });

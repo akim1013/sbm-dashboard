@@ -41,7 +41,7 @@ class Home extends MY_Controller {
 			"start" => $this->input->post('start'),
 			"end"	=> $this->input->post('end')
 		);
-		$shop_name = $this->input->post('shop_name');
+		$shop_name = str_replace(array('"'), '\'', str_replace(array('[',']'), '', $this->input->post('shop_name')));
 		$ret = array(
 			"shops" 		=> $this->dashboard_model->get_shop_list($conn, $shop_name),
 			"sale" 			=> $this->dashboard_model->get_sale($conn, $date, $shop_name),
@@ -65,7 +65,7 @@ class Home extends MY_Controller {
 			"end"	=> $this->input->post('end')
 		);
 
-		$shop_name = $this->input->post('shop_name');
+		$shop_name = str_replace(array('"'), '\'', str_replace(array('[',']'), '', $this->input->post('shop_name')));
 
 		$ret = array(
 			"daily_sale" 		=> $this->dashboard_model->get_daily_sale($conn, $date, $shop_name),
@@ -86,7 +86,7 @@ class Home extends MY_Controller {
 			"end"	=> $this->input->post('end')
 		);
 
-		$shop_name = $this->input->post('shop_name');
+		$shop_name = str_replace(array('"'), '\'', str_replace(array('[',']'), '', $this->input->post('shop_name')));
 		$ret = array(
 			"sale_detail" => $this->dashboard_model->get_sale_detail($conn, $date, $shop_name)
 		);
@@ -105,7 +105,7 @@ class Home extends MY_Controller {
 			"end"	=> $this->input->post('end')
 		);
 
-		$shop_name = $this->input->post('shop_name');
+		$shop_name = str_replace(array('"'), '\'', str_replace(array('[',']'), '', $this->input->post('shop_name')));
 		$ret = array(
 			"transaction_detail" => $this->dashboard_model->get_transaction_detail($conn, $date, $shop_name)
 		);
@@ -124,7 +124,7 @@ class Home extends MY_Controller {
 			"end"	=> $this->input->post('end')
 		);
 
-		$shop_name = $this->input->post('shop_name');
+		$shop_name = str_replace(array('"'), '\'', str_replace(array('[',']'), '', $this->input->post('shop_name')));
 		$ret = array(
 			"payment_detail" => $this->dashboard_model->get_payment_detail($conn, $date, $shop_name)
 		);
@@ -143,7 +143,7 @@ class Home extends MY_Controller {
 			"start" => $this->input->post('start'),
 			"end"	=> $this->input->post('end')
 		);
-		$shop_name = $this->input->post('shop_name');
+		$shop_name = str_replace(array('"'), '\'', str_replace(array('[',']'), '', $this->input->post('shop_name')));
 		$ret = array(
 			"daily_turnover" => $this->dashboard_model->get_daily_turnover($conn, $date, $shop_name)
 		);
@@ -160,7 +160,8 @@ class Home extends MY_Controller {
 			"start" => $this->input->post('start'),
 			"end"	=> $this->input->post('end')
 		);
-		$shop_name = $this->input->post('shop_name');
+		$shop_name = str_replace(array('"'), '\'', str_replace(array('[',']'), '', $this->input->post('shop_name')));
+
 		$ret = array(
 			"weekly_turnover" => $this->dashboard_model->get_weekly_turnover($conn, $date, $shop_name)
 		);
@@ -177,7 +178,7 @@ class Home extends MY_Controller {
 			"start" => $this->input->post('start'),
 			"end"	=> $this->input->post('end')
 		);
-		$shop_name = $this->input->post('shop_name');
+		$shop_name = str_replace(array('"'), '\'', str_replace(array('[',']'), '', $this->input->post('shop_name')));
 		$ret = array(
 			"monthly_turnover" => $this->dashboard_model->get_monthly_turnover($conn, $date, $shop_name)
 		);
@@ -195,7 +196,7 @@ class Home extends MY_Controller {
 			"start" => $this->input->post('d_start'),
 			"end"	=> $this->input->post('end')
 		);
-		$shop_name = $this->input->post('shop_name');
+		$shop_name = str_replace(array('"'), '\'', str_replace(array('[',']'), '', $this->input->post('shop_name')));
 		$ret = array(
 			"yearly_turnover" => $this->dashboard_model->get_yearly_turnover($conn, $shop_name)
 		);

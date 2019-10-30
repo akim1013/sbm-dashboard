@@ -766,7 +766,6 @@ $(document).ready(() => {
             success: function(res){
                 get_monthly_turnover();
                 let response = JSON.parse(res);
-                console.log(response);
                 if(response.status == 'success'){
                     $('#turnover_detail').removeClass('hide');
                     let w_data = response.data.weekly_turnover;
@@ -923,7 +922,7 @@ $(document).ready(() => {
                 console.log(response);
                 if(response.status == 'success'){
                     $('#turnover_detail').removeClass('hide');
-                    
+
                 }
             }
         });

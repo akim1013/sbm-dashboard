@@ -14,7 +14,7 @@ class Dashboard_model extends CI_Model{
             SELECT id, description
             FROM shops";
         if($shop_name != 'All'){
-            $sql = $sql . " WHERE description = '" . $shop_name . "'";
+            $sql = $sql . " WHERE description IN (" . $shop_name . ")";
         }
         return $this->run_query($conn, $sql);
     }
@@ -35,7 +35,7 @@ class Dashboard_model extends CI_Model{
                     AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                     ";
             if($shop_name != 'All'){
-                $sql = $sql . " AND s.description = '" . $shop_name . "'";
+                $sql = $sql . " AND s.description IN (" . $shop_name . ")";
             }
                 $sql = $sql . "
             GROUP BY t.shop_id
@@ -52,7 +52,7 @@ class Dashboard_model extends CI_Model{
                     AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                     ";
             if($shop_name != 'All'){
-                $sql = $sql . " AND s.description = '" . $shop_name . "'";
+                $sql = $sql . " AND s.description IN (" . $shop_name . ")";
             }
                 $sql = $sql . "
             GROUP BY t.shop_id
@@ -72,7 +72,7 @@ class Dashboard_model extends CI_Model{
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                 ";
         if($shop_name != 'All'){
-            $sql = $sql . " AND s.description = '" . $shop_name . "'";
+            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
         }
             $sql = $sql . "
             GROUP BY t.shop_id
@@ -92,7 +92,7 @@ class Dashboard_model extends CI_Model{
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                 ";
         if($shop_name != 'All'){
-            $sql = $sql . " AND s.description = '" . $shop_name . "'";
+            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
         }
             $sql = $sql . "
             GROUP BY t.shop_id
@@ -117,7 +117,7 @@ class Dashboard_model extends CI_Model{
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                 ";
         if($shop_name != 'All'){
-            $sql = $sql . " AND s.description = '" . $shop_name . "'";
+            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
         }
             $sql = $sql . "
             GROUP BY t.shop_id
@@ -142,7 +142,7 @@ class Dashboard_model extends CI_Model{
                     AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                     ";
             if($shop_name != 'All'){
-                $sql = $sql . " AND s.description = '" . $shop_name . "'";
+                $sql = $sql . " AND s.description IN (" . $shop_name . ")";
             }
                 $sql = $sql . "
             GROUP BY t.bookkeeping_date, t.shop_id
@@ -162,7 +162,7 @@ class Dashboard_model extends CI_Model{
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                 ";
         if($shop_name != 'All'){
-            $sql = $sql . " AND s.description = '" . $shop_name . "'";
+            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
         }
             $sql = $sql . "
             GROUP BY t.bookkeeping_date, t.shop_id
@@ -187,7 +187,7 @@ class Dashboard_model extends CI_Model{
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                 ";
         if($shop_name != 'All'){
-            $sql = $sql . " AND s.description = '" . $shop_name . "'";
+            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
         }
         $sql = $sql . "
             GROUP BY g.description
@@ -204,7 +204,7 @@ class Dashboard_model extends CI_Model{
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                 ";
         if($shop_name != 'All'){
-            $sql = $sql . " AND s.description = '" . $shop_name . "'";
+            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
         }
         $sql = $sql . "
             GROUP BY DATEPART(hour, t.trans_date)
@@ -223,7 +223,7 @@ class Dashboard_model extends CI_Model{
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                 ";
         if($shop_name != 'All'){
-            $sql = $sql . " AND s.description = '" . $shop_name . "'";
+            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
         }
         return $this->run_query($conn, $sql);
     }
@@ -238,7 +238,7 @@ class Dashboard_model extends CI_Model{
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                 ";
         if($shop_name != 'All'){
-            $sql = $sql . " AND s.description = '" . $shop_name . "'";
+            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
         }
         $sql = $sql . "
             GROUP BY p.description
@@ -261,7 +261,7 @@ class Dashboard_model extends CI_Model{
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
             ";
         if($shop_name != 'All'){
-            $sql = $sql . " AND s.description = '" . $shop_name . "'";
+            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
         }
         $sql = $sql . "
             GROUP BY DATEPART(DY, t.bookkeeping_date)
@@ -284,7 +284,7 @@ class Dashboard_model extends CI_Model{
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
             ";
         if($shop_name != 'All'){
-            $sql = $sql . " AND s.description = '" . $shop_name . "'";
+            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
         }
         $sql = $sql . "
             GROUP BY DATEPART(week, t.bookkeeping_date)
@@ -307,7 +307,7 @@ class Dashboard_model extends CI_Model{
             AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
             ";
         if($shop_name != 'All'){
-            $sql = $sql . " AND s.description = '" . $shop_name . "'";
+            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
         }
         $sql = $sql . "
             GROUP BY DATEPART(month, t.bookkeeping_date)
@@ -330,7 +330,7 @@ class Dashboard_model extends CI_Model{
             WHERE t.delete_operator_id IS NULL
             ";
         if($shop_name != 'All'){
-            $sql = $sql . " AND s.description = '" . $shop_name . "'";
+            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
         }
         $sql = $sql . "
             GROUP BY DATEPART(year, t.bookkeeping_date)

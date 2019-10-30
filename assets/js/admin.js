@@ -12,10 +12,13 @@ let getUsers = () => {
                 let shop = 'All';
                 let users = response.data;
                 for(let user of users){
-                    shop = 'All';
+                    shop = '';
                     if(user.shop_name.indexOf('"') > 0){
-                        shop = JSON.parse(user.shop_name).toString();
-                        console.log(shop)
+                        if(JSON.parse(user.shop_name).length > 1){
+                            shop = JSON.parse(user.shop_name).length.toString() + ' shops selected';
+                        }else{
+                            shop = JSON.parse(user.shop_name).toString();
+                        }
                     }
                      $('.user-table tbody').append(
                          '<tr><td>' + user.name +
@@ -106,8 +109,6 @@ $('#new_user').submit(function(e){
     //$('.loader').removeClass('hide');
     e.stopPropagation();
     e.preventDefault();
-    console.log($('select[name="shop[]"]').val())
-
     $.ajax({
         url: '/auth/register',
         method: 'post',
@@ -132,8 +133,7 @@ $('#new_user').submit(function(e){
                     position: 'top-right'
                 })
                 setTimeout(function(){
-                    $('.user-table tbody').empty();
-                    getUsers();
+                    window.location.reload();
                 }, 3500);
             }
         }

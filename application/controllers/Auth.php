@@ -27,7 +27,8 @@ class Auth extends CI_Controller {
             if($data['name'] == 'admin'){
 				echo json_encode(array(
 	                'status' => 'success',
-	                'msg'    => lang('admin_login_success')
+	                'msg'    => lang('admin_login_success'),
+					'shop_name' => 'admin'
 	            ));
 			}else{
 				echo json_encode(array(
