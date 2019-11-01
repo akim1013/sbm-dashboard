@@ -80,7 +80,7 @@ class Auth extends CI_Controller {
     }
 	public function update(){
 		$data = array(
-			'id'				=> this->input->post('id'),
+			'id'				=> $this->input->post('id'),
             'name'              => $this->input->post('name'),
 			'shop_name'			=> json_encode($this->input->post('shop'))
         );
