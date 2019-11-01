@@ -7,6 +7,7 @@ let user_array = [];
 let edit_user = (id) => {
     let user = user_array.filter(item => item.id == id)[0];
     $('.shop_multiselect').empty();
+    $('.loader').removeClass('hide');
     $.ajax({
         url: api_path + 'auth/shop',
         method: 'post',
@@ -14,6 +15,7 @@ let edit_user = (id) => {
         success: function(res){
             let response = JSON.parse(res);
             if(response.status == 'success'){
+                $('.loader').addClass('hide');
                 let select = $('<select name="shop[]" class="mr-sm-3 form-control form-control shop_multiselect" multiple="multiple"></select>');
                 for(let item of response.data){
                     let option = '';
@@ -26,6 +28,8 @@ let edit_user = (id) => {
                     }
                     select.append(option);
                 }
+                $('#edit_user input[name="name"]').val(user.name);
+                $('input[name="user_id"]').val(id);
                 $('.shop_multiselect').append(select);
                 select.multiselect({
                     buttonWidth: (window.width > 512) ? '223px' : '100%',
@@ -37,9 +41,6 @@ let edit_user = (id) => {
             }
         }
     });
-
-
-
 }
 let getUsers = () => {
     $.ajax({
@@ -219,7 +220,24 @@ $('select[name="database"]').change(function(){
 $('.user-table tbody').delegate('.delete_user', 'click', function(){
     userId = $(this)[0].getAttribute('user_id');
 })
-
+$('#edit-user').submit(function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    let data = {
+        id: $('input[name="user_id"]').val(),
+        name: $('#edit-user input[name="name"]').val(),
+        shop: $('#edit-user select').val()
+    }
+    
+    $.ajax({
+        url: api_path + 'auth/update',
+        method: 'post',
+        data: data,
+        success: function(res){
+            console.log(res);
+        }
+    });
+})
 // Init page
 $(document).ready(function(){
     $('#shop_select').multiselect({

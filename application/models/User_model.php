@@ -11,6 +11,17 @@
                 return -1; // Database error
             }
         }
+        public function update($data){
+            $this->db->set('name', $data['name']);
+            $this->db->set('shop_name', $data['shop_name']);
+            $this->db->where('id', $data['id']);
+            $res = $this->db->update('users');
+            if($res > 0){
+                return 1; // User created successfully
+            }else{
+                return -1; // Database error
+            }
+        }
         public function login($data){
             $this->db->select('*');
             $this->db->where('name', $data['name']);

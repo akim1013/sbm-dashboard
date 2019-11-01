@@ -78,7 +78,27 @@ class Auth extends CI_Controller {
             ));
         }
     }
+	public function update(){
+		$data = array(
+			'id'				=> this->input->post('id'),
+            'name'              => $this->input->post('name'),
+			'shop_name'			=> json_encode($this->input->post('shop'))
+        );
 
+        $res = $this->user_model->update($data);
+
+        if($res == 1){
+            echo json_encode(array(
+                'status' => 'success',
+                'msg'    => 'User updated'
+            ));
+        }else{
+            echo json_encode(array(
+                'status' => 'failed',
+                'msg'    => 'Unknown error'
+            ));
+        }
+	}
 	public function users(){
 		$users = $this->user_model->users();
 		if($users){

@@ -165,6 +165,7 @@
             <div class="modal-content">
                 <div class="modal-body">
                     <form id="edit_user">
+                        <input type="hidden" name="user_id" value="">
                         <div class="form-group">
                             <input name="name" type="text" placeholder="User name" class="mr-sm-3 form-control" required>
                         </div>
