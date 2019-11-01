@@ -228,13 +228,33 @@ $('#edit-user').submit(function(e){
         name: $('#edit-user input[name="name"]').val(),
         shop: $('#edit-user select').val()
     }
-    
+
     $.ajax({
         url: api_path + 'auth/update',
         method: 'post',
         data: data,
         success: function(res){
-            console.log(res);
+            let response = JSON.parse(res);
+            if(response.status == 'failed'){
+                $.toast({
+                    heading: 'Error',
+                    text: response.msg,
+                    showHideTransition: 'fade',
+                    icon: 'error',
+                    position: 'top-right'
+                })
+            }else{
+                $.toast({
+                    heading: 'Success',
+                    text: response.msg,
+                    showHideTransition: 'slide',
+                    icon: 'success',
+                    position: 'top-right'
+                })
+                setTimeout(function(){
+                    window.location.reload();
+                }, 3500);
+            }
         }
     });
 })
