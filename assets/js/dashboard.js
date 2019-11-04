@@ -1221,13 +1221,13 @@ $(document).ready(() => {
                 if((netsale.length != 0) && (transaction_count.length != 0)){
                     show_comparison_charts();
                 }
-                display_flat_data();
+                //display_flat_data();
                 monthly_growth_process(second_ajax.data, 0);
                 $("#comparison_bar").show();
             }else{
                 $('.shop-name').text(_shop_name.toString());
                 localStorage.setItem('_shop_name', find_shop_name(shop_id)); // Temp shop name store for detail view
-                display_flat_data_single();
+                //display_flat_data_single();
                 monthly_growth_process(second_ajax.data, -1);
             }
             //localStorage.setItem('_shop_name', _shop_name);

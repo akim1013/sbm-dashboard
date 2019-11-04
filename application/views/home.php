@@ -254,7 +254,7 @@
                 <section id="comparison_bar" class="no-padding-top no-padding-bottom hide">
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="col-lg-6">
+                            <div class="col-lg-6" style="height: calc(100% - 20px)">
                                 <div class="block">
                                     <div class="title"><strong>Turnover details by shops</strong></div>
                                     <table class="table table-striped table-sm">
