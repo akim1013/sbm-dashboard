@@ -106,6 +106,7 @@ class Home extends MY_Controller {
 		);
 
 		$shop_name = str_replace(array('"'), '\'', str_replace(array('[',']'), '', $this->input->post('shop_name')));
+
 		$ret = array(
 			"transaction_detail" => $this->dashboard_model->get_transaction_detail($conn, $date, $shop_name)
 		);
@@ -114,7 +115,7 @@ class Home extends MY_Controller {
 			'status_code' => 200,
 			'data' => $ret
 		));
-		sqlsrv_close($conn);
+		 sqlsrv_close($conn);
 	}
 	public function payment(){
 		$conn = parent::dbconnect();

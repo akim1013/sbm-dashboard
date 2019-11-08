@@ -3,8 +3,9 @@ let weeks = ['First week', 'Second week', 'Third week', 'Forth week', 'Fifth wee
 let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 $(document).ready(() => {
     let isMobile = false;
-    localStorage.setItem('_shop_name', 'All');
+
     $('.shop-name').text('All shops');
+    let storage_all_shop = '';
     // Date Range Change
     let start = moment().subtract(1, 'days');
     let end = moment().subtract(1, 'days');
@@ -104,6 +105,9 @@ $(document).ready(() => {
         }
     }
     function add_shop_list(shop_lists){
+        storage_all_shop = localStorage.getItem('shop_name');
+        console.log(storage_all_shop);
+        localStorage.setItem('_shop_name', localStorage.getItem('shop_name'));
         $('#all-shops').empty();
         shops   = [];
         _shops  = [];
@@ -1197,52 +1201,53 @@ $(document).ready(() => {
         transaction_comparison_reverse();
     })
     $('#all-shops').delegate('.single-shop', 'click', function(){
+
         hide_detail_charts();
         let shop_id = $(this)[0].getAttribute('shopId');
         if(shop_id != 0){
             $("#comparison_bar").hide();
-            _shop_name = _shop_name.filter((item) => {
-                return item != "All";
-            })
+
             if($(this).hasClass('selected')){
                 $(this).removeClass('selected');
                 _shop_name = _shop_name.filter((item) => {
                     return item != find_shop_name(shop_id);
                 })
             }else{
+                if(_shop_name.length > 2){
+                    // Give a alert that you can select only 3 distinct shops at a time
+                    //_shop_name.push(find_shop_name(shop_id));
+                    _shop_name = [];
+                    $('.single-shop').removeClass('selected');
+                }
                 $(this).addClass('selected');
                 _shop_name.push(find_shop_name(shop_id));
             }
             if(_shop_name.length == 0){
                 $('.single-shop').removeClass('selected');
-                _shop_name = ['All'];
+                _shop_name = JSON.parse(storage_all_shop);
                 $('.shop-name').text('All shops');
-                localStorage.setItem('_shop_name', 'All');
                 if((netsale.length != 0) && (transaction_count.length != 0)){
                     show_comparison_charts();
                 }
-                //display_flat_data();
                 monthly_growth_process(second_ajax.data, 0);
                 $("#comparison_bar").show();
             }else{
                 $('.shop-name').text(_shop_name.toString());
-                localStorage.setItem('_shop_name', find_shop_name(shop_id)); // Temp shop name store for detail view
-                //display_flat_data_single();
                 monthly_growth_process(second_ajax.data, -1);
             }
-            //localStorage.setItem('_shop_name', _shop_name);
-
+            localStorage.setItem('_shop_name', JSON.stringify(_shop_name));
         }else{
             $('.single-shop').removeClass('selected');
-            _shop_name = ['All'];
+            _shop_name = JSON.parse(storage_all_shop);
             $('.shop-name').text('All shops');
-            localStorage.setItem('_shop_name', 'All');
+            localStorage.setItem('_shop_name', JSON.stringify(_shop_name));
             if((netsale.length != 0) && (transaction_count.length != 0)){
                 show_comparison_charts();
             }
             display_flat_data();
             monthly_growth_process(second_ajax.data, 0);
         }
+        console.log(_shop_name)
     })
     $('#refresh').click(function(){
         window.location.reload();
