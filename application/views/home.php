@@ -81,8 +81,10 @@
             <!-- Sidebar Navidation Menus--><span class="heading"><?php echo lang('lb_main');?></span>
             <ul class="list-unstyled">
                 <li class="active">
-                    <a href="#all-shops" aria-expanded="false" data-toggle="collapse"> <i class="icon-chart"></i><?php echo lang('lb_all_shops');?> </a>
-                    <ul id="all-shops" class="collapse list-unstyled "></ul>
+                    <a id="overall_view" href="#"> <i class="icon-chart"></i>Overall view </a>
+                </li>
+                <li>
+                    <a id="detail_comparison" href="#"> <i class="icon-chart"></i>Detail comparison </a>
                 </li>
                 <li>
                     <a id="refresh" style="cursor: pointer;"> <i class="fa fa-refresh"></i><?php echo lang('lb_refresh');?> </a>
@@ -92,6 +94,11 @@
                 </li>
             </ul><span class="heading"><?php echo lang('lb_extras');?></span>
             <ul class="list-unstyled">
+                <li>
+                    <a href="#all-shops" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-scribd"></i><?php echo lang('lb_all_shops');?> </a>
+                    <ul id="all-shops" class="collapse list-unstyled "></ul>
+                </li>
+
                 <li>
                     <a href="#"> <i class="	fa fa-paste"></i><?php echo lang('lb_export');?> </a>
                 </li>
@@ -299,6 +306,38 @@
                                     <div id="monthly_transaction_line" class="_line_chart"></div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div class="page-comparison hide">
+                <section id="comparison_detail" class="no-padding-top no-padding-bottom">
+                    <div class="container-fluid">
+                        <div class="block">
+                            <table class="table table-striped table-sm">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th colspan="3" class="start_date">Jun 04, 2018 ~ Jun 10, 2018</th>
+                                        <th colspan="3" class="end_date">Jun 11, 2018 ~ Jun 17, 2018</th>
+                                        <th colspan="2">Variance</th>
+                                    </tr>
+                                    <tr>
+                                        <th width="15%"></th>
+                                        <th width="10%">Qty</th>
+                                        <th width="10%">Amount</th>
+                                        <th width="10%">% Sales</th>
+                                        <th width="10%">Qty</th>
+                                        <th width="10%">Amount</th>
+                                        <th width="10%">% Sales</th>
+                                        <th width="12.5%">Qty</th>
+                                        <th width="12.5%">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </section>

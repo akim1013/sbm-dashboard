@@ -338,5 +338,119 @@ class Dashboard_model extends CI_Model{
         ";
         return $this->run_query($conn, $sql);
     }
+
+    function detail_comparison_article($conn, $date, $shop_name){
+        $sql = "
+            SELECT g.id group_id, g.description group_name, a.description article_name, COALESCE(sub_result.amount, 0) amount, COALESCE(sub_result.price, 0) price, COALESCE(sub_result_last_week.amount, 0) last_week_amount, COALESCE(sub_result_last_week.price, 0) last_week_price
+            FROM groups g
+            INNER JOIN articles a ON g.id = a.group_a_id
+            LEFT JOIN (SELECT
+                SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as price,
+            	count(ta.price) amount,
+                a.id as article_id
+            FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+            INNER JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id AND tk.in_statistics=1
+            INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+            INNER JOIN articles a ON (a.id = ta.article_id) AND a.article_type Not In(2,3)
+            INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
+            INNER JOIN groups g ON g.id = a.group_a_id
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+            ";
+        if($shop_name != 'All'){
+            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
+        }
+        $sql = $sql . "
+            GROUP BY a.id) sub_result ON a.id = sub_result.article_id
+            LEFT JOIN (SELECT
+            SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as price,
+            count(ta.price) amount,
+            a.id as article_id
+            FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+            INNER JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id AND tk.in_statistics=1
+            INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+            INNER JOIN articles a ON (a.id = ta.article_id) AND a.article_type Not In(2,3)
+            INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
+            INNER JOIN groups g ON g.id = a.group_a_id
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['last_week_start'] . "' AND '" . $date['last_week_end'] . "'
+            ";
+            if($shop_name != 'All'){
+                $sql = $sql . " AND s.description IN (" . $shop_name . ")";
+            }
+            $sql = $sql . "
+            GROUP BY a.id) sub_result_last_week ON sub_result_last_week.article_id = a.id
+            ORDER BY g.id
+            ";
+        return $this->run_query($conn, $sql);
+    }
+    function detail_comparison_discount($conn, $date, $shop_name){
+        $sql = "
+            SELECT d.description discount_description, COALESCE(this_week.quantity, 0) this_week_quantity, COALESCE(this_week.amount, 0) this_week_amount, COALESCE(last_week.quantity, 0) last_week_quantity, COALESCE(last_week.amount, 0) last_week_amount
+            FROM discounts d
+            LEFT JOIN (SELECT d.description discount_description, sum(td.quantity) quantity, sum(td.amount) amount
+            FROM discounts d
+            LEFT JOIN trans_discounts td ON td.discount_id = d.id
+            INNER JOIN transactions t ON t.id = td.transaction_id
+            INNER JOIN shops s ON s.id = t.shop_id
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+            ";
+        if($shop_name != 'All'){
+            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
+        }
+        $sql = $sql . "
+            GROUP BY d.description) this_week ON d.description = this_week.discount_description
+            LEFT JOIN (SELECT d.description discount_description, sum(td.quantity) quantity, sum(td.amount) amount
+            FROM discounts d
+            LEFT JOIN trans_discounts td ON td.discount_id = d.id
+            INNER JOIN transactions t ON t.id = td.transaction_id
+            INNER JOIN shops s ON s.id = t.shop_id
+            WHERE t.delete_operator_id IS NULL
+            AND t.bookkeeping_date BETWEEN '" . $date['last_week_start'] . "' AND '" . $date['last_week_end'] . "'
+        ";
+        if($shop_name != 'All'){
+            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
+        }
+        $sql = $sql . "
+            GROUP BY d.description) last_week ON d.description = last_week.discount_description
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function detail_comparison_payment($conn, $date, $shop_name){
+        $sql = "
+            SELECT p.description, COALESCE(this_week_payment.amount, 0) this_week_amount, COALESCE(this_week_payment.qty, 0) this_week_qty, COALESCE(last_week_payment.amount, 0) last_week_amount, COALESCE(last_week_payment.qty, 0) last_week_qty
+            FROM payments p
+            LEFT JOIN (SELECT p.description payment_detail, sum(COALESCE(tp.amount, 0)) amount, count(tp.transaction_id) qty
+            FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+            LEFT JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN trans_payments tp ON tp.transaction_id = t.id
+            INNER JOIN payments p ON p.id = tp.payment_id
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+            ";
+        if($shop_name != 'All'){
+            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
+        }
+        $sql = $sql . "
+            GROUP BY p.description) this_week_payment ON p.description = this_week_payment.payment_detail
+            LEFT JOIN (SELECT p.description payment_detail, sum(COALESCE(tp.amount, 0)) amount, count(tp.transaction_id) qty
+            FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+            LEFT JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN trans_payments tp ON tp.transaction_id = t.id
+            INNER JOIN payments p ON p.id = tp.payment_id
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['last_week_start'] . "' AND '" . $date['last_week_end'] . "'
+        ";
+        if($shop_name != 'All'){
+            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
+        }
+        $sql = $sql . "
+            GROUP BY p.description) last_week_payment on p.description = last_week_payment.payment_detail
+        ";
+        return $this->run_query($conn, $sql);
+    }
 }
 ?>

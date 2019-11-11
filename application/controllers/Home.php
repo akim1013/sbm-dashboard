@@ -208,4 +208,26 @@ class Home extends MY_Controller {
 		));
 		sqlsrv_close($conn);
 	}
+
+	public function get_comparison_detailed_data(){
+		$conn = parent::dbconnect();
+		$date = array(
+			"start" => $this->input->post('start'),
+			"end"	=> $this->input->post('end'),
+			"last_week_start" => $this->input->post('last_start'),
+			"last_week_end"	=> $this->input->post('last_end'),
+		);
+		$shop_name = str_replace(array('"'), '\'', str_replace(array('[',']'), '', $this->input->post('shop_name')));
+		$ret = array(
+			"article_detail" 	=> $this->dashboard_model->detail_comparison_article($conn, $date, $shop_name),
+			"discount_detail" 	=> $this->dashboard_model->detail_comparison_discount($conn, $date, $shop_name),
+			"payment_detail" 	=> $this->dashboard_model->detail_comparison_payment($conn, $date, $shop_name)
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
 }
