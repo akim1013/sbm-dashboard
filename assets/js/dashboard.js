@@ -1291,12 +1291,14 @@ $(document).ready(() => {
                     let qty = 0;
                     let last_week_price = 0;
                     let last_week_qty = 0;
+                    let group_price = 0;
                     for(let i = 0; i < article_detail.length; i++){
                         if((article_detail[i].amount == 0) && (article_detail[i].last_week_amount == 0)){
                             continue;
                         }
                         price += parseFloat(article_detail[i].price);
                         qty += (article_detail[i].amount);
+                        group_price += parseFloat(article_detail[i].price);
                         last_week_price += parseFloat(article_detail[i].last_week_price);
                         last_week_qty += (article_detail[i].last_week_amount);
                         if(article_group != article_detail[i].group_name){
@@ -1305,6 +1307,18 @@ $(document).ready(() => {
                                 group_name: article_group,
                             });
                         }
+                    }
+                    for(let item of article_group_array){
+                        let group_price = 0;
+                        let last_group_price = 0;
+                        for(let _item of article_detail){
+                            if(item.group_name == _item.group_name){
+                                group_price += parseFloat(_item.price);
+                                last_group_price += parseFloat(_item.last_week_price);
+                            }
+                        }
+                        item.group_price = group_price;
+                        item.last_group_price = last_group_price;
                     }
                     for(let item of article_group_array){
                         let group_qty = 0;
@@ -1325,7 +1339,7 @@ $(document).ready(() => {
                                 last_week_group_qty += _item.last_week_amount;
                                 last_week_group_amount += parseFloat(_item.last_week_price);
                                 last_week_group_percent += parseFloat(_item.last_week_price) / parseFloat(last_week_price) * 100;
-                                table.append('<tr><td>' + _item.article_name + '</td><td>' + _item.last_week_amount + '</td><td>' + parseFloat(_item.last_week_price).toFixed(2) + '</td><td>' + (parseFloat(_item.last_week_price) / parseFloat(last_week_price) * 100).toFixed(3) + '%' + '</td><td>' + _item.amount + '</td><td>' + parseFloat(_item.price).toFixed(2) + '</td><td>' + (parseFloat(_item.price) / parseFloat(price) * 100).toFixed(3) + '%' + '</td><td>'
+                                table.append('<tr><td>' + _item.article_name + '</td><td>' + _item.last_week_amount + '</td><td>' + parseFloat(_item.last_week_price).toFixed(2) + '</td><td>' + (parseFloat(_item.last_week_price) / parseFloat(item.last_group_price) * 100).toFixed(3) + '%' + '</td><td>' + _item.amount + '</td><td>' + parseFloat(_item.price).toFixed(2) + '</td><td>' + (parseFloat(_item.price) / parseFloat(item.group_price) * 100).toFixed(3) + '%' + '</td><td>'
                                 + (_item.amount - _item.last_week_amount).toString() + '</td><td>' + (parseFloat(_item.price) - parseFloat(_item.last_week_price)).toFixed(2) + '</td></tr>')
                             }
                         }
