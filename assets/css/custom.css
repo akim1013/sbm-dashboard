@@ -117,6 +117,29 @@ select{
 #edit_user .shop_multiselect .multishop-btn{
     margin-right: 0px;
 }
+
+#comparison_detail tbody td{
+    font-size: 12px;
+    font-weight: 400;
+}
+#comparison_detail tbody .title td{
+    padding: 10px 0 5px 0;
+    color: #d55;
+    font-size: 14px;
+    font-weight: 800;
+}
+#comparison_detail tbody .sub-title td{
+    color: #55a;
+    font-weight: 800;
+}
+#comparison_detail tbody .total td{
+    color: #ccc;
+    font-weight: 800;
+}
+#comparison_detail tbody .sub-total td{
+    color: #aaa;
+    font-weight: 800;
+}
 @media(max-width: 575px){
     .brand-text strong{
         font-size: 15px !important;

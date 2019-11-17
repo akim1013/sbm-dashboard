@@ -1279,11 +1279,12 @@ $(document).ready(() => {
             success: function(res){
                 let response = JSON.parse(res);
                 if(response.status == 'success'){
+                    $('.export-data').removeClass('hide');
                     let article_detail = response.data.article_detail;
                     let discount_detail = response.data.discount_detail;
                     let payment_detail = response.data.payment_detail;
                     // Article detail
-                    table.append('<tr><td colspan="9">Sales<td><tr>');
+                    table.append('<tr class="title"><td colspan="9">Sales<td><tr>');
                     let article_group = '';
                     let article_group_array = [];
                     let price = 0;
@@ -1312,7 +1313,7 @@ $(document).ready(() => {
                         let last_week_group_qty = 0;
                         let last_week_group_amount = 0;
                         let last_week_group_percent = 0;
-                        table.append('<tr><td colspan="9">' + item.group_name + '<td><tr>');
+                        table.append('<tr class="sub-title"><td colspan="9">' + item.group_name + '<td><tr>');
                         for(let _item of article_detail){
                             if(item.group_name == _item.group_name){
                                 if((_item.amount == 0) && (_item.last_week_amount == 0)){
@@ -1328,13 +1329,13 @@ $(document).ready(() => {
                                 + (_item.amount - _item.last_week_amount).toString() + '</td><td>' + (parseFloat(_item.price) - parseFloat(_item.last_week_price)).toFixed(2) + '</td></tr>')
                             }
                         }
-                        table.append('<tr><td></td><td>' + last_week_group_qty + '</td><td>' + last_week_group_amount.toFixed(2) + '</td><td>' + last_week_group_percent.toFixed(3) + '%' + '</td><td>' + group_qty + '</td><td>' + group_amount.toFixed(2) + '</td><td>' + group_percent.toFixed(3) + '%' + '</td><td></td><td></td></tr>');
+                        table.append('<tr class="sub-total"><td></td><td>' + last_week_group_qty + '</td><td>' + last_week_group_amount.toFixed(2) + '</td><td>' + last_week_group_percent.toFixed(3) + '%' + '</td><td>' + group_qty + '</td><td>' + group_amount.toFixed(2) + '</td><td>' + group_percent.toFixed(3) + '%' + '</td><td></td><td></td></tr>');
                     }
-                    table.append('<tr><td>Total sales</td><td>' + last_week_qty.toString() + '</td><td>' + process_price(last_week_price) + '</td><td></td><td>' + qty.toString() + '</td><td>' + process_price(price) + '</td><td></td><td>'
+                    table.append('<tr class="total"><td>Total sales</td><td>' + last_week_qty.toString() + '</td><td>' + process_price(last_week_price) + '</td><td></td><td>' + qty.toString() + '</td><td>' + process_price(price) + '</td><td></td><td>'
                      + (qty - last_week_qty).toString() + '</td><td>' + process_price(price - last_week_price) + '</td></tr>');
 
                     // Discount details
-                    table.append('<tr><td colspan="9">Discount<td><tr>');
+                    table.append('<tr class="title"><td colspan="9">Discount<td><tr>');
                     let this_week_discount_qty = 0;
                     let this_week_discount_amount = 0;
                     let last_week_discount_qty = 0;
@@ -1350,11 +1351,11 @@ $(document).ready(() => {
                         table.append('<tr><td>' + item.discount_description + '</td><td>' + item.last_week_quantity + '</td><td>' + process_price(item.last_week_amount) + '</td><td></td><td>' + item.this_week_quantity + '</td><td>' + process_price(item.this_week_amount)
                         + '</td><td></td><td>' + (parseInt(item.this_week_quantity) - parseInt(item.last_week_quantity)).toString() + '</td><td>' + process_price(parseFloat(item.this_week_amount) - parseFloat(item.last_week_amount)) + '</td></tr>');
                     }
-                    table.append('<tr><td>Discount total</td><td>' + last_week_discount_qty.toString() + '</td><td>' + process_price(last_week_discount_amount) + '</td><td></td><td>' + this_week_discount_qty.toString() + '</td><td>' + process_price(this_week_discount_amount)
+                    table.append('<tr class="total"><td>Discount total</td><td>' + last_week_discount_qty.toString() + '</td><td>' + process_price(last_week_discount_amount) + '</td><td></td><td>' + this_week_discount_qty.toString() + '</td><td>' + process_price(this_week_discount_amount)
                     + '</td><td></td><td>' + (this_week_discount_qty - last_week_discount_qty).toString() + '</td><td>' + process_price(this_week_discount_amount - last_week_discount_amount) + '</td></tr>')
 
                     // Payment details
-                    table.append('<tr><td colspan="9">Payment<td><tr>');
+                    table.append('<tr class="title"><td colspan="9">Payment<td><tr>');
                     let this_week_payment_qty = 0;
                     let this_week_payment_amount = 0;
                     let last_week_payment_qty = 0;
@@ -1370,11 +1371,67 @@ $(document).ready(() => {
                         table.append('<tr><td>' + item.description + '</td><td>' + item.last_week_qty + '</td><td>' + process_price(item.last_week_amount) + '</td><td></td><td>' + item.this_week_qty + '</td><td>' + process_price(item.this_week_amount)
                         + '</td><td></td><td>' + (parseInt(item.this_week_qty) - parseInt(item.last_week_qty)).toString() + '</td><td>' + process_price(parseFloat(item.this_week_amount) - parseFloat(item.last_week_amount)) + '</td></tr>');
                     }
-                    table.append('<tr><td>Payment total</td><td>' + last_week_payment_qty.toString() + '</td><td>' + process_price(last_week_payment_amount) + '</td><td></td><td>' + this_week_payment_qty.toString() + '</td><td>' + process_price(this_week_payment_amount)
+                    table.append('<tr class="total"><td>Payment total</td><td>' + last_week_payment_qty.toString() + '</td><td>' + process_price(last_week_payment_amount) + '</td><td></td><td>' + this_week_payment_qty.toString() + '</td><td>' + process_price(this_week_payment_amount)
                     + '</td><td></td><td>' + (this_week_payment_qty - last_week_payment_qty).toString() + '</td><td>' + process_price(this_week_payment_amount - last_week_payment_amount) + '</td></tr>')
                 }
             }
         });
     })
+    let downloadCSV = (csv, filename) => {
+        var csvFile;
+        var downloadLink;
 
+        // CSV file
+        csvFile = new Blob([csv], {type: "text/csv"});
+
+        // Download link
+        downloadLink = document.createElement("a");
+
+        // File name
+        downloadLink.download = filename;
+
+        // Create a link to the file
+        downloadLink.href = window.URL.createObjectURL(csvFile);
+
+        // Hide download link
+        downloadLink.style.display = "none";
+
+        // Add the link to DOM
+        document.body.appendChild(downloadLink);
+
+        // Click download link
+        downloadLink.click();
+    }
+    $('#export_csv').click(function(){
+        let filename = + new Date() + '.csv';
+        let csv = [];
+        let rows = document.querySelectorAll("#detail_comparison_table tr");
+
+        for (let i = 0; i < rows.length; i++) {
+            let row = [], cols = rows[i].querySelectorAll("td, th");
+
+            for (let j = 0; j < cols.length; j++)
+                row.push(cols[j].innerText);
+
+            csv.push(row.join(","));
+        }
+        // Download CSV file
+        downloadCSV(csv.join("\n"), filename);
+    })
+    $("#export_xls").click(function(e){
+        var tab_text="<table border='2px'><tr bgcolor='#87AFC6'>";
+        var textRange; var j=0;
+        tab = document.getElementById('detail_comparison_table'); // id of table
+
+        for(j = 0 ; j < tab.rows.length ; j++)
+        {
+            tab_text=tab_text+tab.rows[j].innerHTML+"</tr>";
+        }
+        tab_text=tab_text+"</table>";
+        var a = document.createElement('a');
+        a.href = 'data:application/vnd.ms-excel,' +  encodeURIComponent(tab_text);
+        a.download =  + new Date() + '.xls';
+        a.click();
+        e.preventDefault();
+    })
 })

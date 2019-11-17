@@ -99,8 +99,12 @@
                     <ul id="all-shops" class="collapse list-unstyled "></ul>
                 </li>
 
-                <li>
-                    <a href="#"> <i class="	fa fa-paste"></i><?php echo lang('lb_export');?> </a>
+                <li class="export-data hide">
+                    <a href="#export" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-paste"></i><?php echo lang('lb_export');?> </a>
+                    <ul id="export" class="collapse list-unstyled">
+                        <li><a id="export_xls" style="cursor: pointer">Export detail comparison(XLS)</a></li>
+                        <li><a id="export_csv" style="cursor: pointer">Export detail comparison(CSV)</a></li>
+                    </ul>
                 </li>
             </ul>
         </nav>
@@ -314,7 +318,7 @@
                 <section id="comparison_detail" class="no-padding-top no-padding-bottom">
                     <div class="container-fluid">
                         <div class="block">
-                            <table class="table table-striped table-sm">
+                            <table id="detail_comparison_table" class="table table-sm">
                                 <thead>
                                     <tr>
                                         <th></th>
