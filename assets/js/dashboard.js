@@ -1266,7 +1266,7 @@ $(document).ready(() => {
             end: moment().format('YYYY-MM-DD'),
             last_start: moment().subtract(7, 'days').startOf('week').format('YYYY-MM-DD'),
             last_end: moment().subtract(7, 'days').endOf('week').format('YYYY-MM-DD'),
-            shop_name: localStorage.getItem('shop_name')
+            shop_name: localStorage.getItem('_shop_name')
         }
         $('.end_date').text(moment().startOf('week').format('MMM DD, YYYY') + ' ~ ' + moment().format('MMM DD, YYYY'));
         $('.start_date').text(moment().subtract(7, 'days').startOf('week').format('MMM DD, YYYY') + ' ~ ' + moment().subtract(7, 'days').endOf('week').format('MMM DD, YYYY'));
