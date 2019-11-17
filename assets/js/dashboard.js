@@ -581,11 +581,11 @@ $(document).ready(() => {
                     add_shop_list(response.data);
                     flat_process(response.data);
                     comparison_chart_process();
-                    get_daily_data(end);
+                    get_daily_turnover();
+                    //get_daily_data(end);
                 }
             }
         });
-        get_daily_turnover();
     }
     function formatDate(date) {
         let monthNames = [
@@ -845,7 +845,8 @@ $(document).ready(() => {
             method: 'post',
             data: data,
             success: function(res){
-                get_yearly_turnover();
+                //get_yearly_turnover();
+                get_daily_data(end)
                 let response = JSON.parse(res);
                 if(response.status == 'success'){
                     $('#turnover_detail').removeClass('hide');
@@ -922,7 +923,6 @@ $(document).ready(() => {
             data: data,
             success: function(res){
                 let response = JSON.parse(res);
-                console.log(response);
                 if(response.status == 'success'){
                     $('#turnover_detail').removeClass('hide');
 
