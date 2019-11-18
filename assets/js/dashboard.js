@@ -666,7 +666,7 @@ $(document).ready(() => {
         let data = {
             start: moment().subtract(7, 'days').format('YYYY-MM-DD'),
             end: moment().format('YYYY-MM-DD'),
-            shop_name: localStorage.getItem('shop_name')
+            shop_name: localStorage.getItem('_shop_name')
         }
         $.ajax({
             url: api_path + 'home/daily_turnover',
@@ -694,6 +694,9 @@ $(document).ready(() => {
                     $('.t_val').text(process_price(d_today[0]));
                     $('.t_growth_percent').text((percent > 0) ? '+' + percent.toFixed(2) + ' %' : percent.toFixed(2) + ' %');
                     $('#turnover_detail').removeClass('hide');
+                    if($("#yt_comparison").highcharts()){
+                        $("#yt_comparison").highcharts().destroy();
+                    }
                     Highcharts.chart('yt_comparison', {
                         chart: {
                             height: 200,
@@ -801,7 +804,7 @@ $(document).ready(() => {
         let data = {
             start: (new Date().getFullYear().toString() + '-' + (new Date().getMonth() + 1).toString() + '-01'),
             end: moment().format('YYYY-MM-DD'),
-            shop_name: localStorage.getItem('shop_name')
+            shop_name: localStorage.getItem('_shop_name')
         }
         $.ajax({
             url: api_path + 'home/weekly_turnover',
@@ -824,6 +827,9 @@ $(document).ready(() => {
                     for(let i = 0; i < 5 - w_data.length; i++){
                         w_days.push(weeks[idx + i]);
                         w_sale.push(0);
+                    }
+                    if($("#wl_comparison").highcharts()){
+                        $("#wl_comparison").highcharts().destroy();
                     }
                     Highcharts.chart('wl_comparison', {
                         chart: {
@@ -879,7 +885,7 @@ $(document).ready(() => {
         let data = {
             start: (new Date().getFullYear().toString() + '-01-01'),
             end: moment().format('YYYY-MM-DD'),
-            shop_name: localStorage.getItem('shop_name')
+            shop_name: localStorage.getItem('_shop_name')
         }
         $.ajax({
             url: api_path + 'home/monthly_turnover',
@@ -903,6 +909,9 @@ $(document).ready(() => {
                     for(let i = 0; i < 12 - m_data.length; i++){
                         m_label.push(months[idx + i]);
                         m_sale.push(0);
+                    }
+                    if($("#m_comparison").highcharts()){
+                        $("#m_comparison").highcharts().destroy();
                     }
                     Highcharts.chart('m_comparison', {
                         chart: {
@@ -956,7 +965,7 @@ $(document).ready(() => {
     }
     let get_yearly_turnover = () => {
         let data = {
-            shop_name: localStorage.getItem('shop_name')
+            shop_name: localStorage.getItem('_shop_name')
         }
         $.ajax({
             url: api_path + 'home/yearly_turnover',
@@ -1289,6 +1298,7 @@ $(document).ready(() => {
                 display_flat_data();
                 monthly_growth_process(second_ajax.data, 0);
             }
+            get_daily_turnover();
             localStorage_changed = false;
         }else{
             let shop_id = $(this)[0].getAttribute('shopId');
@@ -1340,7 +1350,7 @@ $(document).ready(() => {
         selected = 'ov';
     })
     $('#detail_comparison').click(function(){
-        console.log(localStorage_changed);
+
         selected = 'dc';
         $('.page-dashboard').addClass('hide');
         $('.page-comparison').removeClass('hide');
