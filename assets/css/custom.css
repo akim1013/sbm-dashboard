@@ -210,4 +210,7 @@ select{
     .multishop-btn span{
         width: 90% !important;
     }
+    .table_detail_comparison{
+        overflow: scroll;
+    }
 }

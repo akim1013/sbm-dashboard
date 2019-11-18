@@ -317,7 +317,7 @@
             <div class="page-comparison hide">
                 <section id="comparison_detail" class="no-padding-top no-padding-bottom">
                     <div class="container-fluid">
-                        <div class="block">
+                        <div class="block table_detail_comparison">
                             <table id="detail_comparison_table" class="table table-sm">
                                 <thead>
                                     <tr>
