@@ -1015,7 +1015,7 @@ $(document).ready(() => {
             method: 'post',
             data: data,
             success: function(res){
-                //get_daily_data(end)
+                get_daily_data(end)
                 let response = JSON.parse(res);
                 if(response.status == 'success'){
                     $('#turnover_detail').removeClass('hide');
@@ -1445,11 +1445,11 @@ $(document).ready(() => {
                     if((netsale.length != 0) && (transaction_count.length != 0)){
                         show_comparison_charts();
                     }
-                    //monthly_growth_process(second_ajax.data, 0);
+                    monthly_growth_process(second_ajax.data, 0);
                     $("#comparison_bar").show();
                 }else{
                     $('.shop-name').text(_shop_name.toString());
-                    //monthly_growth_process(second_ajax.data, -1);
+                    monthly_growth_process(second_ajax.data, -1);
                 }
                 localStorage.setItem('_shop_name', JSON.stringify(_shop_name));
 
@@ -1462,7 +1462,7 @@ $(document).ready(() => {
                     show_comparison_charts();
                 }
                 display_flat_data();
-                //monthly_growth_process(second_ajax.data, 0);
+                monthly_growth_process(second_ajax.data, 0);
             }
             get_daily_turnover();
             localStorage_changed = false;
