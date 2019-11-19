@@ -1,6 +1,7 @@
 let api_path = '/';
 let weeks = ['First week', 'Second week', 'Third week', 'Forth week', 'Fifth week'];
 let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
 $(document).ready(() => {
     let isMobile = false;
 
@@ -37,18 +38,20 @@ $(document).ready(() => {
     let sorted_netsale      = []; // For storing sorted netsale value
 
     let first_ajax;
-    let second_ajax;
+    let second_ajax = [];
+    let selected = 'ov'; // Selected Overall View else dc, stands for Detail comparison
+    let localStorage_changed = true;
 
     if(window.innerWidth < 575){
         isMobile = true;
     }else{
         isMobile = false;
     }
+
     let dateFromDay = (year, day) => {
         let date = new Date(year, 0); // initialize a date in `year-01-01`
         return new Date(date.setDate(day)); // add the number of days
     }
-    // Generate random color
     let getRandomColor = () => {
         let letters = '0123456789ABCDEF';
         let color = '#';
@@ -56,6 +59,10 @@ $(document).ready(() => {
             color += letters[Math.floor(Math.random() * 16)];
         }
         return color;
+    } // Generate random color
+    let show_monthly_bar = () => {
+        $('#monthly_sale_bar').removeClass('hide');
+        $('#monthly_transaction_bar').removeClass('hide');
     }
 
     let show_comparison_charts = () => {
@@ -67,16 +74,6 @@ $(document).ready(() => {
         $('#comparison_none').removeClass('hide');
         $('#comparison_none h3').text('There are no transactions from ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
     }
-
-    let show_monthly_bar = () => {
-        $('#monthly_sale_bar').removeClass('hide');
-        $('#monthly_transaction_bar').removeClass('hide');
-    }
-
-    let selected = 'ov'; // Selected Overall View else dc, stands for Detail comparison
-
-    let localStorage_changed = true;
-
     let hide_detail_charts = () => {
         if(!$('#transaction_detail').hasClass('hide')){
             $('#transaction_detail').addClass('hide');
@@ -94,22 +91,61 @@ $(document).ready(() => {
             $("#payment_detail_line").highcharts().destroy();
         }
     }
-    function getRanks(value){
+
+    let getRanks = (value) => {
         let sorted = value.slice().sort((a,b) => {return b-a})
         let ranked = value.slice().map((v) => { return sorted.indexOf(v)+1 });
         return ranked;
     }
-    function find_shop_name(id){
+
+    let find_shop_name = (id) => {
         for(let item of shops){
             if(id == item.id) return item.name;
         }
     }
-    function find_shop_id(name){
+    let find_shop_id = (name) => {
         for(let item of shops){
             if(name == item.name) return item.id;
         }
     }
-    function add_shop_list(shop_lists){
+
+    let formatDate = (date) => {
+        let monthNames = [
+            "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"
+        ];
+        let day = date.getDate();
+        let monthIndex = date.getMonth();
+        let year = date.getFullYear();
+
+        return year + '-' + monthNames[monthIndex] + '-' + day;} // Parse randomly given date value to YYYY-MM-DD format
+
+    let downloadCSV = (csv, filename) => {
+        let csvFile;
+        let downloadLink;
+
+        // CSV file
+        csvFile = new Blob([csv], {type: "text/csv"});
+
+        // Download link
+        downloadLink = document.createElement("a");
+
+        // File name
+        downloadLink.download = filename;
+
+        // Create a link to the file
+        downloadLink.href = window.URL.createObjectURL(csvFile);
+
+        // Hide download link
+        downloadLink.style.display = "none";
+
+        // Add the link to DOM
+        document.body.appendChild(downloadLink);
+
+        // Click download link
+        downloadLink.click();
+    }
+
+    let add_shop_list = (shop_lists) => {
         storage_all_shop = localStorage.getItem('shop_name');
         localStorage.setItem('_shop_name', localStorage.getItem('shop_name'));
         $('#all-shops').empty();
@@ -132,7 +168,7 @@ $(document).ready(() => {
             });
         }
     }
-    function flat_process(data){
+    let flat_process = (data) => {
         netsale             = [];
         promotion           = [];
         discount            = [];
@@ -201,7 +237,7 @@ $(document).ready(() => {
         _average_bill = _average_bill / _transaction_count;
         display_flat_data();
     }
-    function display_flat_data(){
+    let display_flat_data = () =>{
         $("._netsale").text(process_price(_netsale));
         $("._discount").text(process_price(_discount));
         $("._average_bill").text(process_price(_average_bill ? _average_bill : 0));
@@ -209,7 +245,7 @@ $(document).ready(() => {
         $("._tip").text(process_price(_tip));
         $("._promotion").text(process_price(_promotion));
     }
-    function display_flat_data_single(){
+    let display_flat_data_single = () => {
 
         let __netsale = 0;
         let __discount = 0;
@@ -262,7 +298,7 @@ $(document).ready(() => {
         $("._tip").text(process_price(__tip));
         $("._promotion").text(process_price(__promotion));
     }
-    function process_price(val){
+    let process_price = (val) => {
 
         let value = parseFloat(val);
         if(Math.abs(value) > 1000 * 1000){
@@ -273,7 +309,7 @@ $(document).ready(() => {
             return value.toFixed(2);
         }
     }
-    function process_percent(val, ref){
+    let process_percent = (val, ref) => {
         let ret = [];
         for(let item of val){
             ret.push({
@@ -284,7 +320,7 @@ $(document).ready(() => {
         }
         return ret;
     }
-    function process_one_value(val, ref){
+    let process_one_value = (val, ref) => {
         let ret = [];
         for(let item of val){
             if(ref == 1){
@@ -319,7 +355,9 @@ $(document).ready(() => {
                 temp_turnover.push(parseFloat(item.value));
                 temp_transaction.push(item.transaction);
             }
-            sale_comparison_reverse();
+            if(sorted_netsale.length > 1){
+                sale_comparison_reverse();
+            }
             sale_comparison_table(sorted_netsale);
 
 
@@ -417,7 +455,7 @@ $(document).ready(() => {
             if(idx == 10) break;
         }
     }
-    function monthly_growth_process(data, id){
+    let monthly_growth_process = (data, id) => {
         if(data.length != 0){
             show_monthly_bar();
             let x_sale              = []; // x Axis date
@@ -604,7 +642,30 @@ $(document).ready(() => {
             });
         }
     }
-    function get_dashboard_data(start, end){
+
+    let date_range_set = (st, ed) => {
+        second_ajax = [];
+        start = st;
+        end = ed;
+        if($("#sale_comparison_pie").highcharts()){
+            $("#sale_comparison_pie").highcharts().destroy();
+        }
+        if($("#transaction_comparison_pie").highcharts()){
+            $("#transaction_comparison_pie").highcharts().destroy();
+        }
+        if($("#sale_comparison_bar").highcharts()){
+            $("#sale_comparison_bar").highcharts().destroy();
+        }
+        if($("#monthly_growth_line").highcharts()){
+            $("#monthly_growth_line").highcharts().destroy();
+        }
+        if($("#monthly_transaction_line").highcharts()){
+            $("#monthly_transaction_line").highcharts().destroy();
+        }
+        $('#reportrange span').html(start.format('M.D.Y') + ' ~ ' + end.format('M.D.Y'));
+        get_dashboard_data(start, end);
+    }               // Priority 0
+    let get_dashboard_data = (start, end) => {
         $('.loader').removeClass('hide');
         let data = {
             start: start.format('YYYY-MM-DD'),
@@ -627,46 +688,25 @@ $(document).ready(() => {
                 }
             }
         });
-    }
-    function formatDate(date) {
-        let monthNames = [
-            "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"
-        ];
-        let day = date.getDate();
-        let monthIndex = date.getMonth();
-        let year = date.getFullYear();
-
-        return year + '-' + monthNames[monthIndex] + '-' + day;
-    }
-    function get_daily_data(date){
-        second_ajax = undefined;
-        let monthago = new Date(date.format('YYYY-MM-DD'));
-        let past_month = monthago.getDate() - 30;
-        monthago.setDate(past_month);
-        let month = {
-            start: formatDate(monthago),
-            end: date.format('YYYY-MM-DD'),
-            shop_name: localStorage.getItem('shop_name')
-        }
-        $.ajax({
-            url: api_path + 'home/daily',
-            method: 'post',
-            data: month,
-            success: function(res){
-                let response = JSON.parse(res);
-                second_ajax = response;
-                if(response.status == 'success'){
-                    monthly_growth_process(response.data, 0);
-                }
-            }
-        });
-    }
-    /////////////////////////////////////////////////////////////////////////
+    }       // Priority 1
     let get_daily_turnover = () => {
         let data = {
             start: moment().subtract(7, 'days').format('YYYY-MM-DD'),
             end: moment().format('YYYY-MM-DD'),
-            shop_name: localStorage.getItem('_shop_name')
+            shop_name: localStorage.getItem('_shop_name'),
+            length: JSON.parse(localStorage.getItem('_shop_name')).length
+        }
+        if($("#yt_comparison").highcharts()){
+            $("#yt_comparison").highcharts().destroy();
+        }
+        if($("#w_comparison").highcharts()){
+            $("#w_comparison").highcharts().destroy();
+        }
+        if($("#wl_comparison").highcharts()){
+            $("#wl_comparison").highcharts().destroy();
+        }
+        if($("#m_comparison").highcharts()){
+            $("#m_comparison").highcharts().destroy();
         }
         $.ajax({
             url: api_path + 'home/daily_turnover',
@@ -681,22 +721,66 @@ $(document).ready(() => {
                     let d_yesterday = [];
                     let d_last_7    = [];
                     let d_w_7       = []; // Week
-                    for(let item of d_data){
-                        d_last_7.push(parseFloat(item.netsale));
-                        d_w_7.push(moment(dateFromDay(moment().format('Y'), item.d)).format('ddd'));
+                    let d_series = [];
+                    let d_temp_shop = '';
+                    if(JSON.parse(localStorage.getItem('_shop_name')).length > 3){
+                        for(let item of d_data){
+                            d_last_7.push(parseFloat(item.netsale));
+                            d_w_7.push(moment(dateFromDay(moment().format('Y'), item.d)).format('ddd'));
+                        }
+                        d_series.push({
+                            name: 'Turnover',
+                            data: d_last_7
+                        })
+                        d_yesterday.push(parseFloat(d_data[d_data.length - 2].netsale));
+                        d_today.push(parseFloat(d_data[d_data.length - 1].netsale));
+                    }else{
+                        let _date = [];
+                        let _date_ = '';
+                        let _s = [];
+                        let _s_ = '';
+                        for(let item of d_data){
+                            if((_date_ != item.d) && (_date.indexOf(item.d) < 0)){
+                                _date.push(item.d);
+                                _date_ = item.d;
+                            }
+                            if((_s_ != item.shop_name) && (_s.indexOf(item.shop_name) < 0)){
+                                _s.push(item.shop_name);
+                                _s_ = item.shop_name;
+                            }
+                        }
+                        let _y = 0;
+                        let _t = 0;
+                        for(let item of _date){
+                            d_w_7.push(moment(dateFromDay(moment().format('Y'), item)).format('ddd'));
+                        }
+                        for(let i = _s.length * 4; i < _s.length * 5; i++){
+                            _y += parseFloat(d_data[i].netsale);
+                        }
+                        for(let i = _s.length * 5; i < _s.length * 6; i++){
+                            _t += parseFloat(d_data[i].netsale);
+                        }
+                        d_yesterday.push(_y);
+                        d_today.push(_t);
+                        for(let item of _s){
+                            let _values = [];
+                            for(let _item of d_data){
+                                if(item == _item.shop_name){
+                                    _values.push(parseFloat(_item.netsale));
+                                }
+                            }
+                            d_series.push({
+                                name: item,
+                                data: _values
+                            })
+                        }
                     }
-
-                    d_yesterday.push(parseFloat(d_data[d_data.length - 2].netsale));
-                    d_today.push(parseFloat(d_data[d_data.length - 1].netsale));
 
                     let percent = ((d_today[0] - d_yesterday[0]) / d_yesterday[0]) * 100;
                     $('.yt_val').text(process_price(d_yesterday[0]));
                     $('.t_val').text(process_price(d_today[0]));
                     $('.t_growth_percent').text((percent > 0) ? '+' + percent.toFixed(2) + ' %' : percent.toFixed(2) + ' %');
                     $('#turnover_detail').removeClass('hide');
-                    if($("#yt_comparison").highcharts()){
-                        $("#yt_comparison").highcharts().destroy();
-                    }
                     Highcharts.chart('yt_comparison', {
                         chart: {
                             height: 200,
@@ -791,20 +875,18 @@ $(document).ready(() => {
                                 borderWidth: 0
                             }
                         },
-                        series: [{
-                            name: 'Turnover',
-                            data: d_last_7
-                        }]
+                        series: d_series
                     });
                 }
             }
         });
-    }
+    }   // Priority 2
     let get_weekly_turnover = () => {
         let data = {
             start: (new Date().getFullYear().toString() + '-' + (new Date().getMonth() + 1).toString() + '-01'),
             end: moment().format('YYYY-MM-DD'),
-            shop_name: localStorage.getItem('_shop_name')
+            shop_name: localStorage.getItem('_shop_name'),
+            length: JSON.parse(localStorage.getItem('_shop_name')).length
         }
         $.ajax({
             url: api_path + 'home/weekly_turnover',
@@ -814,22 +896,65 @@ $(document).ready(() => {
                 get_monthly_turnover();
                 let response = JSON.parse(res);
                 if(response.status == 'success'){
+
                     $('#turnover_detail').removeClass('hide');
                     let w_data = response.data.weekly_turnover;
                     let w_days = [];
                     let w_sale = [];
-                    let idx = 0;
-                    for(let item of w_data){
-                        w_days.push(weeks[idx]);
-                        w_sale.push(parseFloat(item.netsale));
-                        idx ++;
-                    }
-                    for(let i = 0; i < 5 - w_data.length; i++){
-                        w_days.push(weeks[idx + i]);
-                        w_sale.push(0);
-                    }
-                    if($("#wl_comparison").highcharts()){
-                        $("#wl_comparison").highcharts().destroy();
+                    let w_series = [];
+                    if(JSON.parse(localStorage.getItem('_shop_name')).length > 3){
+                        let idx = 0;
+                        for(let item of w_data){
+                            w_days.push(weeks[idx]);
+                            w_sale.push(parseFloat(item.netsale));
+                            idx ++;
+                        }
+                        for(let i = 0; i < 5 - w_data.length; i++){
+                            w_days.push(weeks[idx + i]);
+                            w_sale.push(0);
+                        }
+                        w_series.push({
+                            name: 'Turnover',
+                            data: w_sale
+                        });
+                    }else{
+                        let _week = [];
+                        let _week_ = '';
+                        let _s = [];
+                        let _s_ = '';
+                        let idx = 0;
+                        for(let item of w_data){
+                            if((_week_ != item.w) && (_week.indexOf(item.w) < 0)){
+                                _week.push(item.w);
+                                _week_ = item.w;
+                            }
+                            if((_s_ != item.shop_name) && (_s.indexOf(item.shop_name) < 0)){
+                                _s.push(item.shop_name);
+                                _s_ = item.shop_name;
+                            }
+                        }
+                        for(let item of _week){
+                            w_days.push(weeks[idx]);
+                            idx ++;
+                        }
+                        for(let i = 0; i < 5 - _week.length; i++){
+                            w_days.push(weeks[idx + i]);
+                        }
+                        for(let item of _s){
+                            let _values = [];
+                            for(let _item of w_data){
+                                if(item == _item.shop_name){
+                                    _values.push(parseFloat(_item.netsale));
+                                }
+                            }
+                            for(let i = 0; i < 5 - _values.length; i++){
+                                _values.push(0);
+                            }
+                            w_series.push({
+                                name: item,
+                                data: _values
+                            })
+                        }
                     }
                     Highcharts.chart('wl_comparison', {
                         chart: {
@@ -872,46 +997,85 @@ $(document).ready(() => {
                                 borderWidth: 0
                             }
                         },
-                        series: [{
-                            name: 'Turnover',
-                            data: w_sale
-                        }]
+                        series: w_series
                     });
                 }
             }
         });
-    }
+    } // Priority 3
     let get_monthly_turnover = () => {
         let data = {
             start: (new Date().getFullYear().toString() + '-01-01'),
             end: moment().format('YYYY-MM-DD'),
-            shop_name: localStorage.getItem('_shop_name')
+            shop_name: localStorage.getItem('_shop_name'),
+            length: JSON.parse(localStorage.getItem('_shop_name')).length
         }
         $.ajax({
             url: api_path + 'home/monthly_turnover',
             method: 'post',
             data: data,
             success: function(res){
-                //get_yearly_turnover();
-                get_daily_data(end)
+                //get_daily_data(end)
                 let response = JSON.parse(res);
                 if(response.status == 'success'){
                     $('#turnover_detail').removeClass('hide');
                     let m_data = response.data.monthly_turnover;
                     let m_label = [];
                     let m_sale = [];
-                    let idx = 0;
-                    for(let item of m_data){
-                        m_label.push(months[idx]);
-                        m_sale.push(parseFloat(item.netsale));
-                        idx ++;
-                    }
-                    for(let i = 0; i < 12 - m_data.length; i++){
-                        m_label.push(months[idx + i]);
-                        m_sale.push(0);
-                    }
-                    if($("#m_comparison").highcharts()){
-                        $("#m_comparison").highcharts().destroy();
+                    let m_series = [];
+                    if(JSON.parse(localStorage.getItem('_shop_name')).length > 3){
+                        let idx = 0;
+                        for(let item of m_data){
+                            m_label.push(months[idx]);
+                            m_sale.push(parseFloat(item.netsale));
+                            idx ++;
+                        }
+                        for(let i = 0; i < 12 - m_data.length; i++){
+                            m_label.push(months[idx + i]);
+                            m_sale.push(0);
+                        }
+                        m_series.push({
+                            name: 'Turnover',
+                            data: m_sale
+                        })
+                    }else{
+                        let _month = [];
+                        let _month_ = '';
+                        let _s = [];
+                        let _s_ = '';
+                        let idx = 0;
+                        for(let item of m_data){
+                            if((_month_ != item.m) && (_month.indexOf(item.m) < 0)){
+                                _month.push(item.m);
+                                _month_ = item.m;
+                            }
+                            if((_s_ != item.shop_name) && (_s.indexOf(item.shop_name) < 0)){
+                                _s.push(item.shop_name);
+                                _s_ = item.shop_name;
+                            }
+                        }
+                        for(let item of _month){
+                            m_label.push(months[idx]);
+                            idx ++;
+                        }
+                        for(let i = 0; i < 12 - _month.length; i++){
+                            m_label.push(months[idx + i]);
+                        }
+                        for(let item of _s){
+                            let _values = [];
+                            for(let _item of m_data){
+                                if(item == _item.shop_name){
+                                    _values.push(parseFloat(_item.netsale));
+                                }
+                            }
+                            for(let i = 0; i < 12 - _values.length; i++){
+                                _values.push(0);
+                            }
+                            m_series.push({
+                                name: item,
+                                data: _values
+                            })
+                        }
                     }
                     Highcharts.chart('m_comparison', {
                         chart: {
@@ -954,18 +1118,15 @@ $(document).ready(() => {
                                 borderWidth: 0
                             }
                         },
-                        series: [{
-                            name: 'Turnover',
-                            data: m_sale
-                        }]
+                        series: m_series
                     });
                 }
             }
-        });
-    }
+        });} // Priority 4
     let get_yearly_turnover = () => {
         let data = {
-            shop_name: localStorage.getItem('_shop_name')
+            shop_name: localStorage.getItem('_shop_name'),
+            length: JSON.parse(localStorage.getItem('_shop_name')).length
         }
         $.ajax({
             url: api_path + 'home/yearly_turnover',
@@ -979,31 +1140,36 @@ $(document).ready(() => {
                 }
             }
         });
-    }
+    } // Priority INF
+    let get_daily_data = (date) => {
 
-    function date_range_set(st, ed) {
-        start = st;
-        end = ed;
-        if($("#sale_comparison_pie").highcharts()){
-            $("#sale_comparison_pie").highcharts().destroy();
+        if(second_ajax.length == 0){
+            let monthago = new Date(date.format('YYYY-MM-DD'));
+            let past_month = monthago.getDate() - 30;
+            monthago.setDate(past_month);
+            let month = {
+                start: formatDate(monthago),
+                end: date.format('YYYY-MM-DD'),
+                shop_name: localStorage.getItem('shop_name')
+            }
+            $.ajax({
+                url: api_path + 'home/daily',
+                method: 'post',
+                data: month,
+                success: function(res){
+                    let response = JSON.parse(res);
+                    second_ajax = response;
+                    if(response.status == 'success'){
+                        monthly_growth_process(response.data, 0);
+                    }
+                }
+            });
         }
-        if($("#transaction_comparison_pie").highcharts()){
-            $("#transaction_comparison_pie").highcharts().destroy();
-        }
-        if($("#sale_comparison_bar").highcharts()){
-            $("#sale_comparison_bar").highcharts().destroy();
-        }
-        if($("#monthly_growth_line").highcharts()){
-            $("#monthly_growth_line").highcharts().destroy();
-        }
-        if($("#monthly_transaction_line").highcharts()){
-            $("#monthly_transaction_line").highcharts().destroy();
-        }
-        $('#reportrange span').html(start.format('M.D.Y') + ' ~ ' + end.format('M.D.Y'));
-        get_dashboard_data(start, end);
-    }
-    date_range_set(start, end);
+    } // Priority 5
 
+    date_range_set(start, end); // Initiate app
+
+    /* Action hooks */
     $('#reportrange').daterangepicker({
         startDate: start,
         endDate: end,
@@ -1033,7 +1199,6 @@ $(document).ready(() => {
             }
         });
     })
-
     // Details section
     $('._netsale').click(() => {
         if($('#sale_detail').hasClass('hide')){
@@ -1249,6 +1414,7 @@ $(document).ready(() => {
     $('.transaction_comparison_sort').click(function(){
         transaction_comparison_reverse();
     })
+    // Single shop select
     $('#all-shops').delegate('.single-shop', 'click', function(){
         localStorage_changed = true;
         if(selected == 'ov'){
@@ -1279,11 +1445,11 @@ $(document).ready(() => {
                     if((netsale.length != 0) && (transaction_count.length != 0)){
                         show_comparison_charts();
                     }
-                    monthly_growth_process(second_ajax.data, 0);
+                    //monthly_growth_process(second_ajax.data, 0);
                     $("#comparison_bar").show();
                 }else{
                     $('.shop-name').text(_shop_name.toString());
-                    monthly_growth_process(second_ajax.data, -1);
+                    //monthly_growth_process(second_ajax.data, -1);
                 }
                 localStorage.setItem('_shop_name', JSON.stringify(_shop_name));
 
@@ -1296,7 +1462,7 @@ $(document).ready(() => {
                     show_comparison_charts();
                 }
                 display_flat_data();
-                monthly_growth_process(second_ajax.data, 0);
+                //monthly_growth_process(second_ajax.data, 0);
             }
             get_daily_turnover();
             localStorage_changed = false;
@@ -1490,31 +1656,7 @@ $(document).ready(() => {
             });
         }
     })
-    let downloadCSV = (csv, filename) => {
-        var csvFile;
-        var downloadLink;
 
-        // CSV file
-        csvFile = new Blob([csv], {type: "text/csv"});
-
-        // Download link
-        downloadLink = document.createElement("a");
-
-        // File name
-        downloadLink.download = filename;
-
-        // Create a link to the file
-        downloadLink.href = window.URL.createObjectURL(csvFile);
-
-        // Hide download link
-        downloadLink.style.display = "none";
-
-        // Add the link to DOM
-        document.body.appendChild(downloadLink);
-
-        // Click download link
-        downloadLink.click();
-    }
     $('#export_csv').click(function(){
         let filename = + new Date() + '.csv';
         let csv = [];
@@ -1532,8 +1674,8 @@ $(document).ready(() => {
         downloadCSV(csv.join("\n"), filename);
     })
     $("#export_xls").click(function(e){
-        var tab_text="<table border='2px'><tr bgcolor='#87AFC6'>";
-        var textRange; var j=0;
+        let tab_text="<table border='2px'><tr bgcolor='#87AFC6'>";
+        let textRange; let j=0;
         tab = document.getElementById('detail_comparison_table'); // id of table
 
         for(j = 0 ; j < tab.rows.length ; j++)
@@ -1541,7 +1683,7 @@ $(document).ready(() => {
             tab_text=tab_text+tab.rows[j].innerHTML+"</tr>";
         }
         tab_text=tab_text+"</table>";
-        var a = document.createElement('a');
+        let a = document.createElement('a');
         a.href = 'data:application/vnd.ms-excel,' +  encodeURIComponent(tab_text);
         a.download =  + new Date() + '.xls';
         a.click();

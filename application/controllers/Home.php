@@ -142,7 +142,8 @@ class Home extends MY_Controller {
 
 		$date = array(
 			"start" => $this->input->post('start'),
-			"end"	=> $this->input->post('end')
+			"end"	=> $this->input->post('end'),
+			"length"=> $this->input->post('length')
 		);
 		$shop_name = str_replace(array('"'), '\'', str_replace(array('[',']'), '', $this->input->post('shop_name')));
 		$ret = array(
@@ -159,7 +160,8 @@ class Home extends MY_Controller {
 		$conn = parent::dbconnect();
 		$date = array(
 			"start" => $this->input->post('start'),
-			"end"	=> $this->input->post('end')
+			"end"	=> $this->input->post('end'),
+			"length"=> $this->input->post('length')
 		);
 		$shop_name = str_replace(array('"'), '\'', str_replace(array('[',']'), '', $this->input->post('shop_name')));
 
@@ -177,7 +179,8 @@ class Home extends MY_Controller {
 		$conn = parent::dbconnect();
 		$date = array(
 			"start" => $this->input->post('start'),
-			"end"	=> $this->input->post('end')
+			"end"	=> $this->input->post('end'),
+			"length"=> $this->input->post('length')
 		);
 		$shop_name = str_replace(array('"'), '\'', str_replace(array('[',']'), '', $this->input->post('shop_name')));
 		$ret = array(
@@ -195,7 +198,8 @@ class Home extends MY_Controller {
 
 		$d_date = array(
 			"start" => $this->input->post('d_start'),
-			"end"	=> $this->input->post('end')
+			"end"	=> $this->input->post('end'),
+			"length"=> $this->input->post('length')
 		);
 		$shop_name = str_replace(array('"'), '\'', str_replace(array('[',']'), '', $this->input->post('shop_name')));
 		$ret = array(

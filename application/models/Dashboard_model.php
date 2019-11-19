@@ -249,7 +249,11 @@ class Dashboard_model extends CI_Model{
     function get_daily_turnover($conn, $date, $shop_name){
         $sql = "
             SELECT
-            DATEPART(DY, t.bookkeeping_date) d,
+            DATEPART(DY, t.bookkeeping_date) d,";
+        if($date['length'] <= 3){
+            $sql = $sql . "s.description shop_name,";
+        }
+        $sql = $sql . "
             SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as netsale
             FROM transactions t
             INNER JOIN shops s ON s.id = t.shop_id
@@ -264,7 +268,11 @@ class Dashboard_model extends CI_Model{
             $sql = $sql . " AND s.description IN (" . $shop_name . ")";
         }
         $sql = $sql . "
-            GROUP BY DATEPART(DY, t.bookkeeping_date)
+            GROUP BY DATEPART(DY, t.bookkeeping_date)";
+        if($date['length'] <= 3){
+            $sql = $sql . ", s.description";
+        }
+        $sql = $sql . "
             ORDER BY DATEPART(DY, t.bookkeeping_date)
         ";
         return $this->run_query($conn, $sql);
@@ -272,7 +280,11 @@ class Dashboard_model extends CI_Model{
     function get_weekly_turnover($conn, $date, $shop_name){
         $sql = "
             SELECT
-            DATEPART(week, t.bookkeeping_date) w,
+            DATEPART(week, t.bookkeeping_date) w,";
+        if($date['length'] <= 3){
+            $sql = $sql . "s.description shop_name,";
+        }
+        $sql = $sql . "
             SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as netsale
             FROM transactions t
             INNER JOIN shops s ON s.id = t.shop_id
@@ -287,7 +299,11 @@ class Dashboard_model extends CI_Model{
             $sql = $sql . " AND s.description IN (" . $shop_name . ")";
         }
         $sql = $sql . "
-            GROUP BY DATEPART(week, t.bookkeeping_date)
+            GROUP BY DATEPART(week, t.bookkeeping_date)";
+        if($date['length'] <= 3){
+            $sql = $sql . ", s.description";
+        }
+        $sql = $sql . "
             ORDER BY DATEPART(week, t.bookkeeping_date)
         ";
         return $this->run_query($conn, $sql);
@@ -295,7 +311,11 @@ class Dashboard_model extends CI_Model{
     function get_monthly_turnover($conn, $date, $shop_name){
         $sql = "
             SELECT
-            DATEPART(month, t.bookkeeping_date) m,
+            DATEPART(month, t.bookkeeping_date) m,";
+        if($date['length'] <= 3){
+            $sql = $sql . "s.description shop_name,";
+        }
+        $sql = $sql . "
             SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as netsale
             FROM transactions t
             INNER JOIN shops s ON s.id = t.shop_id
@@ -310,7 +330,11 @@ class Dashboard_model extends CI_Model{
             $sql = $sql . " AND s.description IN (" . $shop_name . ")";
         }
         $sql = $sql . "
-            GROUP BY DATEPART(month, t.bookkeeping_date)
+            GROUP BY DATEPART(month, t.bookkeeping_date)";
+        if($date['length'] <= 3){
+            $sql = $sql . ", s.description";
+        }
+        $sql = $sql . "
             ORDER BY DATEPART(month, t.bookkeeping_date)
         ";
         return $this->run_query($conn, $sql);
@@ -333,7 +357,11 @@ class Dashboard_model extends CI_Model{
             $sql = $sql . " AND s.description IN (" . $shop_name . ")";
         }
         $sql = $sql . "
-            GROUP BY DATEPART(year, t.bookkeeping_date)
+            GROUP BY DATEPART(year, t.bookkeeping_date)";
+        if($date['length'] <= 3){
+            $sql = $sql . ", s.description";
+        }
+        $sql = $sql . "
             ORDER BY DATEPART(year, t.bookkeeping_date)
         ";
         return $this->run_query($conn, $sql);
