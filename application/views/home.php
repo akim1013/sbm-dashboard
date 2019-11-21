@@ -238,10 +238,13 @@
                             <div class="row">
                                 <div class="col-lg-8">
                                     <div id="sale_detail_line" class="_bar_chart"></div>
+                                    <button type="button" class="btn btn-primary shop_article_detail hide" style="margin-top: 20px" name="button">See more...</button>
                                 </div>
                                 <div class="col-lg-4">
                                     <div id="payment_detail_line" class="_bar_chart"></div>
                                 </div>
+                            </div>
+                            <div class="row shop_article_detail_box">
                             </div>
                         </div>
                     </div>
@@ -291,6 +294,7 @@
                         </div>
                     </div>
                 </section>
+
                 <section id="monthly_sale_bar" class="no-padding-top no-padding-bottom hide">
                     <div class="container-fluid">
                         <div class="row">

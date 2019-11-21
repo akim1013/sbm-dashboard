@@ -8,8 +8,8 @@ $(document).ready(() => {
     $('.shop-name').text('All shops');
     let storage_all_shop = '';
     // Date Range Change
-    let start = moment().subtract(1, 'days');
-    let end = moment().subtract(1, 'days');
+    let start = moment().subtract(2, 'days');
+    let end = moment().subtract(2, 'days');
     let _shop_name          = [];
     let shops               = [];   // Shop lists
     let _shops              = [];   // Available shop lists
@@ -117,7 +117,8 @@ $(document).ready(() => {
         let monthIndex = date.getMonth();
         let year = date.getFullYear();
 
-        return year + '-' + monthNames[monthIndex] + '-' + day;} // Parse randomly given date value to YYYY-MM-DD format
+        return year + '-' + monthNames[monthIndex] + '-' + day;
+    } // Parse randomly given date value to YYYY-MM-DD format
 
     let downloadCSV = (csv, filename) => {
         let csvFile;
@@ -1167,6 +1168,14 @@ $(document).ready(() => {
         }
     } // Priority 5
 
+    Highcharts.setOptions({
+        chart: {
+            style: {
+                fontFamily: 'sans-serif'
+            }
+        }
+    });
+
     date_range_set(start, end); // Initiate app
 
     /* Action hooks */
@@ -1202,10 +1211,15 @@ $(document).ready(() => {
     // Details section
     $('._netsale').click(() => {
         if($('#sale_detail').hasClass('hide')){
+            if(JSON.parse(localStorage.getItem('_shop_name')).length <=3){
+                $('.shop_article_detail').removeClass('hide');
+            }else{
+                $('.shop_article_detail').addClass('hide');
+            }
             let data = {
                 start: start.format('YYYY-MM-DD'),
                 end: end.format('YYYY-MM-DD'),
-                shop_name: localStorage.getItem('_shop_name')
+                shop_name: localStorage.getItem('shop_name')
             }
             $('.loader').removeClass('hide');
             // Payment detail
@@ -1233,7 +1247,7 @@ $(document).ready(() => {
                             type: 'column'
                         },
                         title: {
-                            text: 'Payment details'
+                            text: 'Total Payment details'
                         },
                         xAxis: {
                             categories: p_description,
@@ -1290,7 +1304,7 @@ $(document).ready(() => {
                             type: 'column'
                         },
                         title: {
-                            text: 'Turnover details by items'
+                            text: 'Total Turnover details by items'
                         },
                         xAxis: {
                             categories: d_group,
@@ -1336,7 +1350,7 @@ $(document).ready(() => {
             let data = {
                 start: end.format('YYYY-MM-DD'),
                 end: end.format('YYYY-MM-DD'),
-                shop_name: localStorage.getItem('_shop_name')
+                shop_name: localStorage.getItem('shop_name')
             }
             $('.loader').removeClass('hide');
             $.ajax({
@@ -1367,7 +1381,7 @@ $(document).ready(() => {
                             type: 'column'
                         },
                         title: {
-                            text: 'Transaction count detail by hours'
+                            text: 'Total Transaction count detail by hours'
                         },
                         xAxis: {
                             categories: d_hours,
@@ -1406,6 +1420,152 @@ $(document).ready(() => {
         }else{
             $('#transaction_detail').addClass('hide')
         }
+    })
+    $('.shop_article_detail').click(() => {
+        let data = {
+            start: start.format('YYYY-MM-DD'),
+            end: end.format('YYYY-MM-DD'),
+            shop_name: localStorage.getItem('_shop_name')
+        }
+        $('.loader').removeClass('hide');
+        $.ajax({
+            url: api_path + 'home/article_detail',
+            method: 'post',
+            data: data,
+            success: function(res){
+                $('.loader').addClass('hide');
+                let response = JSON.parse(res);
+                if(response.status == 'success'){
+                    let s_n = []; // Shop name list
+                    let article_data = response.data.article_detail;
+                    let filtered_article_data = []; // Limited to 20
+                    let _temp_shop_name = '';
+                    let article_series = [];
+
+                    for(let item of article_data){
+                        if(_temp_shop_name != item.shop_name){
+                            s_n.push(item.shop_name);
+                            _temp_shop_name = item.shop_name;
+                        }
+                    }
+                    for(let s of s_n){
+                        let count = 0;
+                        for(let item of article_data){
+                            if(s == item.shop_name){
+                                if(count < 20){
+                                    count++;
+                                    filtered_article_data.push(item);
+                                }
+                            }
+                        }
+                    }
+
+                    for(let s of s_n){
+                        let article_pie = [];
+                        let article_x = [];
+                        let article_y = [];
+                        for(let item of filtered_article_data){
+                            if(s == item.shop_name){
+                                article_pie.push({
+                                    name: item.article_name,
+                                    y: parseFloat(item.price)
+                                });
+                                article_x.push(item.article_name);
+                                article_y.push(parseFloat(item.price));
+                            }
+                        }
+                        let div1 = $('<div class="col-lg-4"></div>');
+                        let div2 = $('<div class="col-lg-8"></div>');
+                        let table = $('<table class="table table-sm table-striped"></table>');
+                        let line_div = $('<div id="line_chart_' + s.replace(/\s/g, '') + '"></div>')
+                        let pie_div = $('<div id="pie_chart_' + s.replace(/\s/g, '') + '"></div>');
+                        // Render table
+                        let thead = $('<thead><tr><th>Article</th><th>Total price</th></tr><thead>');
+                        let tbody = $('<tbody></tbody>');
+                        for(let item of filtered_article_data){
+                            if(s == item.shop_name){
+                                tbody.append('<tr><td>' + item.article_name + '</td><td>' + item.price + '</td></tr>')
+                            }
+                        }
+                        div1.append('<h3 style="margin: 20px;">' + s + ' - Top 20 articles</h3>');
+                        $('.shop_article_detail_box').append(div1.append(table.append(thead).append(tbody)));
+                        // Render Pie chart
+                        $('.shop_article_detail_box').append(div2);
+                        div2.append(pie_div);
+                        Highcharts.chart('pie_chart_' + s.replace(/\s/g, ''), {
+                            chart: {
+                                plotBackgroundColor: null,
+                                plotBorderWidth: null,
+                                plotShadow: false,
+                                type: 'pie'
+                            },
+                            title: {
+                                text: s + ' article sale details'
+                            },
+                            tooltip: {
+                                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                            },
+                            plotOptions: {
+                                pie: {
+                                    allowPointSelect: true,
+                                    cursor: 'pointer',
+                                    dataLabels: {
+                                        enabled: true,
+                                        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                                    }
+                                }
+                            },
+                            series: [{
+                                name: 'Articles',
+                                colorByPoint: true,
+                                data: article_pie
+                            }]
+                        });
+                        // Render Line chart
+                        div2.append(line_div);
+                        Highcharts.chart('line_chart_' + s.replace(/\s/g, ''), {
+                            chart: {
+                                type: 'column'
+                            },
+                            title: {
+                                text: s + ' article sale details'
+                            },
+                            subtitle: {
+                                text: 'Top 20 articles'
+                            },
+                            xAxis: {
+                                categories: article_x,
+                                crosshair: true
+                            },
+                            yAxis: {
+                                min: 0,
+                                title: {
+                                    text: 'Price'
+                                }
+                            },
+                            tooltip: {
+                                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                                    '<td style="padding:0"><b>${point.y:.1f}</b></td></tr>',
+                                footerFormat: '</table>',
+                                shared: true,
+                                useHTML: true
+                            },
+                            plotOptions: {
+                                column: {
+                                    pointPadding: 0.2,
+                                    borderWidth: 0
+                                }
+                            },
+                            series: [{
+                                name: s,
+                                data: article_y
+                            }]
+                        });
+                    }
+                }
+            }
+        })
     })
     //sale_comparison_reverse
     $('.turnover_comparison_sort').click(function(){
