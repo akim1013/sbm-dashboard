@@ -1209,6 +1209,7 @@ $(document).ready(() => {
         detail_comparison_data.start = st.format('YYYY-MM-DD');
         detail_comparison_data.end = ed.format('YYYY-MM-DD');
     }
+
     Highcharts.setOptions({
         chart: {
             style: {
@@ -1799,7 +1800,8 @@ $(document).ready(() => {
                         let last_week_group_qty = 0;
                         let last_week_group_amount = 0;
                         let last_week_group_percent = 0;
-                        table.append('<tr class="sub-title"><td colspan="9">' + item.group_name + '<td><tr>');
+                        //table.append('<tr class="sub-title" style="cursor: pointer;"><td colspan="9">' + item.group_name + '<td><tr>');
+                        let sub_item = "";
                         for(let _item of article_detail){
                             if(item.group_name == _item.group_name){
                                 if((_item.amount == 0) && (_item.last_week_amount == 0)){
@@ -1811,11 +1813,30 @@ $(document).ready(() => {
                                 last_week_group_qty += _item.last_week_amount;
                                 last_week_group_amount += parseFloat(_item.last_week_price);
                                 last_week_group_percent += parseFloat(_item.last_week_price) / parseFloat(last_week_price) * 100;
-                                table.append('<tr><td>' + _item.article_name + '</td><td>' + _item.last_week_amount + '</td><td>' + parseFloat(_item.last_week_price).toFixed(2) + '</td><td>' + (parseFloat(_item.last_week_price) / parseFloat(item.last_group_price) * 100).toFixed(3) + '%' + '</td><td>' + _item.amount + '</td><td>' + parseFloat(_item.price).toFixed(2) + '</td><td>' + (parseFloat(_item.price) / parseFloat(item.group_price) * 100).toFixed(3) + '%' + '</td><td>'
-                                + (_item.amount - _item.last_week_amount).toString() + '</td><td>' + (parseFloat(_item.price) - parseFloat(_item.last_week_price)).toFixed(2) + '</td></tr>')
+                                sub_item += ('<tr class="sub-items sub_' + item.group_name.replace(/[^A-Z0-9]/ig, "") + ' hide"><td> ' + _item.article_name
+                                    + '</td><td>' + _item.last_week_amount
+                                    + '</td><td>' + parseFloat(_item.last_week_price).toFixed(2)
+                                    + '</td><td>' + (parseFloat(_item.last_week_price) / parseFloat(item.last_group_price) * 100).toFixed(3) + '%'
+                                    + '</td><td>' + _item.amount
+                                    + '</td><td>' + parseFloat(_item.price).toFixed(2)
+                                    + '</td><td>' + (parseFloat(_item.price) / parseFloat(item.group_price) * 100).toFixed(3) + '%'
+                                    + '</td><td>' + (_item.amount - _item.last_week_amount).toString()
+                                    + '</td><td>' + (parseFloat(_item.price) - parseFloat(_item.last_week_price)).toFixed(2)
+                                    + '</td></tr>')
                             }
                         }
-                        table.append('<tr class="sub-total"><td></td><td>' + last_week_group_qty + '</td><td>' + last_week_group_amount.toFixed(2) + '</td><td>' + last_week_group_percent.toFixed(3) + '%' + '</td><td>' + group_qty + '</td><td>' + group_amount.toFixed(2) + '</td><td>' + group_percent.toFixed(3) + '%' + '</td><td></td><td></td></tr>');
+                        sub_item += '<tr class="sub-items sub_' + item.group_name.replace(/[^A-Z0-9]/ig, "") + ' hide"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>';
+                        table.append('<tr class="sub-total group_' + item.group_name.replace(/[^A-Z0-9]/ig, "") + '" style="cursor: pointer"><td style="color: #55a">' + item.group_name
+                            + '</td><td>' + last_week_group_qty
+                            + '</td><td>' + last_week_group_amount.toFixed(2)
+                            + '</td><td>' + last_week_group_percent.toFixed(3) + '%'
+                            + '</td><td>' + group_qty
+                            + '</td><td>' + group_amount.toFixed(2)
+                            + '</td><td>' + group_percent.toFixed(3) + '%'
+                            + '</td><td>' + (group_qty - last_week_group_qty).toString()
+                            + '</td><td>' + (group_amount - last_week_group_amount).toFixed(2)
+                            + '</td></tr>');
+                        table.append(sub_item);
                     }
                     table.append('<tr class="total"><td>Total sales</td><td>' + last_week_qty.toString() + '</td><td>' + process_price(last_week_price) + '</td><td></td><td>' + qty.toString() + '</td><td>' + process_price(price) + '</td><td></td><td>'
                      + (qty - last_week_qty).toString() + '</td><td>' + process_price(price - last_week_price) + '</td></tr>');
@@ -1863,7 +1884,16 @@ $(document).ready(() => {
             }
         });
     })
-
+    $('table').delegate('.sub-total', 'click', function(){
+        if($(this).hasClass('_active')){
+            $(this).removeClass('_active');
+            $('.sub_' + $(this).attr('class').split(" ")[1].split('_')[1]).addClass('hide');
+            return;
+        }else{
+            $(this).addClass('_active');
+            $('.sub_' + $(this).attr('class').split(" ")[1].split('_')[1]).removeClass('hide');
+        }
+    })
     $('#export_csv').click(function(){
         let filename = + new Date() + '.csv';
         let csv = [];
