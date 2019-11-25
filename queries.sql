@@ -153,3 +153,29 @@ INNER JOIN payments p ON p.id = tp.payment_id
 WHERE t.delete_operator_id IS NULL
     AND t.bookkeeping_date BETWEEN '2019-11-06' AND '2019-11-06'
 GROUP BY p.description) last_week_payment on p.description = last_week_payment.payment_detail
+
+// Dataset for David
+SELECT d.m month, d.w week, d.h hour, d.shop_name shop, g.description group_name, a.description article_name, d.amount qty, d.price price
+FROM articles a
+INNER JOIN (SELECT
+	s.description shop_name,
+	DATEPART(month, t.bookkeeping_date) m,
+	DATEPART(week, t.bookkeeping_date) w,
+	DATEPART(hour, t.beginning_timestamp) h,
+	a.id as article_id,
+    SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as price,
+    count(ta.price) amount
+
+FROM transactions t
+INNER JOIN shops s ON s.id = t.shop_id
+LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id AND tk.in_statistics=1
+INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+INNER JOIN articles a ON (a.id = ta.article_id) AND a.article_type Not In(2,3)
+INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
+INNER JOIN groups g ON g.id = a.group_a_id
+WHERE t.delete_operator_id IS NULL
+    AND t.bookkeeping_date BETWEEN '2019-01-01' AND '2019-12-31'
+GROUP BY a.id, DATEPART(month, t.bookkeeping_date), DATEPART(week, t.bookkeeping_date), DATEPART(hour, t.beginning_timestamp), s.description
+) d ON d.article_id = a.id
+LEFT JOIN groups g ON g.id = a.group_a_id
+ORDER BY shop, month, week, hour 

@@ -325,10 +325,11 @@
                             <table id="detail_comparison_table" class="table table-sm">
                                 <thead>
                                     <tr>
-                                        <th></th>
-                                        <th colspan="3" class="start_date">Jun 04, 2018 ~ Jun 10, 2018</th>
-                                        <th colspan="3" class="end_date">Jun 11, 2018 ~ Jun 17, 2018</th>
-                                        <th colspan="2">Variance</th>
+                                        <th>Date range</th>
+                                        <th colspan="3" class="start_date" style="cursor: pointer">Jun 04, 2018 ~ Jun 10, 2018</th>
+                                        <th colspan="3" class="end_date" style="cursor: pointer">Jun 11, 2018 ~ Jun 17, 2018</th>
+                                        <th>Variance</th>
+                                        <th id="apply_filter" style="cursor: pointer; color: #f55;">Apply filter</th>
                                     </tr>
                                     <tr>
                                         <th width="15%"></th>

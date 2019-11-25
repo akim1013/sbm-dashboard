@@ -7,9 +7,33 @@ $(document).ready(() => {
 
     $('.shop-name').text('All shops');
     let storage_all_shop = '';
+
     // Date Range Change
     let start = moment().subtract(2, 'days');
     let end = moment().subtract(2, 'days');
+
+    let today = moment();
+    let yesterday = moment().subtract(1, 'days');
+
+    let start_of_this_week = moment().startOf('week');
+    let end_of_this_week = moment().endOf('week');
+
+    let start_of_last_week = moment().subtract(7, 'days').startOf('week');
+    let end_of_last_week = moment().subtract(7, 'days').endOf('week');
+
+    let start_of_this_month = moment().startOf('month');
+    let end_of_this_month = moment().endOf('month');
+
+    let start_of_last_month = moment().subtract(1, 'months').startOf('month');
+    let end_of_last_month = moment().subtract(1, 'months').endOf('month');
+
+    let start_of_this_year = moment().startOf('year');
+    let end_of_this_year = moment().endOf('year');
+
+    let start_of_last_year = moment().subtract(1, 'years').startOf('year');
+    let end_of_last_year = moment().subtract(1, 'years').endOf('year');
+
+
     let _shop_name          = [];
     let shops               = [];   // Shop lists
     let _shops              = [];   // Available shop lists
@@ -41,7 +65,13 @@ $(document).ready(() => {
     let second_ajax = [];
     let selected = 'ov'; // Selected Overall View else dc, stands for Detail comparison
     let localStorage_changed = true;
-
+    let detail_comparison_data = {
+        start: start_of_this_week.format('YYYY-MM-DD'),
+        end: end_of_this_week.format('YYYY-MM-DD'),
+        last_start: start_of_last_week.format('YYYY-MM-DD'),
+        last_end: end_of_last_week.format('YYYY-MM-DD'),
+        shop_name: localStorage.getItem('_shop_name')
+    };
     if(window.innerWidth < 575){
         isMobile = true;
     }else{
@@ -678,7 +708,6 @@ $(document).ready(() => {
             method: 'post',
             data: data,
             success: function(res){
-                $('.loader').addClass('hide');
                 let response = JSON.parse(res);
                 if(response.status == 'success'){
                     add_shop_list(response.data);
@@ -1158,6 +1187,7 @@ $(document).ready(() => {
                 method: 'post',
                 data: month,
                 success: function(res){
+                    $('.loader').addClass('hide');
                     let response = JSON.parse(res);
                     second_ajax = response;
                     if(response.status == 'success'){
@@ -1168,6 +1198,17 @@ $(document).ready(() => {
         }
     } // Priority 5
 
+
+    let set_start_date = (st, ed) => {
+        $('.start_date').text(st.format('MMM DD, YYYY') + ' ~ ' + ed.format('MMM DD, YYYY'));
+        detail_comparison_data.last_start = st.format('YYYY-MM-DD');
+        detail_comparison_data.last_end = ed.format('YYYY-MM-DD');
+    }
+    let set_end_date = (st, ed) => {
+        $('.end_date').text(st.format('MMM DD, YYYY') + ' ~ ' + ed.format('MMM DD, YYYY'));
+        detail_comparison_data.start = st.format('YYYY-MM-DD');
+        detail_comparison_data.end = ed.format('YYYY-MM-DD');
+    }
     Highcharts.setOptions({
         chart: {
             style: {
@@ -1427,6 +1468,7 @@ $(document).ready(() => {
             end: end.format('YYYY-MM-DD'),
             shop_name: localStorage.getItem('_shop_name')
         }
+        $('.shop_article_detail_box').empty();
         $('.loader').removeClass('hide');
         $.ajax({
             url: api_path + 'home/article_detail',
@@ -1488,6 +1530,7 @@ $(document).ready(() => {
                             }
                         }
                         div1.append('<h3 style="margin: 20px;">' + s + ' - Top 20 articles</h3>');
+
                         $('.shop_article_detail_box').append(div1.append(table.append(thead).append(tbody)));
                         // Render Pie chart
                         $('.shop_article_detail_box').append(div2);
@@ -1675,6 +1718,15 @@ $(document).ready(() => {
         $(this).parent().addClass('active');
         selected = 'ov';
     })
+
+    $('.start_date').daterangepicker({
+        startDate: start_of_last_week,
+        endDate: end_of_last_week
+    }, set_start_date);
+    $('.end_date').daterangepicker({
+        startDate: start_of_this_week,
+        endDate: end_of_this_week
+    }, set_end_date);
     $('#detail_comparison').click(function(){
 
         selected = 'dc';
@@ -1682,139 +1734,134 @@ $(document).ready(() => {
         $('.page-comparison').removeClass('hide');
         $('.list-unstyled li').removeClass('active');
         $(this).parent().addClass('active');
-        let data = {
-            start: moment().startOf('week').format('YYYY-MM-DD'),
-            end: moment().format('YYYY-MM-DD'),
-            last_start: moment().subtract(7, 'days').startOf('week').format('YYYY-MM-DD'),
-            last_end: moment().subtract(7, 'days').endOf('week').format('YYYY-MM-DD'),
-            shop_name: localStorage.getItem('_shop_name')
-        }
-        $('.end_date').text(moment().startOf('week').format('MMM DD, YYYY') + ' ~ ' + moment().format('MMM DD, YYYY'));
-        $('.start_date').text(moment().subtract(7, 'days').startOf('week').format('MMM DD, YYYY') + ' ~ ' + moment().subtract(7, 'days').endOf('week').format('MMM DD, YYYY'));
+    })
+
+    $("#apply_filter").click(function(){
         let table = $('#comparison_detail table tbody');
-        if((detail_comparison.length == 0) || (localStorage_changed)){
-            table.empty();
-            $.ajax({
-                url: api_path + 'home/get_comparison_detailed_data',
-                method: 'post',
-                data: data,
-                success: function(res){
-                    let response = JSON.parse(res);
-                    if(response.status == 'success'){
-                        detail_comparison = response;
-                        detail_comparison.shops = localStorage.getItem('_shop_name');
-                        $('.export-data').removeClass('hide');
-                        let article_detail = response.data.article_detail;
-                        let discount_detail = response.data.discount_detail;
-                        let payment_detail = response.data.payment_detail;
-                        // Article detail
-                        table.append('<tr class="title"><td colspan="9">Sales<td><tr>');
-                        let article_group = '';
-                        let article_group_array = [];
-                        let price = 0;
-                        let qty = 0;
-                        let last_week_price = 0;
-                        let last_week_qty = 0;
-                        let group_price = 0;
-                        for(let i = 0; i < article_detail.length; i++){
-                            if((article_detail[i].amount == 0) && (article_detail[i].last_week_amount == 0)){
-                                continue;
-                            }
-                            price += parseFloat(article_detail[i].price);
-                            qty += (article_detail[i].amount);
-                            group_price += parseFloat(article_detail[i].price);
-                            last_week_price += parseFloat(article_detail[i].last_week_price);
-                            last_week_qty += (article_detail[i].last_week_amount);
-                            if(article_group != article_detail[i].group_name){
-                                article_group = article_detail[i].group_name;
-                                article_group_array.push({
-                                    group_name: article_group,
-                                });
-                            }
+        table.empty();
+        $('.loader').removeClass('hide');
+        detail_comparison_data.shop_name = localStorage.getItem('_shop_name');
+        $.ajax({
+            url: api_path + 'home/get_comparison_detailed_data',
+            method: 'post',
+            data: detail_comparison_data,
+            success: function(res){
+                $('.loader').addClass('hide');
+                let response = JSON.parse(res);
+                if(response.status == 'success'){
+                    detail_comparison = response;
+                    detail_comparison.shops = localStorage.getItem('_shop_name');
+                    $('.export-data').removeClass('hide');
+                    let article_detail = response.data.article_detail;
+                    let discount_detail = response.data.discount_detail;
+                    let payment_detail = response.data.payment_detail;
+                    // Article detail
+                    table.append('<tr class="title"><td colspan="9">Sales<td><tr>');
+                    let article_group = '';
+                    let article_group_array = [];
+                    let price = 0;
+                    let qty = 0;
+                    let last_week_price = 0;
+                    let last_week_qty = 0;
+                    let group_price = 0;
+                    for(let i = 0; i < article_detail.length; i++){
+                        if((article_detail[i].amount == 0) && (article_detail[i].last_week_amount == 0)){
+                            continue;
                         }
-                        for(let item of article_group_array){
-                            let group_price = 0;
-                            let last_group_price = 0;
-                            for(let _item of article_detail){
-                                if(item.group_name == _item.group_name){
-                                    group_price += parseFloat(_item.price);
-                                    last_group_price += parseFloat(_item.last_week_price);
-                                }
-                            }
-                            item.group_price = group_price;
-                            item.last_group_price = last_group_price;
+                        price += parseFloat(article_detail[i].price);
+                        qty += (article_detail[i].amount);
+                        group_price += parseFloat(article_detail[i].price);
+                        last_week_price += parseFloat(article_detail[i].last_week_price);
+                        last_week_qty += (article_detail[i].last_week_amount);
+                        if(article_group != article_detail[i].group_name){
+                            article_group = article_detail[i].group_name;
+                            article_group_array.push({
+                                group_name: article_group,
+                            });
                         }
-                        for(let item of article_group_array){
-                            let group_qty = 0;
-                            let group_amount = 0;
-                            let group_percent = 0;
-                            let last_week_group_qty = 0;
-                            let last_week_group_amount = 0;
-                            let last_week_group_percent = 0;
-                            table.append('<tr class="sub-title"><td colspan="9">' + item.group_name + '<td><tr>');
-                            for(let _item of article_detail){
-                                if(item.group_name == _item.group_name){
-                                    if((_item.amount == 0) && (_item.last_week_amount == 0)){
-                                        continue;
-                                    }
-                                    group_qty += _item.amount;
-                                    group_amount += parseFloat(_item.price);
-                                    group_percent += parseFloat(_item.price) / parseFloat(price) * 100;
-                                    last_week_group_qty += _item.last_week_amount;
-                                    last_week_group_amount += parseFloat(_item.last_week_price);
-                                    last_week_group_percent += parseFloat(_item.last_week_price) / parseFloat(last_week_price) * 100;
-                                    table.append('<tr><td>' + _item.article_name + '</td><td>' + _item.last_week_amount + '</td><td>' + parseFloat(_item.last_week_price).toFixed(2) + '</td><td>' + (parseFloat(_item.last_week_price) / parseFloat(item.last_group_price) * 100).toFixed(3) + '%' + '</td><td>' + _item.amount + '</td><td>' + parseFloat(_item.price).toFixed(2) + '</td><td>' + (parseFloat(_item.price) / parseFloat(item.group_price) * 100).toFixed(3) + '%' + '</td><td>'
-                                    + (_item.amount - _item.last_week_amount).toString() + '</td><td>' + (parseFloat(_item.price) - parseFloat(_item.last_week_price)).toFixed(2) + '</td></tr>')
-                                }
-                            }
-                            table.append('<tr class="sub-total"><td></td><td>' + last_week_group_qty + '</td><td>' + last_week_group_amount.toFixed(2) + '</td><td>' + last_week_group_percent.toFixed(3) + '%' + '</td><td>' + group_qty + '</td><td>' + group_amount.toFixed(2) + '</td><td>' + group_percent.toFixed(3) + '%' + '</td><td></td><td></td></tr>');
-                        }
-                        table.append('<tr class="total"><td>Total sales</td><td>' + last_week_qty.toString() + '</td><td>' + process_price(last_week_price) + '</td><td></td><td>' + qty.toString() + '</td><td>' + process_price(price) + '</td><td></td><td>'
-                         + (qty - last_week_qty).toString() + '</td><td>' + process_price(price - last_week_price) + '</td></tr>');
-
-                        // Discount details
-                        table.append('<tr class="title"><td colspan="9">Discount<td><tr>');
-                        let this_week_discount_qty = 0;
-                        let this_week_discount_amount = 0;
-                        let last_week_discount_qty = 0;
-                        let last_week_discount_amount = 0;
-                        for(let item of discount_detail){
-                            if((item.this_week_quantity == '0') && (item.last_week_quantity == '0')){
-                                continue;
-                            }
-                            this_week_discount_qty += parseInt(item.this_week_quantity);
-                            this_week_discount_amount += parseFloat(item.this_week_amount);
-                            last_week_discount_qty += parseInt(item.last_week_quantity);
-                            last_week_discount_amount += parseFloat(item.last_week_amount);
-                            table.append('<tr><td>' + item.discount_description + '</td><td>' + item.last_week_quantity + '</td><td>' + process_price(item.last_week_amount) + '</td><td></td><td>' + item.this_week_quantity + '</td><td>' + process_price(item.this_week_amount)
-                            + '</td><td></td><td>' + (parseInt(item.this_week_quantity) - parseInt(item.last_week_quantity)).toString() + '</td><td>' + process_price(parseFloat(item.this_week_amount) - parseFloat(item.last_week_amount)) + '</td></tr>');
-                        }
-                        table.append('<tr class="total"><td>Discount total</td><td>' + last_week_discount_qty.toString() + '</td><td>' + process_price(last_week_discount_amount) + '</td><td></td><td>' + this_week_discount_qty.toString() + '</td><td>' + process_price(this_week_discount_amount)
-                        + '</td><td></td><td>' + (this_week_discount_qty - last_week_discount_qty).toString() + '</td><td>' + process_price(this_week_discount_amount - last_week_discount_amount) + '</td></tr>')
-
-                        // Payment details
-                        table.append('<tr class="title"><td colspan="9">Payment<td><tr>');
-                        let this_week_payment_qty = 0;
-                        let this_week_payment_amount = 0;
-                        let last_week_payment_qty = 0;
-                        let last_week_payment_amount = 0;
-                        for(let item of payment_detail){
-                            if((item.this_week_qty == '0') && (item.last_week_qty == '0')){
-                                continue;
-                            }
-                            this_week_payment_qty += parseInt(item.this_week_qty);
-                            this_week_payment_amount += parseFloat(item.this_week_amount);
-                            last_week_payment_qty += parseInt(item.last_week_qty);
-                            last_week_payment_amount += parseFloat(item.last_week_amount);
-                            table.append('<tr><td>' + item.description + '</td><td>' + item.last_week_qty + '</td><td>' + process_price(item.last_week_amount) + '</td><td></td><td>' + item.this_week_qty + '</td><td>' + process_price(item.this_week_amount)
-                            + '</td><td></td><td>' + (parseInt(item.this_week_qty) - parseInt(item.last_week_qty)).toString() + '</td><td>' + process_price(parseFloat(item.this_week_amount) - parseFloat(item.last_week_amount)) + '</td></tr>');
-                        }
-                        table.append('<tr class="total"><td>Payment total</td><td>' + last_week_payment_qty.toString() + '</td><td>' + process_price(last_week_payment_amount) + '</td><td></td><td>' + this_week_payment_qty.toString() + '</td><td>' + process_price(this_week_payment_amount)
-                        + '</td><td></td><td>' + (this_week_payment_qty - last_week_payment_qty).toString() + '</td><td>' + process_price(this_week_payment_amount - last_week_payment_amount) + '</td></tr>')
                     }
+                    for(let item of article_group_array){
+                        let group_price = 0;
+                        let last_group_price = 0;
+                        for(let _item of article_detail){
+                            if(item.group_name == _item.group_name){
+                                group_price += parseFloat(_item.price);
+                                last_group_price += parseFloat(_item.last_week_price);
+                            }
+                        }
+                        item.group_price = group_price;
+                        item.last_group_price = last_group_price;
+                    }
+                    for(let item of article_group_array){
+                        let group_qty = 0;
+                        let group_amount = 0;
+                        let group_percent = 0;
+                        let last_week_group_qty = 0;
+                        let last_week_group_amount = 0;
+                        let last_week_group_percent = 0;
+                        table.append('<tr class="sub-title"><td colspan="9">' + item.group_name + '<td><tr>');
+                        for(let _item of article_detail){
+                            if(item.group_name == _item.group_name){
+                                if((_item.amount == 0) && (_item.last_week_amount == 0)){
+                                    continue;
+                                }
+                                group_qty += _item.amount;
+                                group_amount += parseFloat(_item.price);
+                                group_percent += parseFloat(_item.price) / parseFloat(price) * 100;
+                                last_week_group_qty += _item.last_week_amount;
+                                last_week_group_amount += parseFloat(_item.last_week_price);
+                                last_week_group_percent += parseFloat(_item.last_week_price) / parseFloat(last_week_price) * 100;
+                                table.append('<tr><td>' + _item.article_name + '</td><td>' + _item.last_week_amount + '</td><td>' + parseFloat(_item.last_week_price).toFixed(2) + '</td><td>' + (parseFloat(_item.last_week_price) / parseFloat(item.last_group_price) * 100).toFixed(3) + '%' + '</td><td>' + _item.amount + '</td><td>' + parseFloat(_item.price).toFixed(2) + '</td><td>' + (parseFloat(_item.price) / parseFloat(item.group_price) * 100).toFixed(3) + '%' + '</td><td>'
+                                + (_item.amount - _item.last_week_amount).toString() + '</td><td>' + (parseFloat(_item.price) - parseFloat(_item.last_week_price)).toFixed(2) + '</td></tr>')
+                            }
+                        }
+                        table.append('<tr class="sub-total"><td></td><td>' + last_week_group_qty + '</td><td>' + last_week_group_amount.toFixed(2) + '</td><td>' + last_week_group_percent.toFixed(3) + '%' + '</td><td>' + group_qty + '</td><td>' + group_amount.toFixed(2) + '</td><td>' + group_percent.toFixed(3) + '%' + '</td><td></td><td></td></tr>');
+                    }
+                    table.append('<tr class="total"><td>Total sales</td><td>' + last_week_qty.toString() + '</td><td>' + process_price(last_week_price) + '</td><td></td><td>' + qty.toString() + '</td><td>' + process_price(price) + '</td><td></td><td>'
+                     + (qty - last_week_qty).toString() + '</td><td>' + process_price(price - last_week_price) + '</td></tr>');
+
+                    // Discount details
+                    table.append('<tr class="title"><td colspan="9">Discount<td><tr>');
+                    let this_week_discount_qty = 0;
+                    let this_week_discount_amount = 0;
+                    let last_week_discount_qty = 0;
+                    let last_week_discount_amount = 0;
+                    for(let item of discount_detail){
+                        if((item.this_week_quantity == '0') && (item.last_week_quantity == '0')){
+                            continue;
+                        }
+                        this_week_discount_qty += parseInt(item.this_week_quantity);
+                        this_week_discount_amount += parseFloat(item.this_week_amount);
+                        last_week_discount_qty += parseInt(item.last_week_quantity);
+                        last_week_discount_amount += parseFloat(item.last_week_amount);
+                        table.append('<tr><td>' + item.discount_description + '</td><td>' + item.last_week_quantity + '</td><td>' + process_price(item.last_week_amount) + '</td><td></td><td>' + item.this_week_quantity + '</td><td>' + process_price(item.this_week_amount)
+                        + '</td><td></td><td>' + (parseInt(item.this_week_quantity) - parseInt(item.last_week_quantity)).toString() + '</td><td>' + process_price(parseFloat(item.this_week_amount) - parseFloat(item.last_week_amount)) + '</td></tr>');
+                    }
+                    table.append('<tr class="total"><td>Discount total</td><td>' + last_week_discount_qty.toString() + '</td><td>' + process_price(last_week_discount_amount) + '</td><td></td><td>' + this_week_discount_qty.toString() + '</td><td>' + process_price(this_week_discount_amount)
+                    + '</td><td></td><td>' + (this_week_discount_qty - last_week_discount_qty).toString() + '</td><td>' + process_price(this_week_discount_amount - last_week_discount_amount) + '</td></tr>')
+
+                    // Payment details
+                    table.append('<tr class="title"><td colspan="9">Payment<td><tr>');
+                    let this_week_payment_qty = 0;
+                    let this_week_payment_amount = 0;
+                    let last_week_payment_qty = 0;
+                    let last_week_payment_amount = 0;
+                    for(let item of payment_detail){
+                        if((item.this_week_qty == '0') && (item.last_week_qty == '0')){
+                            continue;
+                        }
+                        this_week_payment_qty += parseInt(item.this_week_qty);
+                        this_week_payment_amount += parseFloat(item.this_week_amount);
+                        last_week_payment_qty += parseInt(item.last_week_qty);
+                        last_week_payment_amount += parseFloat(item.last_week_amount);
+                        table.append('<tr><td>' + item.description + '</td><td>' + item.last_week_qty + '</td><td>' + process_price(item.last_week_amount) + '</td><td></td><td>' + item.this_week_qty + '</td><td>' + process_price(item.this_week_amount)
+                        + '</td><td></td><td>' + (parseInt(item.this_week_qty) - parseInt(item.last_week_qty)).toString() + '</td><td>' + process_price(parseFloat(item.this_week_amount) - parseFloat(item.last_week_amount)) + '</td></tr>');
+                    }
+                    table.append('<tr class="total"><td>Payment total</td><td>' + last_week_payment_qty.toString() + '</td><td>' + process_price(last_week_payment_amount) + '</td><td></td><td>' + this_week_payment_qty.toString() + '</td><td>' + process_price(this_week_payment_amount)
+                    + '</td><td></td><td>' + (this_week_payment_qty - last_week_payment_qty).toString() + '</td><td>' + process_price(this_week_payment_amount - last_week_payment_amount) + '</td></tr>')
                 }
-            });
-        }
+            }
+        });
     })
 
     $('#export_csv').click(function(){
@@ -1849,4 +1896,8 @@ $(document).ready(() => {
         a.click();
         e.preventDefault();
     })
+
+
+    // Template function for testing date ranges
+
 })
