@@ -165,7 +165,6 @@ INNER JOIN (SELECT
 	a.id as article_id,
     SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as price,
     count(ta.price) amount
-
 FROM transactions t
 INNER JOIN shops s ON s.id = t.shop_id
 LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id AND tk.in_statistics=1
@@ -178,4 +177,85 @@ WHERE t.delete_operator_id IS NULL
 GROUP BY a.id, DATEPART(month, t.bookkeeping_date), DATEPART(week, t.bookkeeping_date), DATEPART(hour, t.beginning_timestamp), s.description
 ) d ON d.article_id = a.id
 LEFT JOIN groups g ON g.id = a.group_a_id
-ORDER BY shop, month, week, hour 
+ORDER BY shop, month, week, hour
+
+// Detail comparison article part by shops
+SELECT s.description shop_name, g.id group_id, g.description group_name, a.description article_name, sub_result.amount amount, sub_result.price price, sub_result_last_week.amount last_week_amount, sub_result_last_week.price last_week_price
+FROM groups g
+INNER JOIN articles a ON g.id = a.group_a_id
+LEFT JOIN (SELECT
+	s.description shop_name,
+    SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as price,
+	count(ta.price) amount,
+    a.id as article_id
+FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+INNER JOIN shops s ON s.id = t.shop_id
+LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id AND tk.in_statistics=1
+INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+INNER JOIN articles a ON (a.id = ta.article_id) AND a.article_type Not In(2,3)
+INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
+INNER JOIN groups g ON g.id = a.group_a_id
+WHERE t.delete_operator_id IS NULL
+    AND t.bookkeeping_date BETWEEN '2019-11-07' AND '2019-11-07'
+GROUP BY a.id, s.description) sub_result ON a.id = sub_result.article_id
+LEFT JOIN (SELECT
+	s.description shop_name,
+    SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as price,
+	count(ta.price) amount,
+    a.id as article_id
+FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+INNER JOIN shops s ON s.id = t.shop_id
+LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id AND tk.in_statistics=1
+INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+INNER JOIN articles a ON (a.id = ta.article_id) AND a.article_type Not In(2,3)
+INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
+INNER JOIN groups g ON g.id = a.group_a_id
+WHERE t.delete_operator_id IS NULL
+    AND t.bookkeeping_date BETWEEN '2019-11-06' AND '2019-11-06'
+GROUP BY a.id, s.description) sub_result_last_week ON sub_result_last_week.article_id = a.id
+INNER JOIN shops s ON s.description = sub_result.shop_name AND s.description = sub_result_last_week.shop_name
+ORDER BY s.description, g.id
+
+// Detail comparison discount by shops
+SELECT s.description shop_name, d.description discount_desctiption, this_week.quantity this_week_quantity, this_week.amount this_week_amount, last_week.quantity last_week_quantity, last_week.amount last_week_amount
+FROM discounts d
+LEFT JOIN (SELECT s.description shop_name, d.description discount_description, sum(td.quantity) quantity, sum(td.amount) amount
+FROM discounts d
+LEFT JOIN trans_discounts td ON td.discount_id = d.id
+INNER JOIN transactions t ON t.id = td.transaction_id
+INNER JOIN shops s ON s.id = t.shop_id
+WHERE t.delete_operator_id IS NULL
+    AND t.bookkeeping_date BETWEEN '2019-11-07' AND '2019-11-07'
+GROUP BY d.description, s.description) this_week ON d.description = this_week.discount_description
+LEFT JOIN (SELECT s.description shop_name, d.description discount_description, sum(td.quantity) quantity, sum(td.amount) amount
+FROM discounts d
+LEFT JOIN trans_discounts td ON td.discount_id = d.id
+INNER JOIN transactions t ON t.id = td.transaction_id
+INNER JOIN shops s ON s.id = t.shop_id
+WHERE t.delete_operator_id IS NULL
+    AND t.bookkeeping_date BETWEEN '2019-11-06' AND '2019-11-06'
+GROUP BY d.description, s.description) last_week ON d.description = last_week.discount_description
+INNER JOIN shops s ON s.description = this_week.shop_name AND s.description = last_week.shop_name
+ORDER BY s.description
+
+// Detail comparison payment by shops
+SELECT s.description shop_name, p.description, this_week_payment.amount this_week_amount, this_week_payment.qty this_week_qty, last_week_payment.amount last_week_amount, last_week_payment.qty last_week_amount
+FROM payments p
+LEFT JOIN (SELECT s.description shop_name, p.description payment_detail, sum(COALESCE(tp.amount, 0)) amount, count(tp.transaction_id) qty
+FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+LEFT JOIN shops s ON s.id = t.shop_id
+LEFT JOIN trans_payments tp ON tp.transaction_id = t.id
+INNER JOIN payments p ON p.id = tp.payment_id
+WHERE t.delete_operator_id IS NULL
+    AND t.bookkeeping_date BETWEEN '2019-11-07' AND '2019-11-07'
+GROUP BY p.description, s.description) this_week_payment ON p.description = this_week_payment.payment_detail
+LEFT JOIN (SELECT s.description shop_name, p.description payment_detail, sum(COALESCE(tp.amount, 0)) amount, count(tp.transaction_id) qty
+FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+LEFT JOIN shops s ON s.id = t.shop_id
+LEFT JOIN trans_payments tp ON tp.transaction_id = t.id
+INNER JOIN payments p ON p.id = tp.payment_id
+WHERE t.delete_operator_id IS NULL
+    AND t.bookkeeping_date BETWEEN '2019-11-06' AND '2019-11-06'
+GROUP BY p.description, s.description) last_week_payment on p.description = last_week_payment.payment_detail
+INNER JOIN shops s ON s.description = this_week_payment.shop_name AND s.description = last_week_payment.shop_name
+ORDER BY s.description
