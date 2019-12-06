@@ -5,6 +5,7 @@ $lang['site_lang']          = 'English';
 $lang['auth_username']      = 'Username';
 $lang['auth_password']      = 'Password';
 $lang['auth_login']         = 'Login';
+$lang['auth_add_new_user']  = 'Add new user';
 
 $lang['auth_heading']       = 'SBM Dashboard Login';
 $lang['auth_subtitle_1']    = 'The goal is to turn data into information,';
@@ -39,7 +40,7 @@ $lang['lb_all_shops']       = 'All shops';
 $lang['lb_refresh']         = 'Refresh';
 $lang['lb_extras']          = 'Extras';
 $lang['lb_export']          = 'Export';
-$lang['lb_overview']        = 'Turnover and transaction overview';
+$lang['lb_overview']        = 'Selected shops';
 $lang['lb_turnover']        = 'Turnover';
 $lang['lb_discount']        = 'Discount';
 $lang['lb_promotion']       = 'Promotion';
@@ -48,6 +49,22 @@ $lang['lb_transaction_count']      = 'Transactions';
 $lang['lb_average_bill']    = 'Average bill';
 $lang['lb_tips']            = 'Tips';
 $lang['lb_tax']    = 'Tax';
+
+$lang['lb_overall_view'] = 'Overall view ';
+$lang['lb_detail_comparison'] = 'Detail comparison ';
+$lang['lb_export_detail_comparison'] = 'Export detail comparison';
+$lang['lb_total_values'] = 'Total values';
+$lang['lb_yesterday'] = 'Yesterday';
+$lang['lb_today'] = 'Today';
+$lang['lb_see_more'] = 'See more...';
+$lang['lb_turnover_details_by_shops'] = 'Top 10 and worst 10 shops';
+$lang['lb_date_range'] = 'Date range';
+$lang['lb_variance'] = 'Variance';
+$lang['lb_apply_filter'] = 'Apply filter';
+$lang['lb_qty'] = 'Qty';
+$lang['lb_amount'] = 'Amount';
+$lang['lb_sales'] = 'Sales';
+
 
 $lang['admin_login_success']            = 'Admin logged in successfully';
 $lang['user_login_success']            = 'User logged in successfully';
@@ -58,3 +75,6 @@ $lang['user_read_success']            = 'Read user data successfully';
 $lang['user_read_failed']            = 'Read user data failed';
 $lang['db_error']            = 'DB connection error';
 $lang['not_found_shop']            = 'No shop detected!';
+$lang['admin_user_list'] = 'User lists';
+$lang['admin_user_name'] = 'User name';
+$lang['admin_update_user'] = 'Update user';

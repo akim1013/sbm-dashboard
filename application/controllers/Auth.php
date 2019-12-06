@@ -24,6 +24,11 @@ class Auth extends CI_Controller {
 		$res = $this->user_model->login($data);
 		if($res != '0'){
 			$this->session->set_userdata('user_name', $data['name']);
+			if($this->input->post('language') == 'en'){
+				$this->session->set_userdata('site_lang', 'english');
+			}else{
+				$this->session->set_userdata('site_lang', 'chinese');
+			}
             if($data['name'] == 'admin'){
 				echo json_encode(array(
 	                'status' => 'success',

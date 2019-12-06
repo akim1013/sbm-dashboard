@@ -53,10 +53,10 @@
                             <span class="d-none d-sm-inline-block"><?php echo lang('site_lang')?></span>
                         </a>
                         <div aria-labelledby="languages" class="dropdown-menu" style="z-index: 1000">
-                            <a style="z-index: 1000" rel="nofollow" href="<?php echo base_url(); ?>langswitch/switchLanguage/english" class="dropdown-item">
+                            <a id="lang_en" style="z-index: 1000" rel="nofollow" href="<?php echo base_url(); ?>langswitch/switchLanguage/english" class="dropdown-item">
                                 <span>English</span>
                             </a>
-                            <a style="z-index: 1000" rel="nofollow" href="<?php echo base_url(); ?>langswitch/switchLanguage/chinese" class="dropdown-item">
+                            <a id="lang_ch" style="z-index: 1000" rel="nofollow" href="<?php echo base_url(); ?>langswitch/switchLanguage/chinese" class="dropdown-item">
                                 <span>中文</span>
                             </a>
                         </div>
@@ -101,13 +101,13 @@
                 <div class="block margin-bottom-sm">
                     <form id="new_user" class="form-inline container-fluid d-flex align-items-center justify-content-left">
                         <div class="form-group">
-                            <input name="name" type="text" placeholder="User name" class="mr-sm-3 form-control" required>
+                            <input name="name" type="text" placeholder="<?php echo lang('auth_username');?>" class="mr-sm-3 form-control" required>
                         </div>
                         <div class="form-group">
-                            <input name="email" type="email" placeholder="Email address" class="mr-sm-3 form-control form-control" required>
+                            <input name="email" type="email" placeholder="<?php echo lang('lb_email');?>" class="mr-sm-3 form-control form-control" required>
                         </div>
                         <div class="form-group">
-                            <input name="password" type="password" placeholder="Password" class="mr-sm-3 form-control form-control" required>
+                            <input name="password" type="password" placeholder="<?php echo lang('auth_password');?>" class="mr-sm-3 form-control form-control" required>
                         </div>
                         <div class="form-group">
                             <select name="database" type="text" placeholder="Database name" class="mr-sm-3 form-control form-control">
@@ -118,12 +118,12 @@
 
                         </div>
                         <div class="form-group">
-                            <input type="submit" value="Add new user" class="btn btn-primary">
+                            <input type="submit" value="<?php echo lang('auth_add_new_user');?>" class="btn btn-primary">
                         </div>
                     </form>
                 </div>
                 <div class="block margin-bottom-sm">
-                    <div class="h5 margin-bottom text-center">User lists</div>
+                    <div class="h5 margin-bottom text-center"><?php echo lang('admin_user_list');?></div>
                     <div class="table-responsive container-fluid d-flex align-items-center justify-content-center">
                         <table class="table user-table text-center">
                             <thead>
@@ -167,12 +167,12 @@
                     <form id="edit_user">
                         <input type="hidden" name="user_id" value="">
                         <div class="form-group">
-                            <input name="name" type="text" placeholder="User name" class="mr-sm-3 form-control" required>
+                            <input name="name" type="text" placeholder="<?php echo lang('admin_user_name');?>" class="mr-sm-3 form-control" required>
                         </div>
                         <div class="form-group shop_multiselect" style="height: 40px;">
                         </div>
                         <div class="form-group">
-                            <input type="submit" value="Update user" class="btn btn-primary" style="width: 100%;">
+                            <input type="submit" value="<?php echo lang('admin_update_user');?>" class="btn btn-primary" style="width: 100%;">
                         </div>
                     </form>
                 </div>
@@ -190,6 +190,8 @@
     <script src="<?php echo base_url(); ?>assets/js/jquery.toast.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/js/multiselect.js"></script>
     <script src="<?php echo base_url(); ?>assets/js/front.js"></script>
+    <script src="<?php echo base_url(); ?>assets/js/cookie.js"></script>
+    <script src="<?php echo base_url(); ?>assets/js/language.js"></script>
     <script src="<?php echo base_url(); ?>assets/js/admin.js"></script>
 </body>
 

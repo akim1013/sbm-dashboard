@@ -51,10 +51,10 @@
                             <span class="d-none d-sm-inline-block"><?php echo lang('site_lang')?></span>
                         </a>
                         <div aria-labelledby="languages" class="dropdown-menu" style="z-index: 1000">
-                            <a style="z-index: 1000" rel="nofollow" href="<?php echo base_url(); ?>langswitch/switchLanguage/english" class="dropdown-item">
+                            <a id="lang_en" style="z-index: 1000" rel="nofollow" href="<?php echo base_url(); ?>langswitch/switchLanguage/english" class="dropdown-item">
                                 <span>English</span>
                             </a>
-                            <a style="z-index: 1000" rel="nofollow" href="<?php echo base_url(); ?>langswitch/switchLanguage/chinese" class="dropdown-item">
+                            <a id="lang_ch" style="z-index: 1000" rel="nofollow" href="<?php echo base_url(); ?>langswitch/switchLanguage/chinese" class="dropdown-item">
                                 <span>中文</span>
                             </a>
                         </div>
@@ -81,10 +81,10 @@
             <!-- Sidebar Navidation Menus--><span class="heading"><?php echo lang('lb_main');?></span>
             <ul class="list-unstyled">
                 <li class="active">
-                    <a id="overall_view" href="#"> <i class="icon-chart"></i>Overall view </a>
+                    <a id="overall_view" href="#"> <i class="icon-chart"></i><?php echo lang('lb_overall_view');?> </a>
                 </li>
                 <li>
-                    <a id="detail_comparison" href="#"> <i class="icon-chart"></i>Detail comparison </a>
+                    <a id="detail_comparison" href="#"> <i class="icon-chart"></i><?php echo lang('lb_detail_comparison');?> </a>
                 </li>
                 <li>
                     <a id="refresh" style="cursor: pointer;"> <i class="fa fa-refresh"></i><?php echo lang('lb_refresh');?> </a>
@@ -102,8 +102,8 @@
                 <li class="export-data hide">
                     <a href="#export" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-paste"></i><?php echo lang('lb_export');?> </a>
                     <ul id="export" class="collapse list-unstyled">
-                        <li><a id="export_xls" style="cursor: pointer">Export detail comparison(XLS)</a></li>
-                        <li><a id="export_csv" style="cursor: pointer">Export detail comparison(CSV)</a></li>
+                        <li><a id="export_xls" style="cursor: pointer"><?php echo lang('lb_export_detail_comparison');?>(XLS)</a></li>
+                        <li><a id="export_csv" style="cursor: pointer"><?php echo lang('lb_export_detail_comparison');?>(CSV)</a></li>
                     </ul>
                 </li>
             </ul>
@@ -121,7 +121,7 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="d-desktop block">
-                                    <div class="title"><strong>Total values</strong></div>
+                                    <div class="title"><strong><?php echo lang('lb_total_values');?></strong></div>
                                     <table class="table table-striped table-sm">
                                         <thead>
                                             <tr>
@@ -148,7 +148,7 @@
                                     </table>
                                 </div>
                                 <div class="d-mobile block">
-                                    <div class="title"><strong>Total values</strong></div>
+                                    <div class="title"><strong><?php echo lang('lb_total_values');?></strong></div>
                                     <table class="table table-striped table-sm">
                                         <thead>
                                             <tr>
@@ -202,13 +202,13 @@
                                                 <div class="row" style="height: 50%; margin-top: 30px;">
                                                     <div class="col-6" style="text-align: center">
                                                         <div class="dashtext-3" style="margin-bottom: 20px;">
-                                                            <strong>Yesterday</strong>
+                                                            <strong><?php echo lang('lb_yesterday');?></strong>
                                                         </div>
                                                         <span class="yt_val" style="font-size: 17px; font-weight: 800;">0</span>
                                                     </div>
                                                     <div class="col-6" style="text-align: center">
                                                         <div class="dashtext-3" style="margin-bottom: 20px;">
-                                                            <strong>Today</strong>
+                                                            <strong><?php echo lang('lb_today');?></strong>
                                                         </div>
                                                         <span class="t_val" style="font-size: 17px; font-weight: 800;">0</span>
                                                     </div>
@@ -238,7 +238,7 @@
                             <div class="row">
                                 <div class="col-lg-8">
                                     <div id="sale_detail_line" class="_bar_chart"></div>
-                                    <button type="button" class="btn btn-primary shop_article_detail hide" style="margin-top: 20px" name="button">See more...</button>
+                                    <button type="button" class="btn btn-primary shop_article_detail hide" style="margin-top: 20px" name="button"><?php echo lang('lb_see_more');?></button>
                                 </div>
                                 <div class="col-lg-4">
                                     <div id="payment_detail_line" class="_bar_chart"></div>
@@ -270,7 +270,7 @@
                         <div class="row">
                             <div class="col-lg-6" style="height: calc(100% - 20px)">
                                 <div class="block">
-                                    <div class="title"><strong>Turnover details by shops</strong></div>
+                                    <div class="title"><strong><?php echo lang('lb_turnover_details_by_shops');?></strong></div>
                                     <table class="table table-striped table-sm">
                                         <thead>
                                             <tr>
@@ -325,22 +325,22 @@
                             <table id="detail_comparison_table" class="table table-sm">
                                 <thead>
                                     <tr>
-                                        <th>Date range</th>
+                                        <th><?php echo lang('lb_date_range');?></th>
                                         <th colspan="3" class="start_date" style="cursor: pointer">Jun 04, 2018 ~ Jun 10, 2018</th>
                                         <th colspan="3" class="end_date" style="cursor: pointer">Jun 11, 2018 ~ Jun 17, 2018</th>
-                                        <th>Variance</th>
-                                        <th id="apply_filter" style="cursor: pointer; color: #f55;">Apply filter</th>
+                                        <th><?php echo lang('lb_variance');?></th>
+                                        <th id="apply_filter" style="cursor: pointer; color: #f55;"><?php echo lang('lb_apply_filter');?></th>
                                     </tr>
                                     <tr>
                                         <th width="15%"></th>
-                                        <th width="10%">Qty</th>
-                                        <th width="10%">Amount</th>
-                                        <th width="10%">% Sales</th>
-                                        <th width="10%">Qty</th>
-                                        <th width="10%">Amount</th>
-                                        <th width="10%">% Sales</th>
-                                        <th width="12.5%">Qty</th>
-                                        <th width="12.5%">Amount</th>
+                                        <th width="10%"><?php echo lang('lb_qty');?></th>
+                                        <th width="10%"><?php echo lang('lb_amount');?></th>
+                                        <th width="10%">% <?php echo lang('lb_sales');?></th>
+                                        <th width="10%"><?php echo lang('lb_qty');?></th>
+                                        <th width="10%"><?php echo lang('lb_amount');?></th>
+                                        <th width="10%">% <?php echo lang('lb_sales');?></th>
+                                        <th width="12.5%"><?php echo lang('lb_qty');?></th>
+                                        <th width="12.5%"><?php echo lang('lb_amount');?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -375,6 +375,8 @@
     <script src="<?php echo base_url(); ?>assets/chart/modules/export-data.js"></script>
     <script src="<?php echo base_url(); ?>assets/chart/themes/dark-unica.js"></script>
     <script src="<?php echo base_url(); ?>assets/js/front.js"></script>
+    <script src="<?php echo base_url(); ?>assets/js/cookie.js"></script>
+    <script src="<?php echo base_url(); ?>assets/js/language.js"></script>
     <script src="<?php echo base_url(); ?>assets/js/dashboard.js"></script>
 </body>
 

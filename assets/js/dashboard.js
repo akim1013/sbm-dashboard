@@ -2,6 +2,7 @@ let api_path = '/';
 let weeks = ['First week', 'Second week', 'Third week', 'Forth week', 'Fifth week'];
 let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+let site_lang = getCookie('sbm_language');
 $(document).ready(() => {
     let isMobile = false;
 
@@ -391,8 +392,6 @@ $(document).ready(() => {
             }
             sale_comparison_table(sorted_netsale);
 
-
-
             let turnover_ranks = getRanks(temp_turnover);
             let transaction_ranks = getRanks(temp_transaction);
             Highcharts.chart('sale_comparison_bar', {
@@ -400,7 +399,7 @@ $(document).ready(() => {
                     type: 'column'
                 },
                 title: {
-                    text: 'Turnover and transaction comparison by shops'
+                    text: lang[site_lang]['hc_comparison_by_shops']
                 },
                 xAxis: {
                     categories: temp_shop, // Error, Distorted shop names
@@ -409,7 +408,7 @@ $(document).ready(() => {
                 yAxis: {
                     min: 0,
                     title: {
-                        text: 'Sales [USD]'
+                        text: lang[site_lang]['hc_sales'] + ' [USD]'
                     }
                 },
                 tooltip: {
@@ -440,10 +439,10 @@ $(document).ready(() => {
                     }
                 },
                 series: [{
-                    name: 'Turnover',
+                    name: lang[site_lang]['hc_turnover'],
                     data: temp_turnover
                 },{
-                    name: 'Transaction',
+                    name: lang[site_lang]['hc_transaction'],
                     data: temp_transaction
                 }]
             });
@@ -620,7 +619,7 @@ $(document).ready(() => {
                     type: 'line'
                 },
                 title: {
-                    text: 'Turnover comparison in last 30 days'
+                    text: lang[site_lang]['hc_comparison_30_days_1']
                 },
                 xAxis: {
                     categories: x_sale
@@ -648,14 +647,14 @@ $(document).ready(() => {
                     type: 'line'
                 },
                 title: {
-                    text: 'Transaction count comparison in last 30 days'
+                    text: lang[site_lang]['hc_comparison_30_days_2']
                 },
                 xAxis: {
                     categories: x_transaction
                 },
                 yAxis: {
                     title: {
-                        text: 'Transaction count'
+                        text: lang[site_lang]['hc_transaction_count']
                     }
                 },
                 legend: {
@@ -855,11 +854,11 @@ $(document).ready(() => {
                             }
                         },
                         series: [{
-                            name: 'Yesterday',
+                            name: lang[site_lang]['hc_yesterday'],
                             data: d_yesterday
 
                         }, {
-                            name: 'Today',
+                            name: lang[site_lang]['hc_today'],
                             data: d_today
 
                         }]
@@ -873,7 +872,7 @@ $(document).ready(() => {
                             text: ''
                         },
                         subtitle: {
-                            text: 'Last 7 days'
+                            text: lang[site_lang]['hc_last_7_days'],
                         },
                         xAxis: {
                             categories: d_w_7,
@@ -995,7 +994,7 @@ $(document).ready(() => {
                             text: ''
                         },
                         subtitle: {
-                            text: 'This month\'s turnover'
+                            text: lang[site_lang]['hc_this_month_turnover'],
                         },
                         xAxis: {
                             categories: w_days,
@@ -1116,7 +1115,7 @@ $(document).ready(() => {
                             text: ''
                         },
                         subtitle: {
-                            text: 'This year\'s turnover'
+                            text: lang[site_lang]['hc_this_year_turnover'],
                         },
                         xAxis: {
                             categories: m_label,
@@ -1289,7 +1288,7 @@ $(document).ready(() => {
                             type: 'column'
                         },
                         title: {
-                            text: 'Total Payment details'
+                            text: lang[site_lang]['hc_total_payment_details'],
                         },
                         xAxis: {
                             categories: p_description,
@@ -1298,7 +1297,7 @@ $(document).ready(() => {
                         yAxis: {
                             min: 0,
                             title: {
-                                text: 'Price [USD]'
+                                text: lang[site_lang]['hc_price'] + ' [USD]'
                             }
                         },
                         tooltip: {
@@ -1310,7 +1309,7 @@ $(document).ready(() => {
                             useHTML: true
                         },
                         series: [{
-                            name: 'Payment type',
+                            name: lang[site_lang]['hc_payment_type'],
                             data: p_amount,
                             dataLabels: {
                                 enabled: true,
@@ -1346,7 +1345,7 @@ $(document).ready(() => {
                             type: 'column'
                         },
                         title: {
-                            text: 'Total Turnover details by items'
+                            text: lang[site_lang]['hc_payment_by_articles']
                         },
                         xAxis: {
                             categories: d_group,
@@ -1355,7 +1354,7 @@ $(document).ready(() => {
                         yAxis: {
                             min: 0,
                             title: {
-                                text: 'Price [USD]'
+                                text: lang[site_lang]['hc_price'] + ' [USD]'
                             }
                         },
                         tooltip: {
@@ -1367,7 +1366,7 @@ $(document).ready(() => {
                             useHTML: true
                         },
                         series: [{
-                            name: 'Product',
+                            name: lang[site_lang]['hc_article'],
                             data: d_price,
                             dataLabels: {
                                 enabled: true,
@@ -1423,7 +1422,7 @@ $(document).ready(() => {
                             type: 'column'
                         },
                         title: {
-                            text: 'Total Transaction count detail by hours'
+                            text: lang[site_lang]['hc_transaction_count_by_hours']
                         },
                         xAxis: {
                             categories: d_hours,
@@ -1432,7 +1431,7 @@ $(document).ready(() => {
                         yAxis: {
                             min: 0,
                             title: {
-                                text: 'Number of transactions'
+                                text: lang[site_lang]['hc_transaction_count']
                             }
                         },
                         tooltip: {
@@ -1444,7 +1443,7 @@ $(document).ready(() => {
                             useHTML: true
                         },
                         series: [{
-                            name: 'Transaction count',
+                            name: lang[site_lang]['hc_transaction_count'],
                             data: d_count,
                             dataLabels: {
                                 enabled: true,
@@ -1530,7 +1529,7 @@ $(document).ready(() => {
                                 tbody.append('<tr><td>' + item.article_name + '</td><td>' + item.price + '</td></tr>')
                             }
                         }
-                        div1.append('<h3 style="margin: 20px;">' + s + ' - Top 20 articles</h3>');
+                        div1.append('<h3 style="margin: 20px;">' + s + ' - ' + lang[site_lang]['hc_top_20_articles'] + '</h3>');
 
                         $('.shop_article_detail_box').append(div1.append(table.append(thead).append(tbody)));
                         // Render Pie chart
@@ -1544,7 +1543,7 @@ $(document).ready(() => {
                                 type: 'pie'
                             },
                             title: {
-                                text: s + ' article sale details'
+                                text: s + lang[site_lang]['hc_article_sale_details']
                             },
                             tooltip: {
                                 pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -1572,10 +1571,10 @@ $(document).ready(() => {
                                 type: 'column'
                             },
                             title: {
-                                text: s + ' article sale details'
+                                text: s + lang[site_lang]['hc_article_sale_details']
                             },
                             subtitle: {
-                                text: 'Top 20 articles'
+                                text: lang[site_lang]['hc_top_20_articles']
                             },
                             xAxis: {
                                 categories: article_x,
@@ -1757,7 +1756,7 @@ $(document).ready(() => {
                     let discount_detail = response.data.discount_detail;
                     let payment_detail = response.data.payment_detail;
                     // Article detail
-                    table.append('<tr class="title"><td colspan="9">Sales<td><tr>');
+                    table.append('<tr class="title"><td colspan="9">' + lang[site_lang]['lb_sales'] + '<td><tr>');
                     let article_group = '';
                     let article_group_array = [];
                     let price = 0;
@@ -1838,11 +1837,11 @@ $(document).ready(() => {
                             + '</td></tr>');
                         table.append(sub_item);
                     }
-                    table.append('<tr class="total"><td>Total sales</td><td>' + last_week_qty.toString() + '</td><td>' + process_price(last_week_price) + '</td><td></td><td>' + qty.toString() + '</td><td>' + process_price(price) + '</td><td></td><td>'
+                    table.append('<tr class="total"><td>' + lang[site_lang]['lb_sales_total'] + '</td><td>' + last_week_qty.toString() + '</td><td>' + process_price(last_week_price) + '</td><td></td><td>' + qty.toString() + '</td><td>' + process_price(price) + '</td><td></td><td>'
                      + (qty - last_week_qty).toString() + '</td><td>' + process_price(price - last_week_price) + '</td></tr>');
 
                     // Discount details
-                    table.append('<tr class="title"><td colspan="9">Discount<td><tr>');
+                    table.append('<tr class="title"><td colspan="9">' + lang[site_lang]['lb_discount'] + '<td><tr>');
                     let this_week_discount_qty = 0;
                     let this_week_discount_amount = 0;
                     let last_week_discount_qty = 0;
@@ -1858,11 +1857,11 @@ $(document).ready(() => {
                         table.append('<tr><td>' + item.discount_description + '</td><td>' + item.last_week_quantity + '</td><td>' + process_price(item.last_week_amount) + '</td><td></td><td>' + item.this_week_quantity + '</td><td>' + process_price(item.this_week_amount)
                         + '</td><td></td><td>' + (parseInt(item.this_week_quantity) - parseInt(item.last_week_quantity)).toString() + '</td><td>' + process_price(parseFloat(item.this_week_amount) - parseFloat(item.last_week_amount)) + '</td></tr>');
                     }
-                    table.append('<tr class="total"><td>Discount total</td><td>' + last_week_discount_qty.toString() + '</td><td>' + process_price(last_week_discount_amount) + '</td><td></td><td>' + this_week_discount_qty.toString() + '</td><td>' + process_price(this_week_discount_amount)
+                    table.append('<tr class="total"><td>' + lang[site_lang]['lb_discount_total'] + '</td><td>' + last_week_discount_qty.toString() + '</td><td>' + process_price(last_week_discount_amount) + '</td><td></td><td>' + this_week_discount_qty.toString() + '</td><td>' + process_price(this_week_discount_amount)
                     + '</td><td></td><td>' + (this_week_discount_qty - last_week_discount_qty).toString() + '</td><td>' + process_price(this_week_discount_amount - last_week_discount_amount) + '</td></tr>')
 
                     // Payment details
-                    table.append('<tr class="title"><td colspan="9">Payment<td><tr>');
+                    table.append('<tr class="title"><td colspan="9">' + lang[site_lang]['lb_payment'] + '<td><tr>');
                     let this_week_payment_qty = 0;
                     let this_week_payment_amount = 0;
                     let last_week_payment_qty = 0;
@@ -1878,7 +1877,7 @@ $(document).ready(() => {
                         table.append('<tr><td>' + item.description + '</td><td>' + item.last_week_qty + '</td><td>' + process_price(item.last_week_amount) + '</td><td></td><td>' + item.this_week_qty + '</td><td>' + process_price(item.this_week_amount)
                         + '</td><td></td><td>' + (parseInt(item.this_week_qty) - parseInt(item.last_week_qty)).toString() + '</td><td>' + process_price(parseFloat(item.this_week_amount) - parseFloat(item.last_week_amount)) + '</td></tr>');
                     }
-                    table.append('<tr class="total"><td>Payment total</td><td>' + last_week_payment_qty.toString() + '</td><td>' + process_price(last_week_payment_amount) + '</td><td></td><td>' + this_week_payment_qty.toString() + '</td><td>' + process_price(this_week_payment_amount)
+                    table.append('<tr class="total"><td>' + lang[site_lang]['lb_payment_total'] + '</td><td>' + last_week_payment_qty.toString() + '</td><td>' + process_price(last_week_payment_amount) + '</td><td></td><td>' + this_week_payment_qty.toString() + '</td><td>' + process_price(this_week_payment_amount)
                     + '</td><td></td><td>' + (this_week_payment_qty - last_week_payment_qty).toString() + '</td><td>' + process_price(this_week_payment_amount - last_week_payment_amount) + '</td></tr>')
                 }
             }

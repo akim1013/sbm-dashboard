@@ -1,7 +1,22 @@
+let site_lang = getCookie('sbm_language');
+$(document).ready(function(){
+
+    $('.lang_auth_heading').text(lang[site_lang]['auth_heading']);
+    $('.lang_auth_subtitle').text(lang[site_lang]['auth_subtitle_1'] + '\n' + lang[site_lang]['auth_subtitle_2']);
+    $('.lang_auth_username').text(lang[site_lang]['auth_username']);
+    $('.lang_auth_password').text(lang[site_lang]['auth_password']);
+    $('.lang_auth_login').text(lang[site_lang]['auth_login']);
+})
+
 $('#login-form').submit(function(e){
     $('.loader').removeClass('hide');
     e.stopPropagation();
     e.preventDefault();
+    let data = {
+        name: $('input[name="name"]').val(),
+        password: $('input[name="password"]').val(),
+        language: site_lang
+    }
     $.ajax({
         url: '/auth/login',
         method: 'post',
