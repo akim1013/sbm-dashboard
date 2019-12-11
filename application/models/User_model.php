@@ -57,5 +57,25 @@
                 return $row->database;
             }
         }
+        public function save_presence($data){
+            $res = $this->db->insert('presence', $data);
+            if($res > 0){
+                return 1; // User created successfully
+            }else{
+                return -1; // Database error
+            }
+        }
+        public function get_presence(){
+            $this->db->select('id, manager, date, operators');
+            $data = $this->db->get('presence');
+            $ret = array();
+            foreach ($data->result() as $row){
+                array_push($ret, $row);
+            }
+            return $ret;
+        }
+        public function delete_presence($id){
+            return $this->db->delete('presence', array('id' => $id));
+        }
     }
 ?>

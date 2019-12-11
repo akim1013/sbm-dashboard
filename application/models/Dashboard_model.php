@@ -504,5 +504,51 @@ class Dashboard_model extends CI_Model{
         ";
         return $this->run_query($conn, $sql);
     }
+    function get_shops($conn, $shop_name){
+        $sql = "
+            SELECT s.id, s.description
+            FROM shops s";
+        if($shop_name != 'All'){
+            $sql = $sql . " WHERE s.description IN (" . $shop_name . ")";
+        }
+        return $this->run_query($conn, $sql);
+    }
+    function get_tills($conn, $shop_name){
+        $sql = "
+            SELECT t.id, t.description
+            FROM tills t
+            INNER JOIN shops s ON s.id = t.shop_id";
+        if($shop_name != 'All'){
+            $sql = $sql . " WHERE s.description IN (" . $shop_name . ")";
+        }
+        return $this->run_query($conn, $sql);
+    }
+    function get_operators($conn, $shop_name){
+        $sql = "
+            SELECT DISTINCT(o.id), o.description, o.code
+            FROM operators o
+            INNER JOIN presence_operations p ON p.operator_id = o.id
+            INNER JOIN shops s ON s.id = p.shop_id
+            ORDER BY o.id";
+        // if($shop_name != 'All'){
+        //     $sql = $sql . " WHERE s.description IN (" . $shop_name . ")";
+        // }
+        return $this->run_query($conn, $sql);
+    }
+    function get_presence($conn, $data){
+        $sql = "
+            SELECT o.id operator_id, o.code operator_code, o.description operator_name, p.till_id, p.shop_id, p.timestamp t_stamp, p.operation_type o_type
+            FROM operators o
+            INNER JOIN presence_operations p ON o.id = p.operator_id
+            INNER JOIN tills t ON t.id = p.till_id
+            INNER JOIN shops s ON s.id = p.shop_id
+            WHERE p.timestamp BETWEEN '" . $data['start'] . "' AND '" . $data['end'] . "'
+                AND t.id IN (" . $data['till_id'] . ")
+                AND s.id IN (" . $data['shop_id'] . ")
+                AND o.id IN (" . $data['operator_id'] . ")
+            ORDER BY operator_id, t_stamp";
+
+        return $this->run_query($conn, $sql);
+    }
 }
 ?>

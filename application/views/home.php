@@ -19,6 +19,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Muli:300,400,700">
     <!-- theme stylesheet-->
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/style.default.css" id="theme-stylesheet">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/timepicker.css">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/jquery.toast.min.css">
     <!-- Custom stylesheet - for your changes-->
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/custom.css">
     <!-- Favicon-->
@@ -85,6 +87,9 @@
                 </li>
                 <li>
                     <a id="detail_comparison" href="#"> <i class="icon-chart"></i><?php echo lang('lb_detail_comparison');?> </a>
+                </li>
+                <li>
+                    <a id="operator_present" href="#"> <i class="icon-chart"></i>Presence Control</a>
                 </li>
                 <li>
                     <a id="refresh" style="cursor: pointer;"> <i class="fa fa-refresh"></i><?php echo lang('lb_refresh');?> </a>
@@ -351,6 +356,172 @@
                     </div>
                 </section>
             </div>
+            <div class="page-present hide">
+                <section>
+                    <div class="container-fluid">
+                        <div class="block row">
+                            <div class="col-md-6">
+                                <div class="row" style="height: 40px; text-align: center">
+                                    <div class="col-md-12">
+                                        <div class="presence_date popover_hover" style="cursor: pointer; display: inline-block; margin: 5px; line-height: 30px;" data-container="body" data-toggle="popover" data-placement="top" data-content="Click to change start date"></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="group">
+                                            <div class="group-title check_toggle popover_hover" style="cursor: pointer" data-container="body" data-toggle="popover" data-placement="top" data-content="Click to check all">
+                                                SHOPS
+                                            </div>
+                                            <div class="group-content">
+                                                <div class="form-group shop_multiselect">
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="group">
+                                            <div class="group-title check_toggle popover_hover" style="cursor: pointer" data-container="body" data-toggle="popover" data-placement="top" data-content="Click to check all">
+                                                TILLS
+                                            </div>
+                                            <div class="group-content">
+                                                <div class="form-group till_multiselect">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="group">
+                                            <div class="group-title check_toggle popover_hover" style="cursor: pointer" data-container="body" data-toggle="popover" data-placement="top" data-content="Click to check all">
+                                                OPERATORS
+                                            </div>
+                                            <div class="group-content">
+                                                <div class="form-group operator_multiselect">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" style="text-align: center;">
+                                    <div class="col-md-12">
+                                        <button class="btn btn-primary operator_filter" type="button" name="button" style="margin: 20px;">Apply filter</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row" style="height: 40px;"></div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="group">
+                                            <div class="group-title">
+                                                PRESENCE OF OPERATORS
+                                            </div>
+                                            <div class="group-content">
+                                                <table class="presence_operators table table-sm">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="20%">Operator</th>
+                                                            <th width="20%">From time (In)</th>
+                                                            <th width="20%">To time (Out)</th>
+                                                            <th width="5%">Hours</th>
+                                                            <th width="5%">Adjust</th>
+                                                            <th width="5%">OT</th>
+                                                            <th width="25%">History</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" style="text-align: center;">
+                                    <div class="col-md-12">
+                                        <button class="export_presence_data btn btn-primary disabled" type="button" name="button" style="margin: 20px;">Export</button>
+                                        <button class="save_presence_data btn btn-primary disabled" type="button" name="button" style="margin: 20px;">Save</button>
+                                        <button class="load_presence_data btn btn-primary" type="button" name="button" style="margin: 20px;" data-toggle="modal" data-target="#presence_loaded_data_modal">Load</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="adjustment" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade text-left">
+                        <div role="document" class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header"><strong id="exampleModalLabel" class="modal-title">Adjustment</strong>
+                                    <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Operator working hour adjustment</p>
+                                    <div class="row" style="position: relative;">
+                                        <div class="col-sm-4">
+                                            <small class="operator-name"></small>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="original_in_timestamp timestamp-input form-control form-control-sm" value="">
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="original_out_timestamp timestamp-input form-control form-control-sm" value="">
+                                        </div>
+                                    </div>
+                                    <div class="row" style="margin-top: 10px" style="position: relative;">
+                                        <div class="col-sm-4">
+                                            <small>New timestamp</small>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="new_in_timestamp timestamp-input form-control form-control-sm" value="">
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <input type="text" class="new_out_timestamp timestamp-input form-control form-control-sm" value="">
+                                        </div>
+                                    </div>
+                                    <div class="row" style="margin-top: 10px">
+                                        <div class="col-sm-4">
+                                            <small>Adjust reason</small>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="adjust_reason form-control form-control-sm" value="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" data-dismiss="modal" class="btn btn-secondary">Close</button>
+                                    <button type="button" class="btn btn-primary adjust_done">Save changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="presence_loaded_data_modal" tabindex="-1" role="dialog" aria-hidden="true" class="modal fade text-left">
+                        <div role="document" class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header"><strong id="exampleModalLabel" class="modal-title">Presence data</strong>
+                                    <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Operator presence data stored in database</p>
+                                    <table class="loaded_presence_data_table table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Manager</th>
+                                                <th>Date</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" data-dismiss="modal" class="btn btn-secondary">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
             <footer class="footer">
                 <div class="footer__block block no-margin-bottom">
                     <div class="container-fluid text-center">
@@ -374,6 +545,8 @@
     <script src="<?php echo base_url(); ?>assets/chart/modules/exporting.js"></script>
     <script src="<?php echo base_url(); ?>assets/chart/modules/export-data.js"></script>
     <script src="<?php echo base_url(); ?>assets/chart/themes/dark-unica.js"></script>
+    <script src="<?php echo base_url(); ?>assets/js/timepicker.js"></script>
+    <script src="<?php echo base_url(); ?>assets/js/jquery.toast.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/js/front.js"></script>
     <script src="<?php echo base_url(); ?>assets/js/cookie.js"></script>
     <script src="<?php echo base_url(); ?>assets/js/language.js"></script>

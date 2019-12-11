@@ -39,7 +39,8 @@ class Auth extends CI_Controller {
 				echo json_encode(array(
 	                'status' => 'success',
 	                'msg'    => lang('user_login_success'),
-					'shop_name'=> $res
+					'shop_name'=> $res,
+					'user_name'=> $this->input->post('name')
 	            ));
 			}
         }else{

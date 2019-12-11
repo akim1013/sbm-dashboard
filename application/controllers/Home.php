@@ -33,6 +33,20 @@ class Home extends MY_Controller {
 	     	die( print_r( sqlsrv_errors(), true));
 		}
 	}
+	public function dbtest2(){
+		$servername = "107.180.14.68:3306";
+		$username = "admin-present";
+		$password = "Tcpos2018";
+
+		// Create connection
+		$conn = new mysqli($servername, $username, $password);
+
+		// Check connection
+		if ($conn->connect_error) {
+		    die("Connection failed: " . $conn->connect_error);
+		}
+		echo "Connected successfully";
+	}
 	public function dashboard(){
 
 		$conn = parent::dbconnect();
@@ -251,5 +265,72 @@ class Home extends MY_Controller {
 			'data' => $ret
 		));
 		sqlsrv_close($conn);
+	}
+
+	public function operator_info(){
+		$conn = parent::dbconnect();
+		$shop_name = str_replace(array('"'), '\'', str_replace(array('[',']'), '', $this->input->post('shop_name')));
+		$ret = array(
+			"shops" 	=> $this->dashboard_model->get_shops($conn, $shop_name),
+			"tills"		=> $this->dashboard_model->get_tills($conn, $shop_name),
+			"operators" => $this->dashboard_model->get_operators($conn, $shop_name)
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
+
+	public function operator_presence(){
+		$conn = parent::dbconnect();
+		$data = array(
+			"start" => $this->input->post('start'),
+			"end"	=> $this->input->post('end'),
+			"shop_id" => str_replace(array('"'), '\'', str_replace(array('[',']'), '', $this->input->post('shops'))),
+			"till_id" => str_replace(array('"'), '\'', str_replace(array('[',']'), '', $this->input->post('tills'))),
+			"operator_id" => str_replace(array('"'), '\'', str_replace(array('[',']'), '', $this->input->post('operators')))
+		);
+		$ret = array(
+			"presence" 	=> $this->dashboard_model->get_presence($conn, $data)
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
+
+	public function save_present_data(){
+		$data = array(
+			"operators" => $this->input->post('operators'),
+			"manager"	=> $this->input->post('manager'),
+			"date"		=> $this->input->post('date')
+		);
+		$ret = $this->user_model->save_presence($data);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+	}
+
+	public function load_present_data(){
+		$ret = $this->user_model->get_presence();
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+	}
+	public function delete_present_data(){
+		$ret = $this->user_model->delete_presence($this->input->post('id'));
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
 	}
 }

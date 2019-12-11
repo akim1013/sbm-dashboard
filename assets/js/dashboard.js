@@ -34,7 +34,6 @@ $(document).ready(() => {
     let start_of_last_year = moment().subtract(1, 'years').startOf('year');
     let end_of_last_year = moment().subtract(1, 'years').endOf('year');
 
-
     let _shop_name          = [];
     let shops               = [];   // Shop lists
     let _shops              = [];   // Available shop lists
@@ -62,9 +61,14 @@ $(document).ready(() => {
 
     let sorted_netsale      = []; // For storing sorted netsale value
 
+    let pc_checked          = false; // Present control info checked or not
+    let operators           = [];
+    let stored_operators    = [];
+    let pc_filter           = {};   // Present control filter object
+
     let first_ajax;
     let second_ajax = [];
-    let selected = 'ov'; // Selected Overall View else dc, stands for Detail comparison
+    let selected = 'ov'; // Selected Overall View else dc, stands for Detail comparison, pc present control
     let localStorage_changed = true;
     let detail_comparison_data = {
         start: start_of_this_week.format('YYYY-MM-DD'),
@@ -1197,6 +1201,43 @@ $(document).ready(() => {
         }
     } // Priority 5
 
+    let get_operator_info = () => {
+        let data = {
+            shop_name: localStorage.getItem('_shop_name'),
+            length: JSON.parse(localStorage.getItem('_shop_name')).length
+        }
+        $.ajax({
+            url: api_path + 'home/operator_info',
+            method: 'post',
+            data: data,
+            success: function(res){
+                let response = JSON.parse(res);
+                if(response.status == 'success'){
+                    pc_checked = true;
+                    $('.shop_multiselect').empty();
+                    let p_shops = response.data.shops;
+                    for(let item of p_shops){
+                        $('.shop_multiselect').append('<div class="i-checks"><input type="checkbox" value="' + item.id + '" class="checkbox-template"><label>' + item.description + '</label></div>');
+                    }
+                    $('.till_multiselect').empty();
+                    let p_tills = response.data.tills;
+                    for(let item of p_tills){
+                        $('.till_multiselect').append('<div class="i-checks"><input type="checkbox" value="' + item.id + '" class="checkbox-template"><label>' + item.description + '</label></div>');
+                    }
+                    $('.operator_multiselect').empty();
+                    let p_operator = response.data.operators;
+                    for(let item of p_operator){
+                        $('.operator_multiselect').append('<div class="i-checks"><input type="checkbox" value="' + item.id + '" class="checkbox-template"><label>' + item.code + ':' + item.description + '</label></div>');
+                    }
+                }
+            }
+        });
+    }
+    let presence_date_change = (st, ed) => {
+        $('.presence_date').text(st.format('MMM DD, YYYY') + ' ~ ' + ed.format('MMM DD, YYYY'));
+        pc_filter.start = st.format('YYYY-MM-DD');
+        pc_filter.end = ed.format('YYYY-MM-DD');
+    }
 
     let set_start_date = (st, ed) => {
         $('.start_date').text(st.format('MMM DD, YYYY') + ' ~ ' + ed.format('MMM DD, YYYY'));
@@ -1209,6 +1250,28 @@ $(document).ready(() => {
         detail_comparison_data.end = ed.format('YYYY-MM-DD');
     }
 
+    let presence_table_populate = () => {
+        $('.presence_operators tbody').empty();
+        for(let item of operators){
+            let total_hours = 0;
+            for(let i = 0; i < item.in_timestamp.length; i++){
+                total_hours += (new Date(item.out_timestamp[i]) - new Date(item.in_timestamp[i])) / (1000 * 3600);
+                $('.presence_operators tbody').append('<tr><td>'
+                    + item.code + ' : ' + item.name + '</td><td>'
+                    + item.in_timestamp[i] + '</td><td>'
+                    + item.out_timestamp[i] + '</td><td>'
+                    + ((new Date(item.out_timestamp[i]) - new Date(item.in_timestamp[i])) / (1000 * 3600)).toFixed(2) + '</td><td>'
+                    + '<span style="margin-left: 10px" class="adjust_operator" oid="' + item.id + '" tid="' + i + '" data-toggle="modal" data-target="#adjustment"><i class="fa fa-edit"></i></span>' + '</td><td>'
+                    + ((((new Date(item.out_timestamp[i]) - new Date(item.in_timestamp[i])) / (1000 * 3600)) > 8) ? ((new Date(item.out_timestamp[i]) - new Date(item.in_timestamp[i])) / (1000 * 3600) - 8).toFixed(2) : 0) + '</td><td>'
+                    + item.history[i] + '</td></tr>');
+            }
+            $('.presence_operators tbody').append('<tr class="operator_total" style="color: #eaeaea; font-size: 13"><td colspan="2">'
+                + item.code + ' : ' + item.name + '</td><td></td><td>'
+                + total_hours.toFixed(2) + '</td><td></td><td>'
+                + ((total_hours > 40) ? (total_hours - 40).toFixed(2) : 0) + '</td><td></td></tr>');
+        }
+    }
+
     Highcharts.setOptions({
         chart: {
             style: {
@@ -1218,7 +1281,7 @@ $(document).ready(() => {
     });
 
     date_range_set(start, end); // Initiate app
-
+    presence_date_change(start_of_last_week, end_of_last_week); // Presence date range set
     /* Action hooks */
     $('#reportrange').daterangepicker({
         startDate: start,
@@ -1669,7 +1732,7 @@ $(document).ready(() => {
             }
             get_daily_turnover();
             localStorage_changed = false;
-        }else{
+        }else if(selected == 'dc'){
             let shop_id = $(this)[0].getAttribute('shopId');
             if(shop_id != 0){
                 $("#comparison_bar").hide();
@@ -1706,6 +1769,9 @@ $(document).ready(() => {
             $('#detail_comparison').trigger('click');
             localStorage_changed = false;
         }
+        else{
+
+        }
 
     })
     $('#refresh').click(function(){
@@ -1713,6 +1779,7 @@ $(document).ready(() => {
     })
     $('#overall_view').click(function(){
         $('.page-dashboard').removeClass('hide');
+        $('.page-present').addClass('hide');
         $('.page-comparison').addClass('hide');
         $('.list-unstyled li').removeClass('active');
         $(this).parent().addClass('active');
@@ -1728,14 +1795,24 @@ $(document).ready(() => {
         endDate: end_of_this_week
     }, set_end_date);
     $('#detail_comparison').click(function(){
-
         selected = 'dc';
         $('.page-dashboard').addClass('hide');
+        $('.page-present').addClass('hide');
         $('.page-comparison').removeClass('hide');
         $('.list-unstyled li').removeClass('active');
         $(this).parent().addClass('active');
     })
-
+    $('#operator_present').click(function(){
+        selected = 'pc';
+        $('.page-dashboard').addClass('hide');
+        $('.page-comparison').addClass('hide');
+        $('.page-present').removeClass('hide');
+        $('.list-unstyled li').removeClass('active');
+        $(this).parent().addClass('active');
+        if(!pc_checked){
+            get_operator_info();
+        }
+    })
     $("#apply_filter").click(function(){
         let table = $('#comparison_detail table tbody');
         table.empty();
@@ -1926,7 +2003,415 @@ $(document).ready(() => {
         e.preventDefault();
     })
 
+    $('.presence_date').daterangepicker({
+        startDate: start_of_last_week,
+        endDate: end_of_last_week,
+        ranges: {
+           'Today': [moment(), moment()],
+           'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+           'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+           'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+           'This Month': [moment().startOf('month'), moment().endOf('month')],
+           'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+           'This Year': [moment().startOf('year'), moment().endOf('year')],
+           'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')]
+        }
+    }, presence_date_change);
+    $(".operator_filter").click(function(){
+        let o_shops_dom         = $('.shop_multiselect input:checked'); // Filter, checked shop doms
+        let o_tills_dom         = $('.till_multiselect input:checked'); // Filter, checked till doms
+        let o_operators_dom     = $('.operator_multiselect input:checked'); // Filter, checked operator doms
+        let o_shops         = [];
+        let o_tills         = [];
+        let o_operators     = [];
 
-    // Template function for testing date ranges
+        for(let item of o_shops_dom){
+            o_shops.push(item.value);
+        }
+        for(let item of o_tills_dom){
+            o_tills.push(item.value);
+        }
+        for(let item of o_operators_dom){
+            o_operators.push(item.value);
+        }
+        pc_filter.shops = JSON.stringify(o_shops);
+        pc_filter.tills = JSON.stringify(o_tills);
+        pc_filter.operators = JSON.stringify(o_operators);
+        $('.loader').removeClass('hide');
+        $.ajax({
+            url: api_path + 'home/operator_presence',
+            method: 'post',
+            data: pc_filter,
+            success: function(res){
+                $('.loader').addClass('hide');
+                let response = JSON.parse(res);
+                if(response.status == 'success'){
+                    $('.export_presence_data').removeClass('disabled');
+                    $('.save_presence_data').removeClass('disabled');
+                    operators = [];
+                    let o_id = -1;
+                    // Get operators
+                    for(let item of response.data.presence){
+                        if(o_id != item.operator_id){
+                            o_id = item.operator_id;
+                            operators.push({
+                                id: o_id,
+                                name: item.operator_name,
+                                code: item.operator_code,
+                                till_id: item.till_id,
+                                shop_id: item.shop_id
+                            });
+                        }
+                    }
+                    // Get timestamp for each operator
+                    for(let item of operators){
+                        item.in_timestamp = [];
+                        item.out_timestamp = [];
+                        for(let _item of response.data.presence){
+                            if(item.id == _item.operator_id){
+                                if(_item.o_type == 1){
+                                    item.in_timestamp.push(_item.t_stamp.date.split('.')[0]);
+                                }else{
+                                    item.out_timestamp.push(_item.t_stamp.date.split('.')[0]);
+                                }
+                            }
+                        }
+                    }
+                    // Reorder the timestamp to be valid
+                    for(let item of operators){
+                        let in_length = item.in_timestamp.length;
+                        let out_length = item.out_timestamp.length;
+                        if(in_length != out_length){
+                            // console.log('----------------------');
+                            // console.log(item.in_timestamp);
+                            // console.log(item.out_timestamp);
+                            if(in_length < out_length){
+                                // Fill gaps in in_timestamp
+                                for(let i = 0; i < item.in_timestamp.length; i++){
+                                    if(new Date(item.in_timestamp[i]) > new Date(item.out_timestamp[i])){
+                                        item.in_timestamp.splice(i, 0, item.out_timestamp[i]);
+                                    }
+                                }
+                                if(item.in_timestamp.length != item.out_timestamp.length){
+                                    for(let i = item.in_timestamp.length - 1; i < item.out_timestamp.length - 1; i++){
+                                        item.in_timestamp.splice(i + 1, 0, item.out_timestamp[i + 1]);
+                                    }
+                                }
+                            }else if(in_length > out_length){
+                                // Fill gaps in out_timestamp
+                                for(let i = 0; i < item.out_timestamp.length; i++){
+                                    if(new Date(item.in_timestamp[i]) > new Date(item.out_timestamp[i])){
+                                        item.out_timestamp.splice(i, 0, item.in_timestamp[i]);
+                                    }
+                                }
+                                if(item.in_timestamp.length != item.out_timestamp.length){
+                                    for(let i = item.out_timestamp.length - 1; i < item.in_timestamp.length - 1; i++){
+                                        item.out_timestamp.splice(i + 1, 0, item.in_timestamp[i + 1]);
+                                    }
+                                }
+                            }else{}
+                            // console.log('*************************');
+                            // console.log(item.in_timestamp);
+                            // console.log(item.out_timestamp);
+                        }
+                    }
+                    // Set history data
+                    for(let item of operators){
+                        item.history = [];
+                        for(let i = 0; i < item.in_timestamp.length; i++){
+                            item.history.push('Not adjusted');
+                        }
+                    }
+                    // Draw table
+                    presence_table_populate();
+                }
+            }
+        });
+    })
+    $('tbody').delegate('.adjust_operator', 'click', function(){
+        let o_id = $(this).attr('oid');
+        let t_id = $(this).attr('tid');
+        let operator = {};
+        for(let item of operators){
+            if(item.id == o_id){
+                operator = item;
+            }
+        }
+        // Reset timepicker
+        $('.original_in_timestamp').timepicker('destroy');
+        $('.original_out_timestamp').timepicker('destroy');
+        $('.new_in_timestamp').timepicker('destroy');
+        $('.new_out_timestamp').timepicker('destroy');
+        $('.adjust_reason').val('');
+        $('#adjustment .operator-name').text(operator.code + ':' + operator.name);
 
+        $('.original_in_timestamp').timepicker({
+            timeFormat: 'HH:mm:ss',
+            interval: 10,
+            defaultTime: operator.in_timestamp[t_id].split(' ')[1],
+            dynamic: false,
+            dropdown: true,
+            scrollbar: true,
+            change: function(time){
+                $(this).attr('value', moment(time).format('HH:mm:ss'));
+            }
+        })
+        $('.original_out_timestamp').timepicker({
+            timeFormat: 'HH:mm:ss',
+            interval: 10,
+            defaultTime: operator.out_timestamp[t_id].split(' ')[1],
+            dynamic: false,
+            minTime: operator.in_timestamp[t_id].split(' ')[1],
+            maxTime: operator.out_timestamp[t_id].split(' ')[1],
+            dropdown: true,
+            scrollbar: true,
+            change: function(time){
+                $(this).attr('value', moment(time).format('HH:mm:ss'));
+            }
+        })
+        $('.new_in_timestamp').timepicker({
+            timeFormat: 'HH:mm:ss',
+            interval: 10,
+            defaultTime: operator.in_timestamp[t_id].split(' ')[1],
+            dynamic: false,
+            minTime: operator.in_timestamp[t_id].split(' ')[1],
+            dropdown: true,
+            scrollbar: true,
+            change: function(time){
+                $(this).attr('value', moment(time).format('HH:mm:ss'));
+            }
+        })
+        $('.new_out_timestamp').timepicker({
+            timeFormat: 'HH:mm:ss',
+            interval: 10,
+            defaultTime: operator.out_timestamp[t_id].split(' ')[1],
+            dynamic: false,
+            minTime: operator.in_timestamp[t_id].split(' ')[1],
+            dropdown: true,
+            scrollbar: true,
+            change: function(time){
+                $(this).attr('value', moment(time).format('HH:mm:ss'));
+            }
+        })
+        $('#adjustment').attr('t_id', t_id);
+        $('#adjustment').attr('o_id', o_id);
+    })
+    $('.adjust_done').click(function(){
+        let t_id = $('#adjustment').attr('t_id');
+        let o_id = $('#adjustment').attr('o_id');
+        let operator = {};
+        for(let item of operators){
+            if(o_id == item.id){
+                operator = item;
+            }
+        }
+        // Validation
+        if((new Date(operator.in_timestamp[t_id].split(' ')[0] + ' ' + $('.original_in_timestamp').val()) < new Date(operator.out_timestamp[t_id].split(' ')[0] + ' ' + $('.original_out_timestamp').val()))
+            && (new Date(operator.in_timestamp[t_id].split(' ')[0] + ' ' + $('.new_in_timestamp').val()) < new Date(operator.out_timestamp[t_id].split(' ')[0] + ' ' + $('.new_out_timestamp').val()))
+            && ($('.adjust_reason').val() != '')
+        ){
+            let temp_in_timestamp = [];
+            let temp_out_timestamp = [];
+            let temp_history = [];
+
+            operator.in_timestamp[t_id] = operator.in_timestamp[t_id].split(' ')[0] + ' ' + $('.new_in_timestamp').val();
+            operator.out_timestamp[t_id] = operator.out_timestamp[t_id].split(' ')[0] + ' ' + $('.new_out_timestamp').val();
+            operator.history[t_id] = localStorage.getItem('user_name') + " : (" + moment().format('YYYY-MM-DD HH:mm:ss') + ") : " +  $('.adjust_reason').val();
+            operator.in_timestamp.splice(t_id, 0, operator.in_timestamp[t_id].split(' ')[0] + ' ' + $('.original_in_timestamp').val());
+            operator.out_timestamp.splice(t_id, 0, operator.out_timestamp[t_id].split(' ')[0] + ' ' + $('.original_out_timestamp').val());
+            operator.history.splice(t_id, 0, localStorage.getItem('user_name') + " : (" + moment().format('YYYY-MM-DD HH:mm:ss') + ") : " +  $('.adjust_reason').val());
+            presence_table_populate();
+            $('#adjustment').modal('hide');
+        }else{
+            $.toast({
+                heading: 'Input error',
+                text: 'Please input valid time range and make sure you have filled the adjustment reason',
+                showHideTransition: 'slide',
+                icon: 'error',
+                position: 'top-right'
+            })
+            return false;
+        }
+    })
+    $('.export_presence_data').click(function(){
+        if(!$(this).hasClass('disabled')){
+            let filename = localStorage.getItem('user_name') + ' (' + moment().format('YYYY-MM-DD HH:mm:ss') + ') ' + '.csv';
+            let csv = [];
+            let rows = document.querySelectorAll(".presence_operators tr");
+
+            for (let i = 0; i < rows.length; i++) {
+                let row = [], cols = rows[i].querySelectorAll("td, th");
+
+                for (let j = 0; j < cols.length; j++)
+                    row.push(cols[j].innerText);
+
+                csv.push(row.join(","));
+            }
+            // Download CSV file
+            downloadCSV(csv.join("\n"), filename);
+        }
+    })
+    $('.save_presence_data').click(function(){
+        if(!$(this).hasClass('disabled')){
+            $('.loader').removeClass('hide');
+            $.ajax({
+                url: api_path + 'home/save_present_data',
+                method: 'post',
+                data: {
+                    operators: JSON.stringify(operators),
+                    manager: localStorage.getItem('user_name'),
+                    date: moment().format('YYYY-MM-DD HH:mm:ss')
+                },
+                success: function(res){
+                    $('.loader').addClass('hide');
+                    let response = JSON.parse(res);
+                    if(response.status == 'success'){
+                        $.toast({
+                            heading: 'Save success',
+                            text: 'Presence of operators data successfully stored in database',
+                            showHideTransition: 'slide',
+                            icon: 'success',
+                            position: 'top-right'
+                        })
+                    }else{
+                        $.toast({
+                            heading: 'Error',
+                            text: 'Database has error right now, please try again later',
+                            showHideTransition: 'slide',
+                            icon: 'error',
+                            position: 'top-right'
+                        })
+                    }
+                }
+            });
+        }
+    })
+    $('.load_presence_data').click(function(){
+        $('.loaded_presence_data_table tbody').empty();
+        $('.loader').removeClass('hide');
+        $.ajax({
+            url: api_path + 'home/load_present_data',
+            method: 'post',
+            success: function(res){
+                $('.loader').addClass('hide');
+                let response = JSON.parse(res);
+                if(response.status == 'success'){
+                    stored_operators = response.data;
+                    for(let item of stored_operators){
+                        $('.loaded_presence_data_table tbody').append('<tr><td>'
+                            + item.manager + '</td><td>'
+                            + item.date + '</td><td>'
+                            + '<span style="margin-right: 10px" class="check_data" did="' + item.id + '"><i class="fa fa-eye"></i></span>'
+                            + '<span style="margin-right: 10px" class="download_data" did="' + item.id + '"><i class="fa fa-download"></i></span>'
+                            + '<span style="margin-right: 10px" class="delete_data" did="' + item.id + '"><i class="fa fa-remove"></i></span>'
+                            + '</td></tr>');
+                    }
+                }
+            }
+        });
+    })
+    // See stored presence data
+    $('tbody').delegate('.check_data', 'click', function(){
+        for(let item of stored_operators){
+            if(item.id == $(this).attr('did')){
+                operators = JSON.parse(item.operators);
+            }
+        }
+        presence_table_populate();
+        $('#presence_loaded_data_modal').modal('hide');
+    })
+    // Download stored presence data
+    $('tbody').delegate('.download_data', 'click', function(){
+        let manager = '';
+        let date = '';
+        for(let item of stored_operators){
+            if(item.id == $(this).attr('did')){
+                operators = JSON.parse(item.operators);
+                manager = item.manager;
+                date = item.date;
+            }
+        }
+        presence_table_populate();
+        let filename = manager + ' (' + date + ') ' + '.csv';
+        let csv = [];
+        let rows = document.querySelectorAll(".presence_operators tr");
+
+        for (let i = 0; i < rows.length; i++) {
+            let row = [], cols = rows[i].querySelectorAll("td, th");
+
+            for (let j = 0; j < cols.length; j++)
+                row.push(cols[j].innerText);
+
+            csv.push(row.join(","));
+        }
+        // Download CSV file
+        downloadCSV(csv.join("\n"), filename);
+    })
+    // Delete stored presence data
+    $('tbody').delegate('.delete_data', 'click', function(){
+        let data = {
+            id: $(this).attr('did')
+        }
+        $('.loader').removeClass('hide');
+        $.ajax({
+            url: api_path + 'home/delete_present_data',
+            method: 'post',
+            data: data,
+            success: function(res){
+                $('.loader').addClass('hide');
+                let response = JSON.parse(res);
+                if(response.status == 'success'){
+                    $.toast({
+                        heading: 'Delete presence success',
+                        text: 'Presence of operators data successfully deleted in database',
+                        showHideTransition: 'slide',
+                        icon: 'success',
+                        position: 'top-right'
+                    })
+                    $('.loaded_presence_data_table tbody').empty();
+                    let temp_stored_operators = [];
+                    for(let item of stored_operators){
+                        if(item.id != data.id){
+                            temp_stored_operators.push(item);
+                        }
+                    }
+                    stored_operators = [...temp_stored_operators];
+                    for(let item of stored_operators){
+                        $('.loaded_presence_data_table tbody').append('<tr><td>'
+                            + item.manager + '</td><td>'
+                            + item.date + '</td><td>'
+                            + '<span style="margin-right: 10px" class="check_data" did="' + item.id + '"><i class="fa fa-eye"></i></span>'
+                            + '<span style="margin-right: 10px" class="download_data" did="' + item.id + '"><i class="fa fa-download"></i></span>'
+                            + '<span style="margin-right: 10px" class="delete_data" did="' + item.id + '"><i class="fa fa-remove"></i></span>'
+                            + '</td></tr>');
+                    }
+                }
+            }
+        });
+    })
+    // Display popover for help
+    $('.popover_hover').popover({
+        container: 'body',
+        trigger: 'hover'
+    })
+
+    // Check all or uncheck all
+    $('.check_toggle').click(function(){
+        let tags = $(this)[0].parentElement.querySelectorAll('input');
+        let checked_all = true;
+        for(let item of tags){
+            if(item.checked == false){
+                checked_all = false;
+            }
+        }
+        if(checked_all){
+            for(let item of tags){
+                item.checked = false;
+            }
+        }else{
+            for(let item of tags){
+                item.checked = true;
+            }
+        }
+    })
 })

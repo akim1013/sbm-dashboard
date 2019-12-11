@@ -259,3 +259,15 @@ WHERE t.delete_operator_id IS NULL
 GROUP BY p.description, s.description) last_week_payment on p.description = last_week_payment.payment_detail
 INNER JOIN shops s ON s.description = this_week_payment.shop_name AND s.description = last_week_payment.shop_name
 ORDER BY s.description
+
+// Presence Control
+SELECT o.id operator_id, o.code operator_code, o.description operator_name, p.till_id, p.shop_id, p.timestamp t_stamp, p.operation_type o_type
+FROM operators o
+INNER JOIN presence_operations p ON o.id = p.operator_id
+INNER JOIN tills t ON t.id = p.till_id
+INNER JOIN shops s ON s.id = p.shop_id
+WHERE p.timestamp BETWEEN '2019-12-01' AND '2019-12-31'
+	AND t.id IN ('1', '2', '3')
+	AND s.id IN ('1')
+	AND o.id IN ('1', '2', '39', '40', '42')
+ORDER BY operator_id, shop_id, t_stamp
