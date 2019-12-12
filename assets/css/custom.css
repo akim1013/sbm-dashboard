@@ -36,19 +36,62 @@ a, a:hover{
     top: 83px;
     z-index: 998;
 }
-.loader{
+.loader {
     position: fixed;
-    border: 16px solid #f3f3f3;
-    border-top: 16px solid #666;
+    top: calc(50% - 5em);
+    left: calc(50% - 5em);
+    z-index: 100001;
+    width: 10em;
+    height: 10em;
+    font-size: 30px;
     border-radius: 50%;
-    width: 120px;
-    height: 120px;
-    margin-left: -60px;
-    animation: spin 2s linear infinite;
-    margin-top: -60px;
-    left: 50%;
-    top: 50%;
-    z-index: 1;
+    border-top: 0.3em solid hotpink;
+    box-sizing: border-box;
+    animation: rotating 2s ease-in-out infinite;
+    --direction: 1;
+}
+
+.loader::before,
+.loader::after {
+    content: '';
+    position: absolute;
+    width: inherit;
+    height: inherit;
+    border-radius: 50%;
+    box-sizing: border-box;
+    top: -0.2em;
+}
+
+.loader::before {
+    border-top: 0.3em solid dodgerblue;
+    transform: rotate(120deg);
+}
+
+.loader::after {
+    border-top: 0.3em solid gold;
+    transform: rotate(240deg);
+}
+
+.loader span {
+    color: white;
+    width: inherit;
+    height: inherit;
+    position: absolute;
+    text-align: center;
+    line-height: 10em;
+    font-family: sans-serif;
+    animation: rotating 2s linear infinite;
+    --direction: -1;
+}
+
+@keyframes rotating {
+    50% {
+        transform: rotate(calc(180deg * var(--direction)));
+    }
+
+    100% {
+        transform: rotate(calc(360deg * var(--direction)));
+    }
 }
 .hide{
     display: none;

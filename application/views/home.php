@@ -32,7 +32,7 @@
 </head>
 
 <body style="background-color: #2d3035;">
-    <div class="loader hide"></div>
+    <div class="loader hide"><span>Loading...</span></div>
     <header class="header">
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid d-flex align-items-center justify-content-between">
@@ -510,7 +510,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            
+
                                         </tbody>
                                     </table>
                                 </div>
