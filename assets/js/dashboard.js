@@ -933,50 +933,37 @@ $(document).ready(() => {
                     $('#turnover_detail').removeClass('hide');
                     let w_data = response.data.weekly_turnover;
                     let w_days = [...weeks];
-                    let w_sale = [];
+                    let w_sale = [0, 0, 0, 0, 0];
                     let w_series = [];
                     if(JSON.parse(localStorage.getItem('_shop_name')).length > 3){
                         let idx = 0;
                         for(let item of w_data){
-                            w_sale.push(parseFloat(item.netsale));
-                            idx ++;
-                        }
-                        for(let i = 0; i < 5 - w_data.length; i++){
-                            w_sale.push(0);
+                            w_sale[Math.ceil(moment().day("Monday").week(item.w).date() / 7) - 1] = parseFloat(item.netsale);
                         }
                         w_series.push({
                             name: 'Turnover',
                             data: w_sale
                         });
                     }else{
-                        let _week = [];
-                        let _week_ = '';
                         let _s = [];
                         let _s_ = '';
                         let idx = 0;
                         for(let item of w_data){
-                            if((_week_ != item.w) && (_week.indexOf(item.w) < 0)){
-                                _week.push(item.w);
-                                _week_ = item.w;
-                            }
                             if((_s_ != item.shop_name) && (_s.indexOf(item.shop_name) < 0)){
                                 _s.push(item.shop_name);
                                 _s_ = item.shop_name;
                             }
                         }
                         for(let item of _s){
-                            let _values = [];
+                             let _values = [0, 0, 0, 0, 0];
                             for(let _item of w_data){
                                 if(item == _item.shop_name){
-                                    _values.push(parseFloat(_item.netsale));
+                                    _values[Math.ceil(moment().day("Monday").week(_item.w).date() / 7) - 1] = parseFloat(_item.netsale);
                                 }
-                            }
-                            for(let i = 0; i < 5 - _values.length; i++){
-                                _values.push(0);
                             }
                             w_series.push({
                                 name: item,
-                                data: _values
+                                data: [..._values]
                             })
                         }
                     }
@@ -1058,16 +1045,10 @@ $(document).ready(() => {
                             data: m_sale
                         })
                     }else{
-                        let _month = [];
-                        let _month_ = '';
                         let _s = [];
                         let _s_ = '';
                         let idx = 0;
                         for(let item of m_data){
-                            if((_month_ != item.m) && (_month.indexOf(item.m) < 0)){
-                                _month.push(item.m);
-                                _month_ = item.m;
-                            }
                             if((_s_ != item.shop_name) && (_s.indexOf(item.shop_name) < 0)){
                                 _s.push(item.shop_name);
                                 _s_ = item.shop_name;
