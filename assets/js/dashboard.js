@@ -932,18 +932,16 @@ $(document).ready(() => {
 
                     $('#turnover_detail').removeClass('hide');
                     let w_data = response.data.weekly_turnover;
-                    let w_days = [];
+                    let w_days = [...weeks];
                     let w_sale = [];
                     let w_series = [];
                     if(JSON.parse(localStorage.getItem('_shop_name')).length > 3){
                         let idx = 0;
                         for(let item of w_data){
-                            w_days.push(weeks[idx]);
                             w_sale.push(parseFloat(item.netsale));
                             idx ++;
                         }
                         for(let i = 0; i < 5 - w_data.length; i++){
-                            w_days.push(weeks[idx + i]);
                             w_sale.push(0);
                         }
                         w_series.push({
@@ -965,13 +963,6 @@ $(document).ready(() => {
                                 _s.push(item.shop_name);
                                 _s_ = item.shop_name;
                             }
-                        }
-                        for(let item of _week){
-                            w_days.push(weeks[idx]);
-                            idx ++;
-                        }
-                        for(let i = 0; i < 5 - _week.length; i++){
-                            w_days.push(weeks[idx + i]);
                         }
                         for(let item of _s){
                             let _values = [];
@@ -1053,19 +1044,14 @@ $(document).ready(() => {
                 if(response.status == 'success'){
                     $('#turnover_detail').removeClass('hide');
                     let m_data = response.data.monthly_turnover;
-                    let m_label = [];
-                    let m_sale = [];
+
+                    let m_label = [...months];
+                    let m_sale = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                     let m_series = [];
                     if(JSON.parse(localStorage.getItem('_shop_name')).length > 3){
                         let idx = 0;
                         for(let item of m_data){
-                            m_label.push(months[idx]);
-                            m_sale.push(parseFloat(item.netsale));
-                            idx ++;
-                        }
-                        for(let i = 0; i < 12 - m_data.length; i++){
-                            m_label.push(months[idx + i]);
-                            m_sale.push(0);
+                            m_sale[item.m - 1] = parseFloat(item.netsale);
                         }
                         m_series.push({
                             name: 'Turnover',
@@ -1087,26 +1073,16 @@ $(document).ready(() => {
                                 _s_ = item.shop_name;
                             }
                         }
-                        for(let item of _month){
-                            m_label.push(months[idx]);
-                            idx ++;
-                        }
-                        for(let i = 0; i < 12 - _month.length; i++){
-                            m_label.push(months[idx + i]);
-                        }
                         for(let item of _s){
-                            let _values = [];
+                            let _values = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                             for(let _item of m_data){
                                 if(item == _item.shop_name){
-                                    _values.push(parseFloat(_item.netsale));
+                                    _values[_item.m - 1] = parseFloat(_item.netsale);
                                 }
-                            }
-                            for(let i = 0; i < 12 - _values.length; i++){
-                                _values.push(0);
                             }
                             m_series.push({
                                 name: item,
-                                data: _values
+                                data: [..._values]
                             })
                         }
                     }
@@ -1155,7 +1131,7 @@ $(document).ready(() => {
                     });
                 }
             }
-        });} // Priority 4
+        });} // Priority 4 || Issue fixed for disordered display || 12/13
     let get_yearly_turnover = () => {
         let data = {
             shop_name: localStorage.getItem('_shop_name'),
