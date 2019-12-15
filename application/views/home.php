@@ -338,14 +338,14 @@
                                     </tr>
                                     <tr>
                                         <th width="15%"></th>
-                                        <th width="10%"><?php echo lang('lb_qty');?></th>
-                                        <th width="10%"><?php echo lang('lb_amount');?></th>
+                                        <th width="10%"><?php echo lang('lb_qty');?><i class="fa fa-sort sort article_sort" sort_attr="1" sort_dir="d" style="margin-left: 5px;"></i></th>
+                                        <th width="10%"><?php echo lang('lb_amount');?><i class="fa fa-sort sort article_sort" sort_attr="2" sort_dir="d" style="margin-left: 5px;"></i></th>
                                         <th width="10%">% <?php echo lang('lb_sales');?></th>
-                                        <th width="10%"><?php echo lang('lb_qty');?></th>
-                                        <th width="10%"><?php echo lang('lb_amount');?></th>
+                                        <th width="10%"><?php echo lang('lb_qty');?><i class="fa fa-sort sort article_sort" sort_attr="3" sort_dir="d" style="margin-left: 5px;"></i></th>
+                                        <th width="10%"><?php echo lang('lb_amount');?><i class="fa fa-sort sort article_sort" sort_attr="4" sort_dir="d" style="margin-left: 5px;"></i></th>
                                         <th width="10%">% <?php echo lang('lb_sales');?></th>
-                                        <th width="12.5%"><?php echo lang('lb_qty');?></th>
-                                        <th width="12.5%"><?php echo lang('lb_amount');?></th>
+                                        <th width="12.5%"><?php echo lang('lb_qty');?><i class="fa fa-sort sort article_sort" sort_attr="5" sort_dir="d" style="margin-left: 5px;"></i></th>
+                                        <th width="12.5%"><?php echo lang('lb_amount');?><i class="fa fa-sort sort article_sort" sort_attr="6" sort_dir="d" style="margin-left: 5px;"></i></th>
                                     </tr>
                                 </thead>
                                 <tbody>

@@ -20,7 +20,7 @@ $('#login-form').submit(function(e){
     $.ajax({
         url: '/auth/login',
         method: 'post',
-        data: $(this).serialize(),
+        data: data,
         success: function(res){
             $('.loader').addClass('hide');
             var response = JSON.parse(res);

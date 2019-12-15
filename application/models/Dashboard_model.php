@@ -185,11 +185,7 @@ class Dashboard_model extends CI_Model{
             INNER JOIN groups g ON g.id = a.group_a_id
             WHERE t.delete_operator_id IS NULL
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
-                ";
-        if($shop_name != 'All'){
-            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
-        }
-        $sql = $sql . "
+                AND s.description IN (" . $shop_name . ")
             GROUP BY g.description
         ";
         return $this->run_query($conn, $sql);
@@ -202,11 +198,7 @@ class Dashboard_model extends CI_Model{
             LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id
             WHERE t.delete_operator_id IS NULL
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
-                ";
-        if($shop_name != 'All'){
-            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
-        }
-        $sql = $sql . "
+                AND s.description IN (" . $shop_name . ")
             GROUP BY DATEPART(hour, t.trans_date)
             ORDER BY h
         ";
@@ -236,11 +228,7 @@ class Dashboard_model extends CI_Model{
             INNER JOIN payments p ON p.id = tp.payment_id
             WHERE t.delete_operator_id IS NULL
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
-                ";
-        if($shop_name != 'All'){
-            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
-        }
-        $sql = $sql . "
+                AND s.description IN (" . $shop_name . ")
             GROUP BY p.description
         ";
         return $this->run_query($conn, $sql);
@@ -263,11 +251,7 @@ class Dashboard_model extends CI_Model{
             INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
             WHERE t.delete_operator_id IS NULL
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
-            ";
-        if($shop_name != 'All'){
-            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
-        }
-        $sql = $sql . "
+            AND s.description IN (" . $shop_name . ")
             GROUP BY DATEPART(DY, t.bookkeeping_date)";
         if($date['length'] <= 3){
             $sql = $sql . ", s.description";
@@ -294,11 +278,7 @@ class Dashboard_model extends CI_Model{
             INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
             WHERE t.delete_operator_id IS NULL
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
-            ";
-        if($shop_name != 'All'){
-            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
-        }
-        $sql = $sql . "
+            AND s.description IN (" . $shop_name . ")
             GROUP BY DATEPART(week, t.bookkeeping_date)";
         if($date['length'] <= 3){
             $sql = $sql . ", s.description";
@@ -325,11 +305,7 @@ class Dashboard_model extends CI_Model{
             INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
             WHERE t.delete_operator_id IS NULL
             AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
-            ";
-        if($shop_name != 'All'){
-            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
-        }
-        $sql = $sql . "
+            AND s.description IN (" . $shop_name . ")
             GROUP BY DATEPART(month, t.bookkeeping_date)";
         if($date['length'] <= 3){
             $sql = $sql . ", s.description";
@@ -352,11 +328,7 @@ class Dashboard_model extends CI_Model{
             INNER JOIN articles a ON (a.id = ta.article_id) AND a.article_type Not In(2,3)
             INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
             WHERE t.delete_operator_id IS NULL
-            ";
-        if($shop_name != 'All'){
-            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
-        }
-        $sql = $sql . "
+            AND s.description IN (" . $shop_name . ")
             GROUP BY DATEPART(year, t.bookkeeping_date)";
         if($date['length'] <= 3){
             $sql = $sql . ", s.description";
@@ -369,7 +341,7 @@ class Dashboard_model extends CI_Model{
 
     function detail_comparison_article($conn, $date, $shop_name){
         $sql = "
-            SELECT g.id group_id, g.description group_name, a.description article_name, COALESCE(sub_result.amount, 0) amount, COALESCE(sub_result.price, 0) price, COALESCE(sub_result_last_week.amount, 0) last_week_amount, COALESCE(sub_result_last_week.price, 0) last_week_price
+            SELECT g.id group_id, CONCAT(CONCAT(g.code, '_'), g.description) group_name, a.description article_name, COALESCE(sub_result.amount, 0) amount, COALESCE(sub_result.price, 0) price, COALESCE(sub_result_last_week.amount, 0) last_week_amount, COALESCE(sub_result_last_week.price, 0) last_week_price
             FROM groups g
             INNER JOIN articles a ON g.id = a.group_a_id
             LEFT JOIN (SELECT
@@ -385,11 +357,7 @@ class Dashboard_model extends CI_Model{
             INNER JOIN groups g ON g.id = a.group_a_id
             WHERE t.delete_operator_id IS NULL
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
-            ";
-        if($shop_name != 'All'){
-            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
-        }
-        $sql = $sql . "
+            AND s.description IN (" . $shop_name . ")
             GROUP BY a.id) sub_result ON a.id = sub_result.article_id
             LEFT JOIN (SELECT
             SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as price,
@@ -425,11 +393,7 @@ class Dashboard_model extends CI_Model{
             INNER JOIN shops s ON s.id = t.shop_id
             WHERE t.delete_operator_id IS NULL
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
-            ";
-        if($shop_name != 'All'){
-            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
-        }
-        $sql = $sql . "
+            AND s.description IN (" . $shop_name . ")
             GROUP BY d.description) this_week ON d.description = this_week.discount_description
             LEFT JOIN (SELECT d.description discount_description, sum(td.quantity) quantity, sum(td.amount) amount
             FROM discounts d
@@ -438,11 +402,7 @@ class Dashboard_model extends CI_Model{
             INNER JOIN shops s ON s.id = t.shop_id
             WHERE t.delete_operator_id IS NULL
             AND t.bookkeeping_date BETWEEN '" . $date['last_week_start'] . "' AND '" . $date['last_week_end'] . "'
-        ";
-        if($shop_name != 'All'){
-            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
-        }
-        $sql = $sql . "
+        AND s.description IN (" . $shop_name . ")
             GROUP BY d.description) last_week ON d.description = last_week.discount_description
         ";
         return $this->run_query($conn, $sql);
@@ -458,11 +418,7 @@ class Dashboard_model extends CI_Model{
             INNER JOIN payments p ON p.id = tp.payment_id
             WHERE t.delete_operator_id IS NULL
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
-            ";
-        if($shop_name != 'All'){
-            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
-        }
-        $sql = $sql . "
+            AND s.description IN (" . $shop_name . ")
             GROUP BY p.description) this_week_payment ON p.description = this_week_payment.payment_detail
             LEFT JOIN (SELECT p.description payment_detail, sum(COALESCE(tp.amount, 0)) amount, count(tp.transaction_id) qty
             FROM transactions t WITH (INDEX(idx_transactions_bookdate))
@@ -471,11 +427,7 @@ class Dashboard_model extends CI_Model{
             INNER JOIN payments p ON p.id = tp.payment_id
             WHERE t.delete_operator_id IS NULL
                 AND t.bookkeeping_date BETWEEN '" . $date['last_week_start'] . "' AND '" . $date['last_week_end'] . "'
-        ";
-        if($shop_name != 'All'){
-            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
-        }
-        $sql = $sql . "
+        AND s.description IN (" . $shop_name . ")
             GROUP BY p.description) last_week_payment on p.description = last_week_payment.payment_detail
         ";
         return $this->run_query($conn, $sql);
@@ -494,11 +446,7 @@ class Dashboard_model extends CI_Model{
             INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
             WHERE t.delete_operator_id IS NULL
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
-                ";
-        if($shop_name != 'All'){
-            $sql = $sql . " AND s.description IN (" . $shop_name . ")";
-        }
-        $sql = $sql . "
+                AND s.description IN (" . $shop_name . ")
             GROUP BY a.description, s.description
             ORDER BY s.description, price DESC
         ";
