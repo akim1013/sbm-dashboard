@@ -360,14 +360,14 @@
                 <section>
                     <div class="container-fluid">
                         <div class="block row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="row" style="height: 40px; text-align: center">
                                     <div class="col-md-12">
                                         <div class="presence_date popover_hover" style="cursor: pointer; display: inline-block; margin: 5px; line-height: 30px;" data-container="body" data-toggle="popover" data-placement="top" data-content="Click to change start date"></div>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="group">
                                             <div class="group-title check_toggle popover_hover" style="cursor: pointer" data-container="body" data-toggle="popover" data-placement="top" data-content="Click to check all">
                                                 SHOPS
@@ -379,7 +379,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <!-- <div class="col-md-4">
                                         <div class="group">
                                             <div class="group-title check_toggle popover_hover" style="cursor: pointer" data-container="body" data-toggle="popover" data-placement="top" data-content="Click to check all">
                                                 TILLS
@@ -389,8 +389,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-4">
+                                    </div> -->
+                                    <div class="col-md-6">
                                         <div class="group">
                                             <div class="group-title check_toggle popover_hover" style="cursor: pointer" data-container="body" data-toggle="popover" data-placement="top" data-content="Click to check all">
                                                 OPERATORS
@@ -408,7 +408,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-8">
                                 <div class="row" style="height: 40px;"></div>
                                 <div class="row">
                                     <div class="col-md-12">
@@ -420,13 +420,15 @@
                                                 <table class="presence_operators table table-sm">
                                                     <thead>
                                                         <tr>
-                                                            <th width="20%">Operator</th>
-                                                            <th width="20%">From time (In)</th>
-                                                            <th width="20%">To time (Out)</th>
+                                                            <th width="15%">Operator</th>
+                                                            <th width="15%">From time (In)</th>
+                                                            <th width="15%">To time (Out)</th>
                                                             <th width="5%">Hours</th>
-                                                            <th width="5%">Adjust</th>
                                                             <th width="5%">OT</th>
-                                                            <th width="25%">History</th>
+                                                            <th width="5%">Rate</th>
+                                                            <th width="5%">Charge</th>
+                                                            <th width="5%">Adjust</th>
+                                                            <th width="30%">History</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>

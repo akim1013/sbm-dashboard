@@ -70,6 +70,7 @@ $(document).ready(() => {
     let operators           = [];
     let stored_operators    = [];
     let pc_filter           = {};   // Present control filter object
+    let operator_rate       = [];
 
     let first_ajax;
     let second_ajax = [];
@@ -1181,15 +1182,17 @@ $(document).ready(() => {
                     for(let item of p_shops){
                         $('.shop_multiselect').append('<div class="i-checks"><input type="checkbox" value="' + item.id + '" class="checkbox-template"><label>' + item.description + '</label></div>');
                     }
-                    $('.till_multiselect').empty();
-                    let p_tills = response.data.tills;
-                    for(let item of p_tills){
-                        $('.till_multiselect').append('<div class="i-checks"><input type="checkbox" value="' + item.id + '" class="checkbox-template"><label>' + item.description + '</label></div>');
-                    }
+                    // $('.till_multiselect').empty();
+                    // let p_tills = response.data.tills;
+                    // for(let item of p_tills){
+                    //     $('.till_multiselect').append('<div class="i-checks"><input type="checkbox" value="' + item.id + '" class="checkbox-template"><label>' + item.description + '</label></div>');
+                    // }
                     $('.operator_multiselect').empty();
                     let p_operator = response.data.operators;
                     for(let item of p_operator){
-                        $('.operator_multiselect').append('<div class="i-checks"><input type="checkbox" value="' + item.id + '" class="checkbox-template"><label>' + item.code + ':' + item.description + '</label></div>');
+                        $('.operator_multiselect').append('<div class="row"><div class="col-md-8"><div class="i-checks"><input type="checkbox" value="'
+                            + item.id + '" class="checkbox-template operator_check"><label>'
+                            + item.code + ':' + item.description + '</label></div></div><div class="col-md-4"><input type="text" placeholder="$/hr" class="form-control form-control-sm op_rate hide" style="height: 23px"></div></div>');
                     }
                 }
             }
@@ -1216,21 +1219,26 @@ $(document).ready(() => {
         $('.presence_operators tbody').empty();
         for(let item of operators){
             let total_hours = 0;
+            let total_charge = 0;
             for(let i = 0; i < item.in_timestamp.length; i++){
                 total_hours += (new Date(item.out_timestamp[i]) - new Date(item.in_timestamp[i])) / (1000 * 3600);
+                total_charge += (((new Date(item.out_timestamp[i]) - new Date(item.in_timestamp[i])) / (1000 * 3600)) < 8) ? (((new Date(item.out_timestamp[i]) - new Date(item.in_timestamp[i])) / (1000 * 3600)) * item.rate) : (8 * item.rate + ((new Date(item.out_timestamp[i]) - new Date(item.in_timestamp[i])) / (1000 * 3600) - 8) * item.rate * 1.5);
                 $('.presence_operators tbody').append('<tr><td>'
                     + item.code + ' : ' + item.name + '</td><td>'
                     + item.in_timestamp[i] + '</td><td>'
                     + item.out_timestamp[i] + '</td><td>'
                     + ((new Date(item.out_timestamp[i]) - new Date(item.in_timestamp[i])) / (1000 * 3600)).toFixed(2) + '</td><td>'
-                    + '<span style="margin-left: 10px" class="adjust_operator" oid="' + item.id + '" tid="' + i + '" data-toggle="modal" data-target="#adjustment"><i class="fa fa-edit"></i></span>' + '</td><td>'
                     + ((((new Date(item.out_timestamp[i]) - new Date(item.in_timestamp[i])) / (1000 * 3600)) > 8) ? ((new Date(item.out_timestamp[i]) - new Date(item.in_timestamp[i])) / (1000 * 3600) - 8).toFixed(2) : 0) + '</td><td>'
+                    + item.rate.toString() + ' $/hr' + '</td><td>'
+                    + ((((new Date(item.out_timestamp[i]) - new Date(item.in_timestamp[i])) / (1000 * 3600)) < 8) ? (((new Date(item.out_timestamp[i]) - new Date(item.in_timestamp[i])) / (1000 * 3600)) * item.rate).toFixed(2) + '$' : (8 * item.rate + ((new Date(item.out_timestamp[i]) - new Date(item.in_timestamp[i])) / (1000 * 3600) - 8) * item.rate * 1.5).toFixed(2) + '$') + '</td><td>'
+                    + '<span style="margin-left: 10px" class="adjust_operator" oid="' + item.id + '" tid="' + i + '" data-toggle="modal" data-target="#adjustment"><i class="fa fa-edit"></i></span>' + '</td><td>'
                     + item.history[i] + '</td></tr>');
             }
             $('.presence_operators tbody').append('<tr class="operator_total" style="color: #eaeaea; font-size: 13"><td colspan="2">'
                 + item.code + ' : ' + item.name + '</td><td></td><td>'
-                + total_hours.toFixed(2) + '</td><td></td><td>'
-                + ((total_hours > 40) ? (total_hours - 40).toFixed(2) : 0) + '</td><td></td></tr>');
+                + total_hours.toFixed(2) + '</td><td>'
+                + ((total_hours > 40) ? (total_hours - 40).toFixed(2) : 0) + '</td><td></td><td>'
+                + total_charge.toFixed(2) + '$' + '</td><td></td><td></td><td></td></tr>');
         }
     }
 
@@ -2110,6 +2118,10 @@ $(document).ready(() => {
         let o_tills         = [];
         let o_operators     = [];
 
+        let rate_validation = true;
+
+        operator_rate       = [];
+
         for(let item of o_shops_dom){
             o_shops.push(item.value);
         }
@@ -2117,101 +2129,128 @@ $(document).ready(() => {
             o_tills.push(item.value);
         }
         for(let item of o_operators_dom){
-            o_operators.push(item.value);
+            if(item.parentElement.parentElement.parentElement.querySelector('.op_rate').value){}else{
+                rate_validation = false;
+            }
         }
-        pc_filter.shops = JSON.stringify(o_shops);
-        pc_filter.tills = JSON.stringify(o_tills);
-        pc_filter.operators = JSON.stringify(o_operators);
-        $('.loader').removeClass('hide');
-        $.ajax({
-            url: api_path + 'home/operator_presence',
-            method: 'post',
-            data: pc_filter,
-            success: function(res){
-                $('.loader').addClass('hide');
-                let response = JSON.parse(res);
-                if(response.status == 'success'){
-                    $('.export_presence_data').removeClass('disabled');
-                    $('.save_presence_data').removeClass('disabled');
-                    operators = [];
-                    let o_id = -1;
-                    // Get operators
-                    for(let item of response.data.presence){
-                        if(o_id != item.operator_id){
-                            o_id = item.operator_id;
-                            operators.push({
-                                id: o_id,
-                                name: item.operator_name,
-                                code: item.operator_code,
-                                till_id: item.till_id,
-                                shop_id: item.shop_id
-                            });
+        if(rate_validation){
+
+            for(let item of o_operators_dom){
+                o_operators.push(item.value);
+                operator_rate.push({
+                    id: item.value,
+                    rate: item.parentElement.parentElement.parentElement.querySelector('.op_rate').value
+                });
+            }
+            pc_filter.shops = JSON.stringify(o_shops);
+            pc_filter.tills = JSON.stringify(o_tills);
+            pc_filter.operators = JSON.stringify(o_operators);
+            $('.loader').removeClass('hide');
+            $.ajax({
+                url: api_path + 'home/operator_presence',
+                method: 'post',
+                data: pc_filter,
+                success: function(res){
+                    $('.loader').addClass('hide');
+                    let response = JSON.parse(res);
+                    if(response.status == 'success'){
+                        $('.export_presence_data').removeClass('disabled');
+                        $('.save_presence_data').removeClass('disabled');
+                        operators = [];
+                        let o_id = -1;
+                        // Get operators
+                        for(let item of response.data.presence){
+                            if(o_id != item.operator_id){
+                                o_id = item.operator_id;
+                                operators.push({
+                                    id: o_id,
+                                    name: item.operator_name,
+                                    code: item.operator_code,
+                                    till_id: item.till_id,
+                                    shop_id: item.shop_id
+                                });
+                            }
                         }
-                    }
-                    // Get timestamp for each operator
-                    for(let item of operators){
-                        item.in_timestamp = [];
-                        item.out_timestamp = [];
-                        for(let _item of response.data.presence){
-                            if(item.id == _item.operator_id){
-                                if(_item.o_type == 1){
-                                    item.in_timestamp.push(_item.t_stamp.date.split('.')[0]);
-                                }else{
-                                    item.out_timestamp.push(_item.t_stamp.date.split('.')[0]);
+                        // Get timestamp for each operator
+                        for(let item of operators){
+                            item.in_timestamp = [];
+                            item.out_timestamp = [];
+                            item.rate          = 0;
+                            for(let _item of response.data.presence){
+                                if(item.id == _item.operator_id){
+                                    if(_item.o_type == 1){
+                                        item.in_timestamp.push(_item.t_stamp.date.split('.')[0]);
+                                    }else{
+                                        item.out_timestamp.push(_item.t_stamp.date.split('.')[0]);
+                                    }
+                                }
+                            }
+                            // Apply rate to the operators array
+                            for(let _item of operator_rate){
+                                if(parseInt(_item.id) == parseInt(item.id)){
+                                    item.rate = parseInt(_item.rate);
                                 }
                             }
                         }
-                    }
-                    // Reorder the timestamp to be valid
-                    for(let item of operators){
-                        let in_length = item.in_timestamp.length;
-                        let out_length = item.out_timestamp.length;
-                        if(in_length != out_length){
-                            // console.log('----------------------');
-                            // console.log(item.in_timestamp);
-                            // console.log(item.out_timestamp);
-                            if(in_length < out_length){
-                                // Fill gaps in in_timestamp
-                                for(let i = 0; i < item.in_timestamp.length; i++){
-                                    if(new Date(item.in_timestamp[i]) > new Date(item.out_timestamp[i])){
-                                        item.in_timestamp.splice(i, 0, item.out_timestamp[i]);
+                        // Reorder the timestamp to be valid
+                        for(let item of operators){
+                            let in_length = item.in_timestamp.length;
+                            let out_length = item.out_timestamp.length;
+                            if(in_length != out_length){
+                                // console.log('----------------------');
+                                // console.log(item.in_timestamp);
+                                // console.log(item.out_timestamp);
+                                if(in_length < out_length){
+                                    // Fill gaps in in_timestamp
+                                    for(let i = 0; i < item.in_timestamp.length; i++){
+                                        if(new Date(item.in_timestamp[i]) > new Date(item.out_timestamp[i])){
+                                            item.in_timestamp.splice(i, 0, item.out_timestamp[i]);
+                                        }
                                     }
-                                }
-                                if(item.in_timestamp.length != item.out_timestamp.length){
-                                    for(let i = item.in_timestamp.length - 1; i < item.out_timestamp.length - 1; i++){
-                                        item.in_timestamp.splice(i + 1, 0, item.out_timestamp[i + 1]);
+                                    if(item.in_timestamp.length != item.out_timestamp.length){
+                                        for(let i = item.in_timestamp.length - 1; i < item.out_timestamp.length - 1; i++){
+                                            item.in_timestamp.splice(i + 1, 0, item.out_timestamp[i + 1]);
+                                        }
                                     }
-                                }
-                            }else if(in_length > out_length){
-                                // Fill gaps in out_timestamp
-                                for(let i = 0; i < item.out_timestamp.length; i++){
-                                    if(new Date(item.in_timestamp[i]) > new Date(item.out_timestamp[i])){
-                                        item.out_timestamp.splice(i, 0, item.in_timestamp[i]);
+                                }else if(in_length > out_length){
+                                    // Fill gaps in out_timestamp
+                                    for(let i = 0; i < item.out_timestamp.length; i++){
+                                        if(new Date(item.in_timestamp[i]) > new Date(item.out_timestamp[i])){
+                                            item.out_timestamp.splice(i, 0, item.in_timestamp[i]);
+                                        }
                                     }
-                                }
-                                if(item.in_timestamp.length != item.out_timestamp.length){
-                                    for(let i = item.out_timestamp.length - 1; i < item.in_timestamp.length - 1; i++){
-                                        item.out_timestamp.splice(i + 1, 0, item.in_timestamp[i + 1]);
+                                    if(item.in_timestamp.length != item.out_timestamp.length){
+                                        for(let i = item.out_timestamp.length - 1; i < item.in_timestamp.length - 1; i++){
+                                            item.out_timestamp.splice(i + 1, 0, item.in_timestamp[i + 1]);
+                                        }
                                     }
-                                }
-                            }else{}
-                            // console.log('*************************');
-                            // console.log(item.in_timestamp);
-                            // console.log(item.out_timestamp);
+                                }else{}
+                                // console.log('*************************');
+                                // console.log(item.in_timestamp);
+                                // console.log(item.out_timestamp);
+                            }
                         }
-                    }
-                    // Set history data
-                    for(let item of operators){
-                        item.history = [];
-                        for(let i = 0; i < item.in_timestamp.length; i++){
-                            item.history.push('Not adjusted');
+                        // Set history data
+                        for(let item of operators){
+                            item.history = [];
+                            for(let i = 0; i < item.in_timestamp.length; i++){
+                                item.history.push('Not adjusted');
+                            }
                         }
+                        // Draw table
+                        presence_table_render();
                     }
-                    // Draw table
-                    presence_table_render();
                 }
-            }
-        });
+            });
+        }else{
+            $.toast({
+                heading: 'Rate is missing',
+                text: 'You have to input the rate of selected operators',
+                showHideTransition: 'slide',
+                icon: 'error',
+                position: 'top-right'
+            })
+        }
     })
     $('tbody').delegate('.adjust_operator', 'click', function(){
         let o_id = $(this).attr('oid');
@@ -2381,6 +2420,8 @@ $(document).ready(() => {
                 $('.loader').addClass('hide');
                 let response = JSON.parse(res);
                 if(response.status == 'success'){
+                    $('.export_presence_data').removeClass('disabled');
+                    $('.save_presence_data').removeClass('disabled');
                     stored_operators = response.data;
                     for(let item of stored_operators){
                         $('.loaded_presence_data_table tbody').append('<tr><td>'
@@ -2480,6 +2521,23 @@ $(document).ready(() => {
         trigger: 'hover'
     })
 
+    // Operater rate mask to numeric
+    $('.col-md-4').delegate('.op_rate', 'keypress keyup blur', function(e){
+        $(this).val($(this).val().replace(/[^0-9\.]/g,''));
+        if ((e.which != 46 || $(this).val().indexOf('.') != -1) && (e.which < 48 || e.which > 57)) {
+            e.preventDefault();
+        }
+    })
+
+    // Check operators will show the rate Input
+    $('.operator_multiselect').delegate('.operator_check', 'click', function(){
+        if($(this).is(':checked')){
+            $(this)[0].parentElement.parentElement.parentElement.querySelector('.op_rate').classList.remove('hide');
+        }else{
+            $(this)[0].parentElement.parentElement.parentElement.querySelector('.op_rate').classList.add('hide');
+        }
+    })
+
     // Check all or uncheck all
     $('.check_toggle').click(function(){
         let tags = $(this)[0].parentElement.querySelectorAll('input');
@@ -2492,10 +2550,16 @@ $(document).ready(() => {
         if(checked_all){
             for(let item of tags){
                 item.checked = false;
+                if(item.parentElement.parentElement.parentElement.querySelector('.op_rate')){
+                    item.parentElement.parentElement.parentElement.querySelector('.op_rate').classList.add('hide');
+                }
             }
         }else{
             for(let item of tags){
                 item.checked = true;
+                if(item.parentElement.parentElement.parentElement.querySelector('.op_rate')){
+                    item.parentElement.parentElement.parentElement.querySelector('.op_rate').classList.remove('hide');
+                }
             }
         }
     })

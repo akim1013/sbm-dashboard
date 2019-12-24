@@ -477,10 +477,8 @@ class Dashboard_model extends CI_Model{
             FROM operators o
             INNER JOIN presence_operations p ON p.operator_id = o.id
             INNER JOIN shops s ON s.id = p.shop_id
+            WHERE s.description IN (" . $shop_name . ")
             ORDER BY o.id";
-        // if($shop_name != 'All'){
-        //     $sql = $sql . " WHERE s.description IN (" . $shop_name . ")";
-        // }
         return $this->run_query($conn, $sql);
     }
     function get_presence($conn, $data){
@@ -491,7 +489,7 @@ class Dashboard_model extends CI_Model{
             INNER JOIN tills t ON t.id = p.till_id
             INNER JOIN shops s ON s.id = p.shop_id
             WHERE p.timestamp BETWEEN '" . $data['start'] . "' AND '" . $data['end'] . "'
-                AND t.id IN (" . $data['till_id'] . ")
+
                 AND s.id IN (" . $data['shop_id'] . ")
                 AND o.id IN (" . $data['operator_id'] . ")
             ORDER BY operator_id, t_stamp";
