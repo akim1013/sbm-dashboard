@@ -360,7 +360,7 @@
                 <section>
                     <div class="container-fluid">
                         <div class="block row">
-                            <div class="col-md-4">
+                            <div class="col-md-5">
                                 <div class="row" style="height: 40px; text-align: center">
                                     <div class="col-md-12">
                                         <div class="presence_date popover_hover" style="cursor: pointer; display: inline-block; margin: 5px; line-height: 30px;" data-container="body" data-toggle="popover" data-placement="top" data-content="Click to change start date"></div>
@@ -408,7 +408,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-8">
+                            <div class="col-md-7">
                                 <div class="row" style="height: 40px;"></div>
                                 <div class="row">
                                     <div class="col-md-12">

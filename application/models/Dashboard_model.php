@@ -473,7 +473,7 @@ class Dashboard_model extends CI_Model{
     }
     function get_operators($conn, $shop_name){
         $sql = "
-            SELECT DISTINCT(o.id), o.description, o.code
+            SELECT DISTINCT(o.id), o.description, o.code, s.id shop_id
             FROM operators o
             INNER JOIN presence_operations p ON p.operator_id = o.id
             INNER JOIN shops s ON s.id = p.shop_id

@@ -71,6 +71,8 @@ $(document).ready(() => {
     let stored_operators    = [];
     let pc_filter           = {};   // Present control filter object
     let operator_rate       = [];
+    let shop_operator_data;
+
 
     let first_ajax;
     let second_ajax = [];
@@ -1164,6 +1166,35 @@ $(document).ready(() => {
         }
     } // Priority 5
 
+    let operator_table_render = () => {
+        // Show operators by shop checked
+        $('.operator_multiselect').empty();
+        let p_operator = shop_operator_data.operators;
+        let shop_tags = document.querySelectorAll('.shop_multiselect input');
+        let s_ids = [];
+        for(let item of shop_tags){
+            if(item.checked){
+                s_ids.push(item.getAttribute('value'));
+            }
+        }
+        let dup_remove = -1;
+        for(let item of p_operator){
+            if((s_ids.indexOf(item.shop_id.toString()) > -1) && (dup_remove != item.id)){
+                $('.operator_multiselect').append('<div class="row"><div class="col-md-8"><div class="i-checks"><input type="checkbox" value="'
+                    + item.id + '" class="checkbox-template operator_check"><label>'
+                    + item.code + ':' + item.description + '</label></div></div><div class="col-md-4"><input type="text" placeholder="$/hr" class="form-control form-control-sm op_rate hide" style="height: 23px"></div></div>');
+            }
+            dup_remove = item.id;
+        }
+    }
+    let render_shop_operator_table = () => {
+        $('.shop_multiselect').empty();
+        let p_shops = shop_operator_data.shops;
+        for(let item of p_shops){
+            $('.shop_multiselect').append('<div class="i-checks"><input checked type="checkbox" value="' + item.id + '" class="s_operator_check checkbox-template"><label>' + item.description + '</label></div>');
+        }
+        operator_table_render();
+    }
     let get_operator_info = () => {
         let data = {
             shop_name: localStorage.getItem('_shop_name'),
@@ -1177,23 +1208,9 @@ $(document).ready(() => {
                 let response = JSON.parse(res);
                 if(response.status == 'success'){
                     pc_checked = true;
-                    $('.shop_multiselect').empty();
-                    let p_shops = response.data.shops;
-                    for(let item of p_shops){
-                        $('.shop_multiselect').append('<div class="i-checks"><input type="checkbox" value="' + item.id + '" class="checkbox-template"><label>' + item.description + '</label></div>');
-                    }
-                    // $('.till_multiselect').empty();
-                    // let p_tills = response.data.tills;
-                    // for(let item of p_tills){
-                    //     $('.till_multiselect').append('<div class="i-checks"><input type="checkbox" value="' + item.id + '" class="checkbox-template"><label>' + item.description + '</label></div>');
-                    // }
-                    $('.operator_multiselect').empty();
-                    let p_operator = response.data.operators;
-                    for(let item of p_operator){
-                        $('.operator_multiselect').append('<div class="row"><div class="col-md-8"><div class="i-checks"><input type="checkbox" value="'
-                            + item.id + '" class="checkbox-template operator_check"><label>'
-                            + item.code + ':' + item.description + '</label></div></div><div class="col-md-4"><input type="text" placeholder="$/hr" class="form-control form-control-sm op_rate hide" style="height: 23px"></div></div>');
-                    }
+
+                    shop_operator_data = response.data;
+                    render_shop_operator_table();
                 }
             }
         });
@@ -2110,6 +2127,11 @@ $(document).ready(() => {
            'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')]
         }
     }, presence_date_change);
+
+    $('.shop_multiselect').delegate('.s_operator_check', 'click', function(){
+        operator_table_render();
+    })
+
     $(".operator_filter").click(function(){
         let o_shops_dom         = $('.shop_multiselect input:checked'); // Filter, checked shop doms
         let o_tills_dom         = $('.till_multiselect input:checked'); // Filter, checked till doms
@@ -2552,6 +2574,8 @@ $(document).ready(() => {
                 item.checked = false;
                 if(item.parentElement.parentElement.parentElement.querySelector('.op_rate')){
                     item.parentElement.parentElement.parentElement.querySelector('.op_rate').classList.add('hide');
+                }else{
+                    operator_table_render();
                 }
             }
         }else{
@@ -2559,6 +2583,8 @@ $(document).ready(() => {
                 item.checked = true;
                 if(item.parentElement.parentElement.parentElement.querySelector('.op_rate')){
                     item.parentElement.parentElement.parentElement.querySelector('.op_rate').classList.remove('hide');
+                }else{
+                    operator_table_render();
                 }
             }
         }
