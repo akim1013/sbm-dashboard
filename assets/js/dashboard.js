@@ -213,17 +213,20 @@ $(document).ready(() => {
         }
     }
     let flat_process = (data) => {
+
         netsale             = [];
         promotion           = [];
         discount            = [];
         transaction_count   = [];
         tip                 = [];
+        tax                 = [];
         average_bill        = [];
         _netsale             = 0;
         _promotion           = 0;
         _discount            = 0;
         _transaction_count   = 0;
         _tip                 = 0;
+        _tax                 = 0;
         _average_bill        = 0;
         for(let sale of data.sale){
             netsale.push({
@@ -249,6 +252,12 @@ $(document).ready(() => {
                 value: ti.tip
             });
         }
+        for(let tx of data.tax){
+            tax.push({
+                shop: find_shop_name(tx.shop_id),
+                value: tx.tax
+            });
+        }
         for(let transaction of data.transaction){
             transaction_count.push({
                 shop: find_shop_name(transaction.shop_id),
@@ -269,6 +278,9 @@ $(document).ready(() => {
         for(let item of tip){
             _tip += item.value ? parseFloat(item.value) : 0;
         }
+        for(let item of tax){
+            _tax += item.value ? parseFloat(item.value) : 0;
+        }
         for(let item of promotion){
             _promotion += item.value ? parseFloat(item.value) : 0;
         }
@@ -287,6 +299,7 @@ $(document).ready(() => {
         $("._average_bill").text(process_price(_average_bill ? _average_bill : 0));
         $("._transaction_count").text(_transaction_count);
         $("._tip").text(process_price(_tip));
+        $("._tax").text(process_price(_tax));
         $("._promotion").text(process_price(_promotion));
     }
     let display_flat_data_single = () => {
@@ -937,7 +950,6 @@ $(document).ready(() => {
                 get_monthly_turnover();
                 let response = JSON.parse(res);
                 if(response.status == 'success'){
-
                     $('#turnover_detail').removeClass('hide');
                     let w_data = response.data.weekly_turnover;
                     let w_days = [...weeks];
@@ -946,7 +958,11 @@ $(document).ready(() => {
                     if(JSON.parse(localStorage.getItem('_shop_name')).length > 3){
                         let idx = 0;
                         for(let item of w_data){
-                            w_sale[Math.ceil(moment().day("Monday").week(item.w).date() / 7) - 1] = parseFloat(item.netsale);
+                            if(item.w < 5){
+                                w_sale[item.w - 1] = parseFloat(item.netsale);
+                            }else{
+                                w_sale[Math.ceil(moment().day("Monday").week(item.w).date() / 7) - 1] = parseFloat(item.netsale);
+                            }
                         }
                         w_series.push({
                             name: 'Turnover',
@@ -966,7 +982,11 @@ $(document).ready(() => {
                              let _values = [0, 0, 0, 0, 0];
                             for(let _item of w_data){
                                 if(item == _item.shop_name){
-                                    _values[Math.ceil(moment().day("Monday").week(_item.w).date() / 7) - 1] = parseFloat(_item.netsale);
+                                    if(_item.w < 5){
+                                        _values[_item.w - 1] = parseFloat(_item.netsale);
+                                    }else{
+                                        _values[Math.ceil(moment().day("Monday").week(_item.w).date() / 7) - 1] = parseFloat(_item.netsale);
+                                    }
                                 }
                             }
                             w_series.push({

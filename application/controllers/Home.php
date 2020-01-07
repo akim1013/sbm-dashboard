@@ -62,7 +62,8 @@ class Home extends MY_Controller {
 			"discount"		=> $this->dashboard_model->get_discount($conn, $date, $shop_name),
 			"transaction" 	=> $this->dashboard_model->get_transaction($conn, $date, $shop_name),
 			"promotion"		=> $this->dashboard_model->get_promotion($conn, $date, $shop_name),
-			"tip"			=> $this->dashboard_model->get_tip($conn, $date, $shop_name)
+			"tip"			=> $this->dashboard_model->get_tip($conn, $date, $shop_name),
+			"tax"			=> $this->dashboard_model->get_tax($conn, $date, $shop_name)
 		);
 		echo json_encode(array(
 			'status' => 'success',

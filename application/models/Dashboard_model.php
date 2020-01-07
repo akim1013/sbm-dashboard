@@ -59,6 +59,29 @@ class Dashboard_model extends CI_Model{
         ";
         return $this->run_query($conn, $sql);
     }
+    // Tax
+    function get_tax($conn, $date, $shop_name){
+        $sql = "
+            SELECT
+                t.shop_id as shop_id,
+                SUM(t.tax_amount) as tax
+            FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+            INNER JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id AND tk.in_statistics=1
+            INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+            INNER JOIN articles a ON (a.id = ta.article_id) AND a.article_type Not In(2,3)
+            INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                    ";
+            if($shop_name != 'All'){
+                $sql = $sql . " AND s.description IN (" . $shop_name . ")";
+            }
+                $sql = $sql . "
+            GROUP BY t.shop_id
+        ";
+        return $this->run_query($conn, $sql);
+    }
     // Transaction numbers
     function get_transaction($conn, $date, $shop_name){
         $sql = "
@@ -157,7 +180,7 @@ class Dashboard_model extends CI_Model{
                 t.shop_id as shop_id
             FROM transactions t WITH (INDEX(idx_transactions_bookdate))
             LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id
-            LEFT JOIN shops s ON s.id = t.shop_id AND tk.in_statistics=1
+            LEFT JOIN shops s ON s.id = t.shop_id
             WHERE t.delete_operator_id IS NULL
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                 ";
