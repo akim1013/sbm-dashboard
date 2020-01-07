@@ -364,7 +364,7 @@ class Dashboard_model extends CI_Model{
 
     function detail_comparison_article($conn, $date, $shop_name){
         $sql = "
-            SELECT g.id group_id, CONCAT(CONCAT(g.code, '_'), g.description) group_name, a.description article_name, COALESCE(sub_result.amount, 0) amount, COALESCE(sub_result.price, 0) price, COALESCE(sub_result_last_week.amount, 0) last_week_amount, COALESCE(sub_result_last_week.price, 0) last_week_price
+            SELECT g.id group_id, g.description group_name, a.description article_name, COALESCE(sub_result.amount, 0) amount, COALESCE(sub_result.price, 0) price, COALESCE(sub_result_last_week.amount, 0) last_week_amount, COALESCE(sub_result_last_week.price, 0) last_week_price
             FROM groups g
             INNER JOIN articles a ON g.id = a.group_a_id
             LEFT JOIN (SELECT
