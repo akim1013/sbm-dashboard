@@ -193,6 +193,7 @@ $(document).ready(() => {
         storage_all_shop = localStorage.getItem('shop_name');
         localStorage.setItem('_shop_name', localStorage.getItem('shop_name'));
         $('#all-shops').empty();
+        $('.payment_shop_list').empty();
         shops   = [];
         _shops  = [];
         $('#all-shops').append($('<li>').append($('<a class="single-shop" style="cursor: pointer" shopId="0">Overall view</a>')));
@@ -203,6 +204,7 @@ $(document).ready(() => {
                 value: shop.description
             });
             $('#all-shops').append($('<li>').append($('<a class="single-shop" style="cursor: pointer" shopId=' + shop.id + '>' + (shop.description) + '</a>')));
+            $('.payment_shop_list').append('<option>' + shop.description + '</option>');
         }
         for(let shop of shop_lists.sale){
             _shops.push({
@@ -1240,7 +1242,11 @@ $(document).ready(() => {
         pc_filter.start = st.format('YYYY-MM-DD');
         pc_filter.end = ed.format('YYYY-MM-DD');
     }
-
+    let payment_date_range_set = (st, ed) => {
+        $('#payment_date_range').text(st.format('MMM DD, YYYY') + ' ~ ' + ed.format('MMM DD, YYYY'));
+        $('#payment_date_range').attr('start', st.format('YYYY-MM-DD'));
+        $('#payment_date_range').attr('end', ed.format('YYYY-MM-DD'));
+    }
     let set_start_date = (st, ed) => {
         $('.start_date').text(st.format('MMM DD, YYYY') + ' ~ ' + ed.format('MMM DD, YYYY'));
         detail_comparison_data.last_start = st.format('YYYY-MM-DD');
@@ -1485,6 +1491,7 @@ $(document).ready(() => {
 
     date_range_set(start, end); // Initiate app
     presence_date_change(start_of_last_week, end_of_last_week); // Presence date range set
+
     /* Action hooks */
     $('#reportrange').daterangepicker({
         startDate: start,
@@ -1500,6 +1507,14 @@ $(document).ready(() => {
            'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')]
         }
     }, date_range_set);
+    $('#payment_date_range').daterangepicker({
+        startDate: start_of_last_month,
+        endDate: end_of_last_month,
+        ranges: {
+           'This Month': [moment().startOf('month'), moment().endOf('month')],
+           'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        }
+    }, payment_date_range_set);
     // Logout User
     $('.logout').click(function(e){
         $('.loader').removeClass('hide');
@@ -1975,7 +1990,6 @@ $(document).ready(() => {
         else{
 
         }
-
     })
     $('#refresh').click(function(){
         window.location.reload();
@@ -2015,6 +2029,27 @@ $(document).ready(() => {
         if(!pc_checked){
             get_operator_info();
         }
+    })
+    $('#payment_view').click(function(){
+        selected = 'pv';
+        $('.page-dashboard').addClass('hide');
+        $('.page-present').addClass('hide');
+        $('.page-comparison').addClass('hide');
+        $('.page-payment').removeClass('hide');
+        $('.page-monthly').addClass('hide');
+        $('.list-unstyled li').removeClass('active');
+        $(this).parent().addClass('active');
+        payment_date_range_set(start_of_last_month, end_of_last_month);
+    })
+    $('#month_view').click(function(){
+        selected = 'mv';
+        $('.page-dashboard').addClass('hide');
+        $('.page-present').addClass('hide');
+        $('.page-comparison').addClass('hide');
+        $('.page-payment').addClass('hide');
+        $('.page-monthly').removeClass('hide');
+        $('.list-unstyled li').removeClass('active');
+        $(this).parent().addClass('active');
     })
     $("#apply_filter").click(function(){
         let table = $('#comparison_detail table tbody');
@@ -2151,7 +2186,115 @@ $(document).ready(() => {
     $('.shop_multiselect').delegate('.s_operator_check', 'click', function(){
         operator_table_render();
     })
+    $('.payment_view_apply').click(function(){
+        let data = {
+            start: $('#payment_date_range').attr('start'),
+            end: $('#payment_date_range').attr('end'),
+            shop_name: $('.payment_shop_list').val()
+        }
+        $('.loader').removeClass('hide');
+        $.ajax({
+            url: api_path + 'home/get_payment_view',
+            method: 'post',
+            data: data,
+            success: function(res){
+                $('.loader').addClass('hide');
+                $('.payment_view_export').removeClass('disabled');
+                let response = JSON.parse(res);
+                if(response.status = 'success'){
+                    let p_netsale = response.data.p_netsale;
+                    let p_tax = response.data.p_tax;
+                    let p_detail = response.data.p_detail;
+                    // Adding required headers
+                    let p_types = [];
+                    for(let item of p_detail){
+                        if(p_types.indexOf(item.payment_description) == -1){
+                            p_types.push(item.payment_description);
+                        }
+                    }
+                    $('.payment_table_header').empty();
+                    $('.payment_table_header').append('<th width=' + (100 / (4 + p_types.length)) + '%>Date</th><th width=' + (100 / (4 + p_types.length)) + '%>Gross sale</th><th width=' + (100 / (4 + p_types.length)) + '%>Tax</th><th width=' + (100 / (4 + p_types.length)) + '%>Net sale</th>');
+                    for(let item of p_types){
+                        $('.payment_table_header').append(`<th width=${100 / (4 + p_types.length)}%>${item}</th>`);
+                    }
+                    // Adding to tbody
+                    $('#payment_table tbody').empty();
+                    let _date_array = [];
+                    for(let item of p_netsale){
+                        _date_array.push(item.d);
+                    }
+                    for(let item of _date_array){
+                        let tbody_array = [];
+                        tbody_array.push($('#payment_date_range').attr('start').split('-')[0] + '-' + $('#payment_date_range').attr('start').split('-')[1] + '-' + item.toString()); // Date field
+                        let __netsale = 0;
+                        let __tax = 0;
+                        for(let _item of p_netsale){
+                            if(item == _item.d){
+                                __netsale = parseFloat(_item.netsale);
+                            }
+                        }
+                        for(let _item of p_tax){
+                            if(item == _item.d){
+                                __tax = parseFloat(_item.tax);
+                            }
+                        }
+                        tbody_array.push(__netsale + __tax); // Gross sale
+                        tbody_array.push(__tax); // Tax
+                        tbody_array.push(__netsale); // Net sale
+                        let _temp_payment = [];
+                        for(let _item of p_detail){
+                            if(item == _item.d){
+                                _temp_payment.push({
+                                    type: _item.payment_description,
+                                    amount: _item.amount
+                                })
+                            }
+                        }
+                        for(let _item of p_types){
+                            let found = 0;
+                            for(let __item of _temp_payment){
+                                if(__item.type == _item){
+                                    found = 1;
+                                }
+                            }
+                            if(found == 0){
+                                tbody_array.push(0);
+                            }else{
+                                for(let __item of _temp_payment){
+                                    if(__item.type == _item){
+                                        tbody_array.push(__item.amount);
+                                    }
+                                }
+                            }
+                        }
+                        let tr = $('<tr></tr>');
+                        for(let _item of tbody_array){
+                            tr.append(`<td>${_item}</td>`)
+                        }
+                        $('#payment_table tbody').append(tr);
+                    }
+                }
+            }
+        });
+    })
+    $('.payment_view_export').click(function(){
+        if(!$(this).hasClass('disabled')){
+            let filename = localStorage.getItem('user_name') + ' (' + moment().format('YYYY-MM-DD HH:mm:ss') + ') ' + '.csv';
+            let csv = [];
+            let rows = document.querySelectorAll("#payment_table tr");
 
+            for (let i = 0; i < rows.length; i++) {
+                let row = [], cols = rows[i].querySelectorAll("td, th");
+
+                for (let j = 0; j < cols.length; j++)
+                    row.push(cols[j].innerText);
+
+                csv.push(row.join(","));
+            }
+            // Download CSV file
+            downloadCSV(csv.join("\n"), filename);
+        }
+    })
     $(".operator_filter").click(function(){
         let o_shops_dom         = $('.shop_multiselect input:checked'); // Filter, checked shop doms
         let o_tills_dom         = $('.till_multiselect input:checked'); // Filter, checked till doms

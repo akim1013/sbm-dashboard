@@ -86,6 +86,12 @@
                     <a id="overall_view" href="#"> <i class="icon-chart"></i><?php echo lang('lb_overall_view');?> </a>
                 </li>
                 <li>
+                    <a id="payment_view" href="#"> <i class="icon-chart"></i>Payment detail </a>
+                </li>
+                <li>
+                    <a id="month_view" href="#"> <i class="icon-chart"></i>Monthly sales report </a>
+                </li>
+                <li>
                     <a id="detail_comparison" href="#"> <i class="icon-chart"></i><?php echo lang('lb_detail_comparison');?> </a>
                 </li>
                 <li>
@@ -319,6 +325,49 @@
                                     <div id="monthly_transaction_line" class="_line_chart"></div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div class="page-payment hide">
+                <section class="no-padding-top no-padding-bottom">
+                    <div class="container-fluid">
+                        <div class="block">
+                            <div style="margin-bottom: 20px;">
+                                <div id="payment_date_range" style="width: 250px; cursor: pointer; display: inline-block;"></div>
+                                <select class="payment_shop_list form-control form-control-sm" style="display: inline-block"></select>
+                                <button type="button" name="button" class="btn btn-primary btn-sm payment_view_apply" style="display: inline-block; margin-left: 20px;">Apply</button>
+                                <button type="button" name="button" class="btn btn-primary btn-sm payment_view_export disabled" style="display: inline-block; margin-left: 20px;">Export</button>
+                            </div>
+                            <table id="payment_table" class="table table-sm">
+                                <thead>
+                                    <tr class="payment_table_header">
+                                        <th>Date</th>
+                                        <th>Gross sale</th>
+                                        <th>Tax</th>
+                                        <th>Net sale</th>
+                                        <th>Cash</th>
+                                        <th>Credit card</th>
+                                        <th>Clover</th>
+                                        <th>Uber eat</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div class="page-monthly hide">
+                <section class="no-padding-top no-padding-bottom">
+                    <div class="container-fluid">
+                        <div class="block">
+                            <table id="monthly_table" class="table table-sm">
+
+                            </table>
                         </div>
                     </div>
                 </section>

@@ -271,3 +271,13 @@ WHERE p.timestamp BETWEEN '2019-12-01' AND '2019-12-31'
 	AND s.id IN ('1')
 	AND o.id IN ('1', '2', '39', '40', '42')
 ORDER BY operator_id, shop_id, t_stamp
+
+// tax
+SELECT
+    t.shop_id as shop_id,
+    SUM(t.tax_amount) as tax
+FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+INNER JOIN shops s ON s.id = t.shop_id
+WHERE t.delete_operator_id IS NULL
+    AND t.bookkeeping_date BETWEEN '2019-09-20' AND '2019-09-20'
+GROUP BY t.shop_id

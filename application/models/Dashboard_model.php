@@ -63,14 +63,10 @@ class Dashboard_model extends CI_Model{
     function get_tax($conn, $date, $shop_name){
         $sql = "
             SELECT
-                t.shop_id as shop_id,
-                SUM(t.tax_amount) as tax
+            t.shop_id as shop_id,
+            SUM(t.tax_amount) as tax
             FROM transactions t WITH (INDEX(idx_transactions_bookdate))
             INNER JOIN shops s ON s.id = t.shop_id
-            LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id AND tk.in_statistics=1
-            INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
-            INNER JOIN articles a ON (a.id = ta.article_id) AND a.article_type Not In(2,3)
-            INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
             WHERE t.delete_operator_id IS NULL
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                     ";
@@ -517,6 +513,55 @@ class Dashboard_model extends CI_Model{
                 AND o.id IN (" . $data['operator_id'] . ")
             ORDER BY operator_id, t_stamp";
 
+        return $this->run_query($conn, $sql);
+    }
+
+    function get_p_netsale($conn, $date, $shop_name){
+        $sql = "
+            SELECT
+            	DATEPART(day, t.bookkeeping_date) d,
+                SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as netsale
+            FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+            LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id AND tk.in_statistics=1
+            INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+            INNER JOIN articles a ON (a.id = ta.article_id) AND a.article_type Not In(2,3)
+            INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
+            INNER JOIN shops s ON s.id = t.shop_id
+            WHERE t.delete_operator_id IS NULL
+        		AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description IN ('" . $shop_name . "')
+            GROUP BY DATEPART(day, t.bookkeeping_date)
+            ORDER BY DATEPART(day, t.bookkeeping_date)
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function get_p_tax($conn, $date, $shop_name){
+        $sql = "
+            SELECT
+                DATEPART(day, t.bookkeeping_date) d,
+                SUM(t.tax_amount) as tax
+            FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+            INNER JOIN shops s ON s.id = t.shop_id
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description IN ('" . $shop_name . "')
+            GROUP BY DATEPART(day, t.bookkeeping_date)
+            ORDER BY DATEPART(day, t.bookkeeping_date)
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function get_p_detail($conn, $date, $shop_name){
+        $sql = "
+            SELECT DATEPART(day, t.bookkeeping_date) d, p.description payment_description, sum(COALESCE(tp.amount, 0)) amount
+            FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+            LEFT JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN trans_payments tp ON tp.transaction_id = t.id
+            INNER JOIN payments p ON p.id = tp.payment_id
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description IN ('" . $shop_name . "')
+            GROUP BY p.description, DATEPART(day, t.bookkeeping_date)
+        ";
         return $this->run_query($conn, $sql);
     }
 }

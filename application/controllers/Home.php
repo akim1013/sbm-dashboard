@@ -334,4 +334,24 @@ class Home extends MY_Controller {
 			'data' => $ret
 		));
 	}
+
+	public function get_payment_view(){
+		$conn = parent::dbconnect();
+		$date = array(
+			"start" => $this->input->post('start'),
+			"end"	=> $this->input->post('end')
+		);
+		$shop_name = $this->input->post('shop_name');
+		$ret = array(
+			"p_netsale" 	=> $this->dashboard_model->get_p_netsale($conn, $date, $shop_name),
+			"p_tax" 		=> $this->dashboard_model->get_p_tax($conn, $date, $shop_name),
+			"p_detail" 		=> $this->dashboard_model->get_p_detail($conn, $date, $shop_name)
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
 }
