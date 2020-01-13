@@ -365,8 +365,39 @@
                 <section class="no-padding-top no-padding-bottom">
                     <div class="container-fluid">
                         <div class="block">
+                            <div style="margin-bottom: 20px;">
+                                <div id="monthly_date_range" style="width: 250px; cursor: pointer; display: inline-block;"></div>
+                                <select class="monthly_shop_list form-control form-control-sm" style="display: inline-block"></select>
+                                <button type="button" name="button" class="btn btn-primary btn-sm monthly_view_apply" style="display: inline-block; margin-left: 20px;">Apply</button>
+                                <button type="button" name="button" class="btn btn-primary btn-sm monthly_view_export disabled" style="display: inline-block; margin-left: 20px;">Export</button>
+                            </div>
                             <table id="monthly_table" class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th width='6.3%'>Date</th>
+                                        <th width='4.3%'>Day</th>
+                                        <th width='5.3%'>Temp</th>
+                                        <th width='5.3%'>Projected daily sales</th>
+                                        <th width='5.3%'>Accumulated projected</th>
+                                        <th width='5.3%'>Achievements (%)</th>
+                                        <th width='5.3%'>Daily sales</th>
+                                        <th width='5.3%'>Accumulated daily</th>
+                                        <th width='5.3%'>Netsale</th>
+                                        <th width='5.3%'>Accumulated netsale</th>
+                                        <th width='5.3%'>Guest count</th>
+                                        <th width='5.3%'>Accumulated GC</th>
+                                        <th width='5.3%'>Cups sold</th>
+                                        <th width='5.3%'>Accumulated cups</th>
+                                        <th width='5.3%'>AC</th>
+                                        <th width='5.3%'>AC</th>
+                                        <th width='5.3%'>Minus coffee</th>
+                                        <th width='5.3%'>Accumulated minus coffee</th>
+                                        <th>Remark</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
 
+                                </tbody>
                             </table>
                         </div>
                     </div>

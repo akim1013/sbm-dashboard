@@ -34,6 +34,12 @@ $(document).ready(() => {
     let start_of_last_year = moment().subtract(1, 'years').startOf('year');
     let end_of_last_year = moment().subtract(1, 'years').endOf('year');
 
+    const formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2
+    })
+
     let _shop_name          = [];
     let shops               = [];   // Shop lists
     let _shops              = [];   // Available shop lists
@@ -194,6 +200,7 @@ $(document).ready(() => {
         localStorage.setItem('_shop_name', localStorage.getItem('shop_name'));
         $('#all-shops').empty();
         $('.payment_shop_list').empty();
+        $('.monthly_shop_list').empty();
         shops   = [];
         _shops  = [];
         $('#all-shops').append($('<li>').append($('<a class="single-shop" style="cursor: pointer" shopId="0">Overall view</a>')));
@@ -205,6 +212,7 @@ $(document).ready(() => {
             });
             $('#all-shops').append($('<li>').append($('<a class="single-shop" style="cursor: pointer" shopId=' + shop.id + '>' + (shop.description) + '</a>')));
             $('.payment_shop_list').append('<option>' + shop.description + '</option>');
+            $('.monthly_shop_list').append('<option>' + shop.description + '</option>');
         }
         for(let shop of shop_lists.sale){
             _shops.push({
@@ -358,7 +366,7 @@ $(document).ready(() => {
         $("._promotion").text(process_price(__promotion));
     }
     let process_price = (val) => {
-
+        // Converts string to price format || 34503 -> 34.5k
         let value = parseFloat(val);
         if(Math.abs(value) > 1000 * 1000){
             return (value / 1000).toFixed(2) + ' m';
@@ -367,6 +375,11 @@ $(document).ready(() => {
         }else{
             return value.toFixed(2);
         }
+    }
+    let process_price_secondary = (val) => {
+        // Converts string to price format || 34503 -> $34,503.00
+        let value = parseFloat(val);
+        return formatter.format(value);
     }
     let process_percent = (val, ref) => {
         let ret = [];
@@ -1247,6 +1260,11 @@ $(document).ready(() => {
         $('#payment_date_range').attr('start', st.format('YYYY-MM-DD'));
         $('#payment_date_range').attr('end', ed.format('YYYY-MM-DD'));
     }
+    let monthly_date_range_set = (st, ed) => {
+        $('#monthly_date_range').text(st.format('MMM DD, YYYY') + ' ~ ' + ed.format('MMM DD, YYYY'));
+        $('#monthly_date_range').attr('start', st.format('YYYY-MM-DD'));
+        $('#monthly_date_range').attr('end', ed.format('YYYY-MM-DD'));
+    }
     let set_start_date = (st, ed) => {
         $('.start_date').text(st.format('MMM DD, YYYY') + ' ~ ' + ed.format('MMM DD, YYYY'));
         detail_comparison_data.last_start = st.format('YYYY-MM-DD');
@@ -1515,6 +1533,15 @@ $(document).ready(() => {
            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
         }
     }, payment_date_range_set);
+    $('#monthly_date_range').daterangepicker({
+        startDate: start_of_last_month,
+        endDate: end_of_last_month,
+        ranges: {
+           'This Month': [moment().startOf('month'), moment().endOf('month')],
+           'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        }
+    }, monthly_date_range_set);
+
     // Logout User
     $('.logout').click(function(e){
         $('.loader').removeClass('hide');
@@ -2016,6 +2043,8 @@ $(document).ready(() => {
         $('.page-dashboard').addClass('hide');
         $('.page-present').addClass('hide');
         $('.page-comparison').removeClass('hide');
+        $('.page-payment').addClass('hide');
+        $('.page-monthly').addClass('hide');
         $('.list-unstyled li').removeClass('active');
         $(this).parent().addClass('active');
     })
@@ -2024,6 +2053,8 @@ $(document).ready(() => {
         $('.page-dashboard').addClass('hide');
         $('.page-comparison').addClass('hide');
         $('.page-present').removeClass('hide');
+        $('.page-payment').addClass('hide');
+        $('.page-monthly').addClass('hide');
         $('.list-unstyled li').removeClass('active');
         $(this).parent().addClass('active');
         if(!pc_checked){
@@ -2050,6 +2081,7 @@ $(document).ready(() => {
         $('.page-monthly').removeClass('hide');
         $('.list-unstyled li').removeClass('active');
         $(this).parent().addClass('active');
+        monthly_date_range_set(start_of_last_month, end_of_last_month);
     })
     $("#apply_filter").click(function(){
         let table = $('#comparison_detail table tbody');
@@ -2282,6 +2314,119 @@ $(document).ready(() => {
             let filename = localStorage.getItem('user_name') + ' (' + moment().format('YYYY-MM-DD HH:mm:ss') + ') ' + '.csv';
             let csv = [];
             let rows = document.querySelectorAll("#payment_table tr");
+
+            for (let i = 0; i < rows.length; i++) {
+                let row = [], cols = rows[i].querySelectorAll("td, th");
+
+                for (let j = 0; j < cols.length; j++)
+                    row.push(cols[j].innerText);
+
+                csv.push(row.join(","));
+            }
+            // Download CSV file
+            downloadCSV(csv.join("\n"), filename);
+        }
+    })
+    $('.monthly_view_apply').click(function(){
+        let data = {
+            start: $('#monthly_date_range').attr('start'),
+            end: $('#monthly_date_range').attr('end'),
+            shop_name: $('.monthly_shop_list').val()
+        }
+        $('.loader').removeClass('hide');
+        $.ajax({
+            url: api_path + 'home/get_monthly_view',
+            method: 'post',
+            data: data,
+            success: function(res){
+                $('.loader').addClass('hide');
+                $('.monthly_view_export').removeClass('disabled');
+                let response = JSON.parse(res);
+                if(response.status = 'success'){
+                    $('#monthly_table tbody').empty();
+                    console.log(response.data);
+                    // Define the templates
+                    let week = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                    let projected = [4800, 3200, 3200, 3200, 3200, 3400, 4500];
+
+                    // Date series
+                    let date_array = [];
+                    for(let item of response.data.m_sale){
+                        // Format is YYYY-MM-DD || 2019-12-08
+                        date_array.push(item.y + '-' + item.m + '-' + item.d);
+                    }
+                    // Seed the table
+                    let ac_projected = 0;
+                    let ac_sale = 0;
+                    let ac_netsale = 0;
+                    let ac_count = 0;
+                    let ac_cup = 0;
+                    let ac_drink = 0;
+                    for(let date of date_array){
+                        let tr_array = [];
+                        tr_array.push(date);
+                        for(let item of response.data.m_sale){
+                            if((item.y == date.split('-')[0]) && (item.m == date.split('-')[1]) && (item.d == date.split('-')[2])){
+                                tr_array.push(week[parseInt(item.w) - 1]);
+                            }
+                        }
+                        tr_array.push('#Temp!');
+                        for(let item of response.data.m_sale){
+                            if((item.y == date.split('-')[0]) && (item.m == date.split('-')[1]) && (item.d == date.split('-')[2])){
+                                ac_projected += projected[parseInt(item.w) - 1];
+                                ac_sale += parseFloat(item.sale);
+                                ac_netsale += parseFloat(item.netsale);
+                                tr_array.push(process_price_secondary(projected[parseInt(item.w) - 1]));
+                                tr_array.push(process_price_secondary(ac_projected));
+                                tr_array.push(((parseFloat(item.sale) / projected[parseInt(item.w) - 1]) * 100).toFixed(2) + '%');
+                                tr_array.push(process_price_secondary(item.sale));
+                                tr_array.push(process_price_secondary(ac_sale));
+                                tr_array.push(process_price_secondary(item.netsale));
+                                tr_array.push(process_price_secondary(ac_netsale));
+                            }
+                        }
+                        for(let item of response.data.m_count){
+                            if((item.y == date.split('-')[0]) && (item.m == date.split('-')[1]) && (item.d == date.split('-')[2])){
+                                ac_count += item.transaction_count;
+                                tr_array.push(item.transaction_count);
+                                tr_array.push(ac_count);
+                            }
+                        }
+                        for(let item of response.data.m_cup){
+                            if((item.y == date.split('-')[0]) && (item.m == date.split('-')[1]) && (item.d == date.split('-')[2])){
+                                ac_cup += item.cups;
+                                tr_array.push(item.cups);
+                                tr_array.push(ac_cup);
+                            }
+                        }
+                        tr_array.push('#AC_day!');
+                        tr_array.push('#AC_accumulated!');
+                        for(let item of response.data.m_drink){
+                            if((item.y == date.split('-')[0]) && (item.m == date.split('-')[1]) && (item.d == date.split('-')[2])){
+                                ac_drink += parseFloat(item.drinks);
+                                tr_array.push(process_price_secondary(item.drinks));
+                                tr_array.push(process_price_secondary(ac_drink));
+                            }
+                        }
+                        console.log(tr_array);
+
+                        // Render the table
+                        let tr_tag = $('<tr></tr>');
+                        for(let item of tr_array){
+                            tr_tag.append(`<td>${item}</td>`);
+                        }
+                        tr_tag.append('<td></td>');
+                        $('#monthly_table tbody').append(tr_tag);
+                    }
+                }
+            }
+        });
+    })
+    $('.monthly_view_export').click(function(){
+        if(!$(this).hasClass('disabled')){
+            let filename = localStorage.getItem('user_name') + ' (' + moment().format('YYYY-MM-DD HH:mm:ss') + ') ' + '.csv';
+            let csv = [];
+            let rows = document.querySelectorAll("#monthly_table tr");
 
             for (let i = 0; i < rows.length; i++) {
                 let row = [], cols = rows[i].querySelectorAll("td, th");

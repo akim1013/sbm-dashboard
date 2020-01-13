@@ -220,6 +220,15 @@ select{
     overflow-y: scroll;
     font-size: 12px;
 }
+#payment_table{
+    font-size: 12px !important;
+    text-align: center;
+}
+#monthly_table, #monthly_table th{
+    font-size: 12px !important;
+    text-align: center;
+    vertical-align: middle;
+}
 @media(max-width: 575px){
     .brand-text strong{
         font-size: 15px !important;
