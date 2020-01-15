@@ -365,6 +365,7 @@ class Home extends MY_Controller {
 			"m_sale" 		=> $this->dashboard_model->get_m_sale($conn, $date, $shop_name),
 			"m_count" 		=> $this->dashboard_model->get_m_count($conn, $date, $shop_name),
 			"m_cup" 		=> $this->dashboard_model->get_m_cups($conn, $date, $shop_name),
+			"m_ac" 			=> $this->dashboard_model->get_m_ac($conn, $date, $shop_name),
 			"m_drink" 		=> $this->dashboard_model->get_m_drinks($conn, $date, $shop_name)
 		);
 		echo json_encode(array(

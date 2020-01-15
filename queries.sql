@@ -281,3 +281,44 @@ INNER JOIN shops s ON s.id = t.shop_id
 WHERE t.delete_operator_id IS NULL
     AND t.bookkeeping_date BETWEEN '2019-09-20' AND '2019-09-20'
 GROUP BY t.shop_id
+
+
+// AC
+SELECT tb.*
+FROM (SELECT
+	g.id group_id,
+	DATEPART(YEAR, t.bookkeeping_date) y, DATEPART(MONTH, t.bookkeeping_date) m, DATEPART(day, t.bookkeeping_date) d, DATEPART(WEEKDAY, t.bookkeeping_date) w,
+	(SUM(ta.price) / count(g.id)) ac
+FROM trans_articles ta
+LEFT JOIN transactions t ON t.id=ta.transaction_id
+LEFT JOIN shops s ON s.id = t.shop_id
+LEFT JOIN articles a ON a.id = ta.article_id
+LEFT JOIN groups g ON a.group_a_id = g.id
+WHERE t.delete_operator_id IS NULL
+    AND t.bookkeeping_date BETWEEN '2019-11-01' AND '2019-12-31'
+    AND s.description IN ('SUNMERRY_NJ')
+	AND g.description NOT LIKE '%add_on%'
+GROUP BY g.id, DATEPART(day, t.bookkeeping_date), DATEPART(WEEKDAY, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(YEAR, t.bookkeeping_date)) tb
+ORDER BY tb.y, tb.m, tb.d
+
+
+
+SELECT tb.y, tb.m, tb.d, sum(tb.ac)
+FROM (SELECT
+	g.id group_id,
+	DATEPART(YEAR, t.bookkeeping_date) y, DATEPART(MONTH, t.bookkeeping_date) m, DATEPART(day, t.bookkeeping_date) d, DATEPART(WEEKDAY, t.bookkeeping_date) w,
+	(SUM(ta.price) / count(g.id)) ac
+FROM trans_articles ta
+LEFT JOIN transactions t ON t.id=ta.transaction_id
+LEFT JOIN shops s ON s.id = t.shop_id
+LEFT JOIN articles a ON a.id = ta.article_id
+LEFT JOIN groups g ON a.group_a_id = g.id
+WHERE t.delete_operator_id IS NULL
+    AND t.bookkeeping_date BETWEEN '2019-11-01' AND '2019-12-31'
+    AND s.description IN ('SUNMERRY_NJ')
+	AND g.description NOT LIKE '%add_on%'
+GROUP BY g.id, DATEPART(day, t.bookkeeping_date), DATEPART(WEEKDAY, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(YEAR, t.bookkeeping_date)) tb
+GROUP BY tb.y, tb.m, tb.d
+ORDER BY tb.y, tb.m, tb.d
+
+//

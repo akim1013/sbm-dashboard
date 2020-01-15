@@ -2344,7 +2344,6 @@ $(document).ready(() => {
                 let response = JSON.parse(res);
                 if(response.status = 'success'){
                     $('#monthly_table tbody').empty();
-                    console.log(response.data);
                     // Define the templates
                     let week = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                     let projected = [4800, 3200, 3200, 3200, 3200, 3400, 4500];
@@ -2361,6 +2360,7 @@ $(document).ready(() => {
                     let ac_netsale = 0;
                     let ac_count = 0;
                     let ac_cup = 0;
+                    let ac_ac = 0;
                     let ac_drink = 0;
                     for(let date of date_array){
                         let tr_array = [];
@@ -2399,8 +2399,13 @@ $(document).ready(() => {
                                 tr_array.push(ac_cup);
                             }
                         }
-                        tr_array.push('#AC_day!');
-                        tr_array.push('#AC_accumulated!');
+                        for(let item of response.data.m_ac){
+                            if((item.y == date.split('-')[0]) && (item.m == date.split('-')[1]) && (item.d == date.split('-')[2])){
+                                ac_ac += parseFloat(item.ac);
+                                tr_array.push(process_price_secondary(item.ac));
+                                tr_array.push(process_price_secondary(ac_ac));
+                            }
+                        }
                         for(let item of response.data.m_drink){
                             if((item.y == date.split('-')[0]) && (item.m == date.split('-')[1]) && (item.d == date.split('-')[2])){
                                 ac_drink += parseFloat(item.drinks);
@@ -2408,7 +2413,6 @@ $(document).ready(() => {
                                 tr_array.push(process_price_secondary(ac_drink));
                             }
                         }
-                        console.log(tr_array);
 
                         // Render the table
                         let tr_tag = $('<tr></tr>');
@@ -2440,6 +2444,70 @@ $(document).ready(() => {
             downloadCSV(csv.join("\n"), filename);
         }
     })
+    // Temp modify
+    $('#monthly_table tbody').delegate('td:nth-child(3)', 'click', function(){
+        let value = $(this).text();
+        let input = $('<input class="temp_input form-control form-control-sm"/>');
+        $(this).empty();
+        $(this).append(input);
+        input.val(value);
+        input.focus();
+    })
+    $('#monthly_table tbody').delegate('.temp_input', 'focusout', function(){
+        let value = $(this).val();
+        $(this).parent().text(value);
+        $(this).remove();
+    })
+
+    // Projected sales modify
+    let update_projected_ac = () => {
+        let projected_tds = $('#monthly_table tbody td:nth-child(4)');
+        let projected_ac_tds = $('#monthly_table tbody td:nth-child(5)');
+
+        let projected_ac_values = [];
+
+        let ac_value = 0;
+        for(let item of projected_tds){
+            ac_value += Number(item.innerText.replace(/[^0-9.-]+/g,""));
+            projected_ac_values.push(process_price_secondary(ac_value));
+        }
+        let idx = 0;
+        for(let item of projected_ac_tds){
+            item.innerText = (projected_ac_values[idx]);
+            idx++;
+        }
+    }
+    let update_sales_percent = () => {
+        let projected_tds = $('#monthly_table tbody td:nth-child(4)');
+        let percent_tds = $('#monthly_table tbody td:nth-child(6)');
+        let sales_tds = $('#monthly_table tbody td:nth-child(7)');
+
+        let length = projected_tds.length;
+        for(let i = 0; i < length; i++){
+            percent_tds[i].innerText = (Number(sales_tds[i].innerText.replace(/[^0-9.-]+/g,"")) / Number(projected_tds[i].innerText.replace(/[^0-9.-]+/g,"")) * 100).toFixed(2) + '%';
+        }
+    }
+    $('#monthly_table tbody').delegate('td:nth-child(4)', 'click', function(){
+        let value = Number($(this).text().replace(/[^0-9.-]+/g,""));
+        let input = $('<input class="projected_input form-control form-control-sm"/>');
+        $(this).empty();
+        $(this).append(input);
+        input.val(value);
+        input.focus();
+    })
+    $('#monthly_table tbody').delegate('.projected_input', 'keyup', function(e){
+        if(e.originalEvent.keyCode == 13){
+            $(this).focusout();
+        }
+    })
+    $('#monthly_table tbody').delegate('.projected_input', 'focusout', function(){
+        let value = $(this).val();
+        $(this).parent().text(process_price_secondary(value));
+        $(this).remove();
+        update_projected_ac();
+        update_sales_percent();
+    })
+
     $(".operator_filter").click(function(){
         let o_shops_dom         = $('.shop_multiselect input:checked'); // Filter, checked shop doms
         let o_tills_dom         = $('.till_multiselect input:checked'); // Filter, checked till doms

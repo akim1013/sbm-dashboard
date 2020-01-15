@@ -376,8 +376,8 @@
                                     <tr>
                                         <th width='6.3%'>Date</th>
                                         <th width='4.3%'>Day</th>
-                                        <th width='5.3%'>Temp</th>
-                                        <th width='5.3%'>Projected daily sales</th>
+                                        <th width='5.3%'>Temp*</th>
+                                        <th width='5.3%'>Projected daily sales*</th>
                                         <th width='5.3%'>Accumulated projected</th>
                                         <th width='5.3%'>Achievements (%)</th>
                                         <th width='5.3%'>Daily sales</th>
@@ -389,10 +389,10 @@
                                         <th width='5.3%'>Cups sold</th>
                                         <th width='5.3%'>Accumulated cups</th>
                                         <th width='5.3%'>AC</th>
-                                        <th width='5.3%'>AC</th>
+                                        <th width='5.3%'>Accumulated AC</th>
                                         <th width='5.3%'>Minus coffee</th>
                                         <th width='5.3%'>Accumulated minus coffee</th>
-                                        <th>Remark</th>
+                                        <th>Remark*</th>
                                     </tr>
                                 </thead>
                                 <tbody>

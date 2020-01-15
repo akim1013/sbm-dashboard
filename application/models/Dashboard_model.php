@@ -617,6 +617,29 @@ class Dashboard_model extends CI_Model{
         ";
         return $this->run_query($conn, $sql);
     }
+    function get_m_ac($conn, $date, $shop_name){
+        $sql = "
+            SELECT tb.y, tb.m, tb.d, sum(tb.ac) ac
+            FROM (SELECT
+            	g.id group_id,
+            	DATEPART(YEAR, t.bookkeeping_date) y, DATEPART(MONTH, t.bookkeeping_date) m, DATEPART(day, t.bookkeeping_date) d, DATEPART(WEEKDAY, t.bookkeeping_date) w,
+            	(SUM(ta.price) / count(g.id)) ac
+            FROM trans_articles ta
+            LEFT JOIN transactions t ON t.id=ta.transaction_id
+            LEFT JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN articles a ON a.id = ta.article_id
+            LEFT JOIN groups g ON a.group_a_id = g.id
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description IN ('" . $shop_name . "')
+            	AND g.description NOT LIKE '%add_on%'
+                AND g.description NOT LIKE '%drink%'
+            GROUP BY g.id, DATEPART(day, t.bookkeeping_date), DATEPART(WEEKDAY, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(YEAR, t.bookkeeping_date)) tb
+            GROUP BY tb.y, tb.m, tb.d
+            ORDER BY tb.y, tb.m, tb.d
+        ";
+        return $this->run_query($conn, $sql);
+    }
     function get_m_drinks($conn, $date, $shop_name){
         $sql = "
             SELECT
