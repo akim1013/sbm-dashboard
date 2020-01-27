@@ -229,6 +229,11 @@ select{
     text-align: center;
     vertical-align: middle;
 }
+#yearly_table, #yearly_table th{
+    font-size: 12px !important;
+    text-align: left;
+    vertical-align: middle;
+}
 @media(max-width: 575px){
     .brand-text strong{
         font-size: 15px !important;

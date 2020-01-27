@@ -92,6 +92,9 @@
                     <a id="month_view" href="#"> <i class="icon-chart"></i>Monthly sales report </a>
                 </li>
                 <li>
+                    <a id="year_view" href="#"> <i class="icon-chart"></i>Yearly sales report </a>
+                </li>
+                <li>
                     <a id="detail_comparison" href="#"> <i class="icon-chart"></i><?php echo lang('lb_detail_comparison');?> </a>
                 </li>
                 <li>
@@ -393,6 +396,43 @@
                                         <th width='5.3%'>Minus coffee</th>
                                         <th width='5.3%'>Accumulated minus coffee</th>
                                         <th>Remark*</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div class="page-yearly hide">
+                <section class="no-padding-top no-padding-bottom">
+                    <div class="container-fluid">
+                        <div class="block">
+                            <div style="margin-bottom: 20px;">
+                                <div id="yearly_date_range" style="width: 250px; cursor: pointer; display: inline-block;"></div>
+                                <select class="yearly_shop_list form-control form-control-sm" style="display: inline-block"></select>
+                                <button type="button" name="button" class="btn btn-primary btn-sm yearly_view_apply" style="display: inline-block; margin-left: 20px;">Apply</button>
+                                <button type="button" name="button" class="btn btn-primary btn-sm yearly_view_export disabled" style="display: inline-block; margin-left: 20px;">Export</button>
+                            </div>
+                            <table id="yearly_table" class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th class="__year">2019</th>
+                                        <th>Jan</th>
+                                        <th>Feb</th>
+                                        <th>Mar</th>
+                                        <th>Apr</th>
+                                        <th>May</th>
+                                        <th>Jun</th>
+                                        <th>Jul</th>
+                                        <th>Aug</th>
+                                        <th>Sep</th>
+                                        <th>Oct</th>
+                                        <th>Nov</th>
+                                        <th>Dec</th>
+                                        <th>Total</th>
                                     </tr>
                                 </thead>
                                 <tbody>

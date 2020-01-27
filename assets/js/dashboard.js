@@ -213,6 +213,7 @@ $(document).ready(() => {
             $('#all-shops').append($('<li>').append($('<a class="single-shop" style="cursor: pointer" shopId=' + shop.id + '>' + (shop.description) + '</a>')));
             $('.payment_shop_list').append('<option>' + shop.description + '</option>');
             $('.monthly_shop_list').append('<option>' + shop.description + '</option>');
+            $('.yearly_shop_list').append('<option>' + shop.description + '</option>');
         }
         for(let shop of shop_lists.sale){
             _shops.push({
@@ -1265,6 +1266,11 @@ $(document).ready(() => {
         $('#monthly_date_range').attr('start', st.format('YYYY-MM-DD'));
         $('#monthly_date_range').attr('end', ed.format('YYYY-MM-DD'));
     }
+    let yearly_date_range_set = (st, ed) => {
+        $('#yearly_date_range').text(st.format('MMM DD, YYYY') + ' ~ ' + ed.format('MMM DD, YYYY'));
+        $('#yearly_date_range').attr('start', st.format('YYYY-MM-DD'));
+        $('#yearly_date_range').attr('end', ed.format('YYYY-MM-DD'));
+    }
     let set_start_date = (st, ed) => {
         $('.start_date').text(st.format('MMM DD, YYYY') + ' ~ ' + ed.format('MMM DD, YYYY'));
         detail_comparison_data.last_start = st.format('YYYY-MM-DD');
@@ -1541,7 +1547,14 @@ $(document).ready(() => {
            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
         }
     }, monthly_date_range_set);
-
+    $('#yearly_date_range').daterangepicker({
+        startDate: start_of_last_year,
+        endDate: end_of_last_year,
+        ranges: {
+           'This Year': [moment().startOf('year'), moment().endOf('year')],
+           'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')]
+        }
+    }, yearly_date_range_set);
     // Logout User
     $('.logout').click(function(e){
         $('.loader').removeClass('hide');
@@ -2025,6 +2038,9 @@ $(document).ready(() => {
         $('.page-dashboard').removeClass('hide');
         $('.page-present').addClass('hide');
         $('.page-comparison').addClass('hide');
+        $('.page-payment').addClass('hide');
+        $('.page-monthly').addClass('hide');
+        $('.page-yearly').addClass('hide');
         $('.list-unstyled li').removeClass('active');
         $(this).parent().addClass('active');
         selected = 'ov';
@@ -2045,6 +2061,7 @@ $(document).ready(() => {
         $('.page-comparison').removeClass('hide');
         $('.page-payment').addClass('hide');
         $('.page-monthly').addClass('hide');
+        $('.page-yearly').addClass('hide');
         $('.list-unstyled li').removeClass('active');
         $(this).parent().addClass('active');
     })
@@ -2055,6 +2072,7 @@ $(document).ready(() => {
         $('.page-present').removeClass('hide');
         $('.page-payment').addClass('hide');
         $('.page-monthly').addClass('hide');
+        $('.page-yearly').addClass('hide');
         $('.list-unstyled li').removeClass('active');
         $(this).parent().addClass('active');
         if(!pc_checked){
@@ -2068,6 +2086,7 @@ $(document).ready(() => {
         $('.page-comparison').addClass('hide');
         $('.page-payment').removeClass('hide');
         $('.page-monthly').addClass('hide');
+        $('.page-yearly').addClass('hide');
         $('.list-unstyled li').removeClass('active');
         $(this).parent().addClass('active');
         payment_date_range_set(start_of_last_month, end_of_last_month);
@@ -2079,9 +2098,22 @@ $(document).ready(() => {
         $('.page-comparison').addClass('hide');
         $('.page-payment').addClass('hide');
         $('.page-monthly').removeClass('hide');
+        $('.page-yearly').addClass('hide');
         $('.list-unstyled li').removeClass('active');
         $(this).parent().addClass('active');
         monthly_date_range_set(start_of_last_month, end_of_last_month);
+    })
+    $('#year_view').click(function(){
+        selected = 'mv';
+        $('.page-dashboard').addClass('hide');
+        $('.page-present').addClass('hide');
+        $('.page-comparison').addClass('hide');
+        $('.page-payment').addClass('hide');
+        $('.page-monthly').addClass('hide');
+        $('.page-yearly').removeClass('hide');
+        $('.list-unstyled li').removeClass('active');
+        $(this).parent().addClass('active');
+        yearly_date_range_set(start_of_last_year, end_of_last_year);
     })
     $("#apply_filter").click(function(){
         let table = $('#comparison_detail table tbody');
@@ -2233,7 +2265,7 @@ $(document).ready(() => {
                 $('.loader').addClass('hide');
                 $('.payment_view_export').removeClass('disabled');
                 let response = JSON.parse(res);
-                if(response.status = 'success'){
+                if(response.status == 'success'){
                     let p_netsale = response.data.p_netsale;
                     let p_tax = response.data.p_tax;
                     let p_detail = response.data.p_detail;
@@ -2342,7 +2374,7 @@ $(document).ready(() => {
                 $('.loader').addClass('hide');
                 $('.monthly_view_export').removeClass('disabled');
                 let response = JSON.parse(res);
-                if(response.status = 'success'){
+                if(response.status == 'success'){
                     $('#monthly_table tbody').empty();
                     // Define the templates
                     let week = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -2443,6 +2475,258 @@ $(document).ready(() => {
             // Download CSV file
             downloadCSV(csv.join("\n"), filename);
         }
+    })
+    $('.yearly_view_apply').click(function(){
+        let data = {
+            start: $('#yearly_date_range').attr('start'),
+            end: $('#yearly_date_range').attr('end'),
+            shop_name: $('.yearly_shop_list').val()
+        }
+        $('.loader').removeClass('hide');
+        $.ajax({
+            url: api_path + 'home/get_yearly_view',
+            method: 'post',
+            data: data,
+            success: function(res){
+                $('.loader').addClass('hide');
+                $('.yearly_view_export').removeClass('disabled');
+                let response = JSON.parse(res);
+                if(response.status == 'success'){
+                    console.log(response.data);
+                    $('#yearly_table tbody').empty();
+
+                    // Sale
+                    let td_array = [];
+                    let total_value = 0;
+                    td_array.push('Monthly sales');
+                    for(let i = 0; i < 12; i++){
+                        if(response.data.y_sale[i].m == (i + 1)){
+                            total_value += parseFloat(response.data.y_sale[i].netsale);
+                            td_array.push(process_price_secondary(response.data.y_sale[i].netsale));
+                        }else{
+                            td_array.push(0);
+                        }
+                    }
+                    td_array.push(process_price_secondary(total_value));
+                    let tr = $('<tr></tr>');
+                    for(let item of td_array){
+                        tr.append('<td>' + item + '</td>');
+                    }
+                    $('#yearly_table tbody').append(tr);
+
+                    // Daily average
+                    td_array = [];
+                    total_value = 0;
+                    td_array.push('Daily average');
+                    for(let i = 0; i < 12; i++){
+                        if(response.data.y_sale[i].m == (i + 1)){
+                            total_value += parseFloat(response.data.y_sale[i].netsale) / (new Date(response.data.y_sale[i].y, response.data.y_sale[i].m, 0).getDate());
+                            td_array.push(process_price_secondary(parseFloat(response.data.y_sale[i].netsale) / (new Date(response.data.y_sale[i].y, response.data.y_sale[i].m, 0).getDate())));
+                        }else{
+                            td_array.push(0);
+                        }
+                    }
+                    td_array.push(process_price_secondary(total_value / 12));
+                    tr = $('<tr></tr>');
+                    for(let item of td_array){
+                        tr.append('<td>' + item + '</td>');
+                    }
+                    $('#yearly_table tbody').append(tr);
+
+                    // Dine in items
+                    td_array = [];
+                    total_value = 0;
+                    td_array.push('Dine in items');
+                    for(let i = 0; i < 12; i++){
+                        if(response.data.y_dinein_count[i].m == (i + 1)){
+                            total_value += parseInt(response.data.y_dinein_count[i].dinein_count);
+                            td_array.push(response.data.y_dinein_count[i].dinein_count);
+                        }else{
+                            td_array.push(0);
+                        }
+                    }
+                    td_array.push(total_value);
+                    tr = $('<tr></tr>');
+                    for(let item of td_array){
+                        tr.append('<td>' + item + '</td>');
+                    }
+                    $('#yearly_table tbody').append(tr);
+
+                    // Dine in amount
+                    td_array = [];
+                    total_value = 0;
+                    td_array.push('Dine in Amount');
+                    for(let i = 0; i < 12; i++){
+                        if(response.data.y_dinein_amount[i].m == (i + 1)){
+                            total_value += parseFloat(response.data.y_dinein_amount[i].dinein_amount);
+                            td_array.push(process_price_secondary(response.data.y_dinein_amount[i].dinein_amount));
+                        }else{
+                            td_array.push(0);
+                        }
+                    }
+                    td_array.push(process_price_secondary(total_value));
+                    tr = $('<tr></tr>');
+                    for(let item of td_array){
+                        tr.append('<td>' + item + '</td>');
+                    }
+                    $('#yearly_table tbody').append(tr);
+
+                    // Dine in percent
+                    td_array = [];
+                    total_value = 0;
+                    td_array.push('Dine in Percent');
+                    for(let i = 0; i < 12; i++){
+                        if(response.data.y_dinein_amount[i].m == (i + 1)){
+                            total_value += parseFloat(response.data.y_dinein_amount[i].dinein_amount) / parseFloat(response.data.y_sale[i].netsale);
+                            td_array.push(((parseFloat(response.data.y_dinein_amount[i].dinein_amount) / parseFloat(response.data.y_sale[i].netsale)) * 100).toFixed(2) + '%');
+                        }else{
+                            td_array.push(0);
+                        }
+                    }
+                    td_array.push((total_value * 100).toFixed(2) + '%');
+                    tr = $('<tr></tr>');
+                    for(let item of td_array){
+                        tr.append('<td>' + item + '</td>');
+                    }
+                    $('#yearly_table tbody').append(tr);
+
+                    // To go count
+                    td_array = [];
+                    total_value = 0;
+                    td_array.push('To go items');
+                    for(let i = 0; i < 12; i++){
+                        if(response.data.y_togo_count[i].m == (i + 1)){
+                            total_value += parseInt(response.data.y_togo_count[i].togo_count);
+                            td_array.push(response.data.y_togo_count[i].togo_count);
+                        }else{
+                            td_array.push(0);
+                        }
+                    }
+                    td_array.push(total_value);
+                    tr = $('<tr></tr>');
+                    for(let item of td_array){
+                        tr.append('<td>' + item + '</td>');
+                    }
+                    $('#yearly_table tbody').append(tr);
+
+                    // To go amount
+                    td_array = [];
+                    total_value = 0;
+                    td_array.push('To go Amount');
+                    for(let i = 0; i < 12; i++){
+                        if(response.data.y_togo_amount[i].m == (i + 1)){
+                            total_value += parseFloat(response.data.y_togo_amount[i].togo_amount);
+                            td_array.push(process_price_secondary(response.data.y_togo_amount[i].togo_amount));
+                        }else{
+                            td_array.push(0);
+                        }
+                    }
+                    td_array.push(process_price_secondary(total_value));
+                    tr = $('<tr></tr>');
+                    for(let item of td_array){
+                        tr.append('<td>' + item + '</td>');
+                    }
+                    $('#yearly_table tbody').append(tr);
+
+                    // To go percent
+                    td_array = [];
+                    total_value = 0;
+                    td_array.push('Dine in Percent');
+                    for(let i = 0; i < 12; i++){
+                        if(response.data.y_togo_amount[i].m == (i + 1)){
+                            total_value += parseFloat(response.data.y_togo_amount[i].togo_amount) / parseFloat(response.data.y_sale[i].netsale);
+                            td_array.push(((parseFloat(response.data.y_togo_amount[i].togo_amount) / parseFloat(response.data.y_sale[i].netsale)) * 100).toFixed(2) + '%');
+                        }else{
+                            td_array.push(0);
+                        }
+                    }
+                    td_array.push((total_value * 100).toFixed(2) + '%');
+                    tr = $('<tr></tr>');
+                    for(let item of td_array){
+                        tr.append('<td>' + item + '</td>');
+                    }
+                    $('#yearly_table tbody').append(tr);
+
+                    // Monthly transaction count
+                    td_array = [];
+                    total_value = 0;
+                    td_array.push('Monthly transaction tickets');
+                    for(let i = 0; i < 12; i++){
+                        if(response.data.y_transaction_count[i].m == (i + 1)){
+                            total_value += parseInt(response.data.y_transaction_count[i].transaction_count);
+                            td_array.push(response.data.y_transaction_count[i].transaction_count);
+                        }else{
+                            td_array.push(0);
+                        }
+                    }
+                    td_array.push(total_value);
+                    tr = $('<tr></tr>');
+                    for(let item of td_array){
+                        tr.append('<td>' + item + '</td>');
+                    }
+                    $('#yearly_table tbody').append(tr);
+
+                    // Monthly item count
+                    td_array = [];
+                    total_value = 0;
+                    td_array.push('Monthly items');
+                    for(let i = 0; i < 12; i++){
+                        if(response.data.y_article_count[i].m == (i + 1)){
+                            total_value += parseInt(response.data.y_article_count[i].article_count);
+                            td_array.push(response.data.y_article_count[i].article_count);
+                        }else{
+                            td_array.push(0);
+                        }
+                    }
+                    td_array.push(total_value);
+                    tr = $('<tr></tr>');
+                    for(let item of td_array){
+                        tr.append('<td>' + item + '</td>');
+                    }
+                    $('#yearly_table tbody').append(tr);
+
+                    // Price per ticker
+                    td_array = [];
+                    total_value = 0;
+                    td_array.push('Unit price/per tickers');
+                    for(let i = 0; i < 12; i++){
+                        if(response.data.y_transaction_count[i].m == (i + 1)){
+                            total_value += parseFloat(response.data.y_sale[i].netsale) / parseFloat(response.data.y_transaction_count[i].transaction_count);
+                            td_array.push(process_price_secondary(parseFloat(response.data.y_sale[i].netsale) / parseFloat(response.data.y_transaction_count[i].transaction_count)));
+                        }else{
+                            td_array.push(0);
+                        }
+                    }
+                    td_array.push(process_price_secondary(total_value / 12));
+                    tr = $('<tr></tr>');
+                    for(let item of td_array){
+                        tr.append('<td>' + item + '</td>');
+                    }
+                    $('#yearly_table tbody').append(tr);
+
+                    // Price per article
+                    td_array = [];
+                    total_value = 0;
+                    td_array.push('Unit price/per items');
+                    for(let i = 0; i < 12; i++){
+                        if(response.data.y_article_count[i].m == (i + 1)){
+                            total_value += parseFloat(response.data.y_sale[i].netsale) / parseFloat(response.data.y_article_count[i].article_count);
+                            td_array.push(process_price_secondary(parseFloat(response.data.y_sale[i].netsale) / parseFloat(response.data.y_article_count[i].article_count)));
+                        }else{
+                            td_array.push(0);
+                        }
+                    }
+                    td_array.push(process_price_secondary(total_value / 12));
+                    tr = $('<tr></tr>');
+                    for(let item of td_array){
+                        tr.append('<td>' + item + '</td>');
+                    }
+                    $('#yearly_table tbody').append(tr);
+                }
+
+            }
+        })
+        //$('.loader').removeClass('hide');
     })
     // Temp modify
     $('#monthly_table tbody').delegate('td:nth-child(3)', 'click', function(){

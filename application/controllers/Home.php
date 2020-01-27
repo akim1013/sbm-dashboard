@@ -375,4 +375,27 @@ class Home extends MY_Controller {
 		));
 		sqlsrv_close($conn);
 	}
+	public function get_yearly_view(){
+		$conn = parent::dbconnect();
+		$date = array(
+			"start" => $this->input->post('start'),
+			"end"	=> $this->input->post('end')
+		);
+		$shop_name = $this->input->post('shop_name');
+		$ret = array(
+			"y_sale"				=> $this->dashboard_model->get_y_sale($conn, $date, $shop_name),
+			"y_dinein_count"		=> $this->dashboard_model->get_y_dinein_count($conn, $date, $shop_name),
+			"y_dinein_amount"		=> $this->dashboard_model->get_y_dinein_amount($conn, $date, $shop_name),
+			"y_togo_count"			=> $this->dashboard_model->get_y_togo_count($conn, $date, $shop_name),
+			"y_togo_amount"			=> $this->dashboard_model->get_y_togo_amount($conn, $date, $shop_name),
+			"y_transaction_count"	=> $this->dashboard_model->get_y_transaction_count($conn, $date, $shop_name),
+			"y_article_count"		=> $this->dashboard_model->get_y_article_count($conn, $date, $shop_name),
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
 }
