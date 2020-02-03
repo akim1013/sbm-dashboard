@@ -112,14 +112,6 @@
                     <a href="#all-shops" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-scribd"></i><?php echo lang('lb_all_shops');?> </a>
                     <ul id="all-shops" class="collapse list-unstyled "></ul>
                 </li>
-
-                <li class="export-data hide">
-                    <a href="#export" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-paste"></i><?php echo lang('lb_export');?> </a>
-                    <ul id="export" class="collapse list-unstyled">
-                        <li><a id="export_xls" style="cursor: pointer"><?php echo lang('lb_export_detail_comparison');?>(XLS)</a></li>
-                        <li><a id="export_csv" style="cursor: pointer"><?php echo lang('lb_export_detail_comparison');?>(CSV)</a></li>
-                    </ul>
-                </li>
             </ul>
         </nav>
         <!-- Sidebar Navigation end-->
@@ -454,7 +446,10 @@
                                         <th colspan="3" class="start_date" style="cursor: pointer">Jun 04, 2018 ~ Jun 10, 2018</th>
                                         <th colspan="3" class="end_date" style="cursor: pointer">Jun 11, 2018 ~ Jun 17, 2018</th>
                                         <th><?php echo lang('lb_variance');?></th>
-                                        <th id="apply_filter" style="cursor: pointer; color: #f55;"><?php echo lang('lb_apply_filter');?></th>
+                                        <th>
+                                            <button type="button" name="button" id="apply_filter" class="btn btn-sm btn-primary">Apply</button>
+                                            <button type="button" name="button" id="export_csv" class="btn btn-sm btn-primary disabled">Export</button>
+                                        </th>
                                     </tr>
                                     <tr>
                                         <th width="15%"></th>

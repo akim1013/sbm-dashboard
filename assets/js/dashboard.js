@@ -2131,7 +2131,7 @@ $(document).ready(() => {
                     detail_comparison = response;
                     detail_comparison.shops = localStorage.getItem('_shop_name');
 
-                    $('.export-data').removeClass('hide');
+                    $('#export_csv').removeClass('disabled');
                     article_detail = [...response.data.article_detail];
                     discount_detail = [...response.data.discount_detail];
                     payment_detail = [...response.data.payment_detail];
@@ -2200,20 +2200,22 @@ $(document).ready(() => {
         }
     })
     $('#export_csv').click(function(){
-        let filename = + new Date() + '.csv';
-        let csv = [];
-        let rows = document.querySelectorAll("#detail_comparison_table tr");
+        if(!$(this).hasClass('disabled')){
+            let filename = + new Date() + '.csv';
+            let csv = [];
+            let rows = document.querySelectorAll("#detail_comparison_table tr");
 
-        for (let i = 0; i < rows.length; i++) {
-            let row = [], cols = rows[i].querySelectorAll("td, th");
+            for (let i = 0; i < rows.length; i++) {
+                let row = [], cols = rows[i].querySelectorAll("td, th");
 
-            for (let j = 0; j < cols.length; j++)
-                row.push(cols[j].innerText);
+                for (let j = 0; j < cols.length; j++)
+                    row.push(cols[j].innerText);
 
-            csv.push(row.join(","));
+                csv.push(row.join(","));
+            }
+            // Download CSV file
+            downloadCSV(csv.join("\n"), filename);
         }
-        // Download CSV file
-        downloadCSV(csv.join("\n"), filename);
     })
     $("#export_xls").click(function(e){
         let tab_text="<table border='2px'><tr bgcolor='#87AFC6'>";
@@ -2492,21 +2494,26 @@ $(document).ready(() => {
                 $('.yearly_view_export').removeClass('disabled');
                 let response = JSON.parse(res);
                 if(response.status == 'success'){
-                    console.log(response.data);
+
                     $('#yearly_table tbody').empty();
 
                     // Sale
                     let td_array = [];
                     let total_value = 0;
                     td_array.push('Monthly sales');
-                    for(let i = 0; i < 12; i++){
-                        if(response.data.y_sale[i].m == (i + 1)){
-                            total_value += parseFloat(response.data.y_sale[i].netsale);
-                            td_array.push(process_price_secondary(response.data.y_sale[i].netsale));
-                        }else{
-                            td_array.push(0);
+
+                    for(let i = 0; i < 12; i ++){
+                        td_array.push(0);
+                    }
+                    for(let item of response.data.y_sale){
+                        for(let i = 0; i < 12; i++){
+                            if(item.m == (i + 1)){
+                                total_value += parseFloat(item.netsale);
+                                td_array[i + 1] = process_price_secondary(item.netsale);
+                            }
                         }
                     }
+
                     td_array.push(process_price_secondary(total_value));
                     let tr = $('<tr></tr>');
                     for(let item of td_array){
@@ -2518,15 +2525,47 @@ $(document).ready(() => {
                     td_array = [];
                     total_value = 0;
                     td_array.push('Daily average');
-                    for(let i = 0; i < 12; i++){
-                        if(response.data.y_sale[i].m == (i + 1)){
-                            total_value += parseFloat(response.data.y_sale[i].netsale) / (new Date(response.data.y_sale[i].y, response.data.y_sale[i].m, 0).getDate());
-                            td_array.push(process_price_secondary(parseFloat(response.data.y_sale[i].netsale) / (new Date(response.data.y_sale[i].y, response.data.y_sale[i].m, 0).getDate())));
-                        }else{
-                            td_array.push(0);
+                    for(let i = 0; i < 12; i ++){
+                        td_array.push(0);
+                    }
+                    for(let item of response.data.y_sale){
+                        for(let i = 0; i < 12; i++){
+                            if(item.m == (i + 1)){
+                                total_value += parseFloat(item.netsale) / (new Date(item.y, item.m, 0).getDate());
+                                td_array[i + 1] = (process_price_secondary(parseFloat(item.netsale) / (new Date(item.y, item.m, 0).getDate())));
+                            }
                         }
                     }
+
                     td_array.push(process_price_secondary(total_value / 12));
+                    tr = $('<tr></tr>');
+                    for(let item of td_array){
+                        tr.append('<td>' + item + '</td>');
+                    }
+                    $('#yearly_table tbody').append(tr);
+
+                    // Deliver amount
+                    td_array = [];
+                    total_value = 0;
+                    td_array.push('Deliver amount');
+                    for(let i = 0; i < 12; i++){
+                        td_array.push(0);
+                    }
+                    td_array.push(process_price_secondary(total_value / 12));
+                    tr = $('<tr></tr>');
+                    for(let item of td_array){
+                        tr.append('<td>' + item + '</td>');
+                    }
+                    $('#yearly_table tbody').append(tr);
+
+                    // Deliver amount percent
+                    td_array = [];
+                    total_value = 0;
+                    td_array.push('Deliver amount percent');
+                    for(let i = 0; i < 12; i++){
+                        td_array.push('0%');
+                    }
+                    td_array.push('0%');
                     tr = $('<tr></tr>');
                     for(let item of td_array){
                         tr.append('<td>' + item + '</td>');
@@ -2537,14 +2576,18 @@ $(document).ready(() => {
                     td_array = [];
                     total_value = 0;
                     td_array.push('Dine in items');
-                    for(let i = 0; i < 12; i++){
-                        if(response.data.y_dinein_count[i].m == (i + 1)){
-                            total_value += parseInt(response.data.y_dinein_count[i].dinein_count);
-                            td_array.push(response.data.y_dinein_count[i].dinein_count);
-                        }else{
-                            td_array.push(0);
+                    for(let i = 0; i < 12; i ++){
+                        td_array.push(0);
+                    }
+                    for(let item of response.data.y_dinein_count){
+                        for(let i = 0; i < 12; i++){
+                            if(item.m == (i + 1)){
+                                total_value += parseInt(item.dinein_count);
+                                td_array[i + 1] = (item.dinein_count);
+                            }
                         }
                     }
+
                     td_array.push(total_value);
                     tr = $('<tr></tr>');
                     for(let item of td_array){
@@ -2556,14 +2599,18 @@ $(document).ready(() => {
                     td_array = [];
                     total_value = 0;
                     td_array.push('Dine in Amount');
-                    for(let i = 0; i < 12; i++){
-                        if(response.data.y_dinein_amount[i].m == (i + 1)){
-                            total_value += parseFloat(response.data.y_dinein_amount[i].dinein_amount);
-                            td_array.push(process_price_secondary(response.data.y_dinein_amount[i].dinein_amount));
-                        }else{
-                            td_array.push(0);
+                    for(let i = 0; i < 12; i ++){
+                        td_array.push(0);
+                    }
+                    for(let item of response.data.y_dinein_amount){
+                        for(let i = 0; i < 12; i++){
+                            if(item.m == (i + 1)){
+                                total_value += parseFloat(item.dinein_amount);
+                                td_array[i + 1] = (process_price_secondary(item.dinein_amount));
+                            }
                         }
                     }
+
                     td_array.push(process_price_secondary(total_value));
                     tr = $('<tr></tr>');
                     for(let item of td_array){
@@ -2575,14 +2622,20 @@ $(document).ready(() => {
                     td_array = [];
                     total_value = 0;
                     td_array.push('Dine in Percent');
-                    for(let i = 0; i < 12; i++){
-                        if(response.data.y_dinein_amount[i].m == (i + 1)){
-                            total_value += parseFloat(response.data.y_dinein_amount[i].dinein_amount) / parseFloat(response.data.y_sale[i].netsale);
-                            td_array.push(((parseFloat(response.data.y_dinein_amount[i].dinein_amount) / parseFloat(response.data.y_sale[i].netsale)) * 100).toFixed(2) + '%');
-                        }else{
-                            td_array.push(0);
-                        }
+                    for(let i = 0; i < 12; i ++){
+                        td_array.push(0);
                     }
+                    let idx = 0;
+                    for(let item of response.data.y_sale){
+                        for(let i = 0; i < 12; i++){
+                            if(item.m == (i + 1)){
+                                total_value += parseFloat(response.data.y_dinein_amount[idx].dinein_amount) / parseFloat(response.data.y_sale[idx].netsale);
+                                td_array[i + 1] = (((parseFloat(response.data.y_dinein_amount[idx].dinein_amount) / parseFloat(response.data.y_sale[idx].netsale)) * 100).toFixed(2) + '%');
+                            }
+                        }
+                        idx ++;
+                    }
+
                     td_array.push((total_value * 100).toFixed(2) + '%');
                     tr = $('<tr></tr>');
                     for(let item of td_array){
@@ -2594,14 +2647,20 @@ $(document).ready(() => {
                     td_array = [];
                     total_value = 0;
                     td_array.push('To go items');
-                    for(let i = 0; i < 12; i++){
-                        if(response.data.y_togo_count[i].m == (i + 1)){
-                            total_value += parseInt(response.data.y_togo_count[i].togo_count);
-                            td_array.push(response.data.y_togo_count[i].togo_count);
-                        }else{
-                            td_array.push(0);
-                        }
+                    for(let i = 0; i < 12; i ++){
+                        td_array.push(0);
                     }
+                    idx = 0;
+                    for(let item of response.data.y_sale){
+                        for(let i = 0; i < 12; i++){
+                            if(item.m == (i + 1)){
+                                total_value += parseInt(response.data.y_togo_count[idx].togo_count);
+                                td_array[i + 1] = (response.data.y_togo_count[idx].togo_count);
+                            }
+                        }
+                        idx++;
+                    }
+
                     td_array.push(total_value);
                     tr = $('<tr></tr>');
                     for(let item of td_array){
@@ -2613,13 +2672,18 @@ $(document).ready(() => {
                     td_array = [];
                     total_value = 0;
                     td_array.push('To go Amount');
-                    for(let i = 0; i < 12; i++){
-                        if(response.data.y_togo_amount[i].m == (i + 1)){
-                            total_value += parseFloat(response.data.y_togo_amount[i].togo_amount);
-                            td_array.push(process_price_secondary(response.data.y_togo_amount[i].togo_amount));
-                        }else{
-                            td_array.push(0);
+                    for(let i = 0; i < 12; i ++){
+                        td_array.push(0);
+                    }
+                    idx = 0;
+                    for(let item of response.data.y_sale){
+                        for(let i = 0; i < 12; i++){
+                            if(item.m == (i + 1)){
+                                total_value += parseFloat(response.data.y_togo_amount[idx].togo_amount);
+                                td_array[i + 1] = (process_price_secondary(response.data.y_togo_amount[idx].togo_amount));
+                            }
                         }
+                        idx++;
                     }
                     td_array.push(process_price_secondary(total_value));
                     tr = $('<tr></tr>');
@@ -2631,15 +2695,21 @@ $(document).ready(() => {
                     // To go percent
                     td_array = [];
                     total_value = 0;
-                    td_array.push('Dine in Percent');
-                    for(let i = 0; i < 12; i++){
-                        if(response.data.y_togo_amount[i].m == (i + 1)){
-                            total_value += parseFloat(response.data.y_togo_amount[i].togo_amount) / parseFloat(response.data.y_sale[i].netsale);
-                            td_array.push(((parseFloat(response.data.y_togo_amount[i].togo_amount) / parseFloat(response.data.y_sale[i].netsale)) * 100).toFixed(2) + '%');
-                        }else{
-                            td_array.push(0);
-                        }
+                    td_array.push('To go Percent');
+                    for(let i = 0; i < 12; i ++){
+                        td_array.push(0);
                     }
+                    idx = 0;
+                    for(let item of response.data.y_sale){
+                        for(let i = 0; i < 12; i++){
+                            if(item.m == (i + 1)){
+                                total_value += parseFloat(response.data.y_togo_amount[idx].togo_amount) / parseFloat(response.data.y_sale[idx].netsale);
+                                td_array[i + 1] = (((parseFloat(response.data.y_togo_amount[idx].togo_amount) / parseFloat(response.data.y_sale[idx].netsale)) * 100).toFixed(2) + '%');
+                            }
+                        }
+                        idx++;
+                    }
+
                     td_array.push((total_value * 100).toFixed(2) + '%');
                     tr = $('<tr></tr>');
                     for(let item of td_array){
@@ -2651,13 +2721,18 @@ $(document).ready(() => {
                     td_array = [];
                     total_value = 0;
                     td_array.push('Monthly transaction tickets');
-                    for(let i = 0; i < 12; i++){
-                        if(response.data.y_transaction_count[i].m == (i + 1)){
-                            total_value += parseInt(response.data.y_transaction_count[i].transaction_count);
-                            td_array.push(response.data.y_transaction_count[i].transaction_count);
-                        }else{
-                            td_array.push(0);
+                    for(let i = 0; i < 12; i ++){
+                        td_array.push(0);
+                    }
+                    idx = 0;
+                    for(let item of response.data.y_sale){
+                        for(let i = 0; i < 12; i++){
+                            if(item.m == (i + 1)){
+                                total_value += parseInt(response.data.y_transaction_count[idx].transaction_count);
+                                td_array[i + 1] = (response.data.y_transaction_count[idx].transaction_count);
+                            }
                         }
+                        idx++;
                     }
                     td_array.push(total_value);
                     tr = $('<tr></tr>');
@@ -2670,13 +2745,18 @@ $(document).ready(() => {
                     td_array = [];
                     total_value = 0;
                     td_array.push('Monthly items');
-                    for(let i = 0; i < 12; i++){
-                        if(response.data.y_article_count[i].m == (i + 1)){
-                            total_value += parseInt(response.data.y_article_count[i].article_count);
-                            td_array.push(response.data.y_article_count[i].article_count);
-                        }else{
-                            td_array.push(0);
+                    for(let i = 0; i < 12; i ++){
+                        td_array.push(0);
+                    }
+                    idx = 0;
+                    for(let item of response.data.y_sale){
+                        for(let i = 0; i < 12; i++){
+                            if(item.m == (i + 1)){
+                                total_value += parseInt(response.data.y_article_count[idx].article_count);
+                                td_array[i + 1] = (response.data.y_article_count[idx].article_count);
+                            }
                         }
+                        idx++;
                     }
                     td_array.push(total_value);
                     tr = $('<tr></tr>');
@@ -2689,13 +2769,18 @@ $(document).ready(() => {
                     td_array = [];
                     total_value = 0;
                     td_array.push('Unit price/per tickers');
-                    for(let i = 0; i < 12; i++){
-                        if(response.data.y_transaction_count[i].m == (i + 1)){
-                            total_value += parseFloat(response.data.y_sale[i].netsale) / parseFloat(response.data.y_transaction_count[i].transaction_count);
-                            td_array.push(process_price_secondary(parseFloat(response.data.y_sale[i].netsale) / parseFloat(response.data.y_transaction_count[i].transaction_count)));
-                        }else{
-                            td_array.push(0);
+                    for(let i = 0; i < 12; i ++){
+                        td_array.push(0);
+                    }
+                    idx = 0;
+                    for(let item of response.data.y_sale){
+                        for(let i = 0; i < 12; i++){
+                            if(item.m == (i + 1)){
+                                total_value += parseFloat(response.data.y_sale[idx].netsale) / parseFloat(response.data.y_transaction_count[idx].transaction_count);
+                                td_array[i + 1] = (process_price_secondary(parseFloat(response.data.y_sale[idx].netsale) / parseFloat(response.data.y_transaction_count[idx].transaction_count)));
+                            }
                         }
+                        idx++;
                     }
                     td_array.push(process_price_secondary(total_value / 12));
                     tr = $('<tr></tr>');
@@ -2708,13 +2793,18 @@ $(document).ready(() => {
                     td_array = [];
                     total_value = 0;
                     td_array.push('Unit price/per items');
-                    for(let i = 0; i < 12; i++){
-                        if(response.data.y_article_count[i].m == (i + 1)){
-                            total_value += parseFloat(response.data.y_sale[i].netsale) / parseFloat(response.data.y_article_count[i].article_count);
-                            td_array.push(process_price_secondary(parseFloat(response.data.y_sale[i].netsale) / parseFloat(response.data.y_article_count[i].article_count)));
-                        }else{
-                            td_array.push(0);
+                    for(let i = 0; i < 12; i ++){
+                        td_array.push(0);
+                    }
+                    idx = 0;
+                    for(let item of response.data.y_sale){
+                        for(let i = 0; i < 12; i++){
+                            if(item.m == (i + 1)){
+                                total_value += parseFloat(response.data.y_sale[idx].netsale) / parseFloat(response.data.y_article_count[idx].article_count);
+                                td_array[i + 1] = (process_price_secondary(parseFloat(response.data.y_sale[idx].netsale) / parseFloat(response.data.y_article_count[idx].article_count)));
+                            }
                         }
+                        idx++;
                     }
                     td_array.push(process_price_secondary(total_value / 12));
                     tr = $('<tr></tr>');
