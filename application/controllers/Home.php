@@ -384,6 +384,7 @@ class Home extends MY_Controller {
 		$shop_name = $this->input->post('shop_name');
 		$ret = array(
 			"y_sale"				=> $this->dashboard_model->get_y_sale($conn, $date, $shop_name),
+			"y_delivery_amount"		=> $this->dashboard_model->get_y_delivery_amount($conn, $date, $shop_name),
 			"y_dinein_count"		=> $this->dashboard_model->get_y_dinein_count($conn, $date, $shop_name),
 			"y_dinein_amount"		=> $this->dashboard_model->get_y_dinein_amount($conn, $date, $shop_name),
 			"y_togo_count"			=> $this->dashboard_model->get_y_togo_count($conn, $date, $shop_name),

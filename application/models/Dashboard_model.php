@@ -257,7 +257,7 @@ class Dashboard_model extends CI_Model{
         $sql = "
             SELECT
             DATEPART(DY, t.bookkeeping_date) d,";
-        if($date['length'] <= 3){
+        if($date['length'] <= 5){
             $sql = $sql . "s.description shop_name,";
         }
         $sql = $sql . "
@@ -272,7 +272,7 @@ class Dashboard_model extends CI_Model{
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
             AND s.description IN (" . $shop_name . ")
             GROUP BY DATEPART(DY, t.bookkeeping_date)";
-        if($date['length'] <= 3){
+        if($date['length'] <= 5){
             $sql = $sql . ", s.description";
         }
         $sql = $sql . "
@@ -284,7 +284,7 @@ class Dashboard_model extends CI_Model{
         $sql = "
             SELECT
             DATEPART(week, t.bookkeeping_date) w,";
-        if($date['length'] <= 3){
+        if($date['length'] <= 5){
             $sql = $sql . "s.description shop_name,";
         }
         $sql = $sql . "
@@ -299,7 +299,7 @@ class Dashboard_model extends CI_Model{
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
             AND s.description IN (" . $shop_name . ")
             GROUP BY DATEPART(week, t.bookkeeping_date)";
-        if($date['length'] <= 3){
+        if($date['length'] <= 5){
             $sql = $sql . ", s.description";
         }
         $sql = $sql . "
@@ -311,7 +311,7 @@ class Dashboard_model extends CI_Model{
         $sql = "
             SELECT
             DATEPART(month, t.bookkeeping_date) m,";
-        if($date['length'] <= 3){
+        if($date['length'] <= 5){
             $sql = $sql . "s.description shop_name,";
         }
         $sql = $sql . "
@@ -326,7 +326,7 @@ class Dashboard_model extends CI_Model{
             AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
             AND s.description IN (" . $shop_name . ")
             GROUP BY DATEPART(month, t.bookkeeping_date)";
-        if($date['length'] <= 3){
+        if($date['length'] <= 5){
             $sql = $sql . ", s.description";
         }
         $sql = $sql . "
@@ -349,7 +349,7 @@ class Dashboard_model extends CI_Model{
             WHERE t.delete_operator_id IS NULL
             AND s.description IN (" . $shop_name . ")
             GROUP BY DATEPART(year, t.bookkeeping_date)";
-        if($date['length'] <= 3){
+        if($date['length'] <= 5){
             $sql = $sql . ", s.description";
         }
         $sql = $sql . "
@@ -660,7 +660,7 @@ class Dashboard_model extends CI_Model{
         ";
         return $this->run_query($conn, $sql);
     }
-    
+
     function get_y_sale($conn, $date, $shop_name){
         $sql = "
             SELECT
@@ -687,14 +687,12 @@ class Dashboard_model extends CI_Model{
                 COUNT(a.id) dinein_count
             FROM transactions t
             INNER JOIN shops s ON s.id = t.shop_id
-            LEFT JOIN trans_comments tc ON t.id = tc.transaction_id
             LEFT JOIN trans_articles ta ON t.id = ta.transaction_id
             LEFT JOIN articles a ON a.id = ta.article_id
-            LEFT JOIN groups g ON g.id = a.group_a_id
+            LEFT JOIN transaction_causals tc ON tc.id = t.transaction_causal_id
             WHERE t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                 AND s.description IN ('" . $shop_name . "')
-                AND tc.comment_text = 'Dine-in'
-                AND g.description NOT LIKE '%add_on%'
+            	AND tc.description = 'Dine In'
             GROUP BY DATEPART(MONTH, t.bookkeeping_date), DATEPART(YEAR, t.bookkeeping_date)
             ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date)
         ";
@@ -707,14 +705,10 @@ class Dashboard_model extends CI_Model{
                 SUM(t.total_amount) dinein_amount
             FROM transactions t
             INNER JOIN shops s ON s.id = t.shop_id
-            LEFT JOIN trans_comments tc ON t.id = tc.transaction_id
-            LEFT JOIN trans_articles ta ON t.id = ta.transaction_id
-            LEFT JOIN articles a ON a.id = ta.article_id
-            LEFT JOIN groups g ON g.id = a.group_a_id
+            LEFT JOIN transaction_causals tc ON tc.id = t.transaction_causal_id
             WHERE t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                 AND s.description IN ('" . $shop_name . "')
-                AND tc.comment_text = 'Dine-in'
-                AND g.description NOT LIKE '%add_on%'
+            	AND tc.description = 'Dine In'
             GROUP BY DATEPART(MONTH, t.bookkeeping_date), DATEPART(YEAR, t.bookkeeping_date)
             ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date)
         ";
@@ -727,14 +721,12 @@ class Dashboard_model extends CI_Model{
                 COUNT(a.id) togo_count
             FROM transactions t
             INNER JOIN shops s ON s.id = t.shop_id
-            LEFT JOIN trans_comments tc ON t.id = tc.transaction_id
             LEFT JOIN trans_articles ta ON t.id = ta.transaction_id
             LEFT JOIN articles a ON a.id = ta.article_id
-            LEFT JOIN groups g ON g.id = a.group_a_id
+            LEFT JOIN transaction_causals tc ON tc.id = t.transaction_causal_id
             WHERE t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                 AND s.description IN ('" . $shop_name . "')
-                AND tc.comment_text = 'To-go'
-                AND g.description NOT LIKE '%add_on%'
+                AND tc.description = 'To Go'
             GROUP BY DATEPART(MONTH, t.bookkeeping_date), DATEPART(YEAR, t.bookkeeping_date)
             ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date)
         ";
@@ -747,14 +739,44 @@ class Dashboard_model extends CI_Model{
                 SUM(t.total_amount) togo_amount
             FROM transactions t
             INNER JOIN shops s ON s.id = t.shop_id
-            LEFT JOIN trans_comments tc ON t.id = tc.transaction_id
-            LEFT JOIN trans_articles ta ON t.id = ta.transaction_id
-            LEFT JOIN articles a ON a.id = ta.article_id
-            LEFT JOIN groups g ON g.id = a.group_a_id
+            LEFT JOIN transaction_causals tc ON tc.id = t.transaction_causal_id
             WHERE t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                 AND s.description IN ('" . $shop_name . "')
-                AND tc.comment_text = 'To-go'
-                AND g.description NOT LIKE '%add_on%'
+                AND tc.description = 'To Go'
+            GROUP BY DATEPART(MONTH, t.bookkeeping_date), DATEPART(YEAR, t.bookkeeping_date)
+            ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date)
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function get_y_delivery_count($conn, $date, $shop_name){
+        $sql = "
+            SELECT
+                DATEPART(YEAR, t.bookkeeping_date) y, DATEPART(MONTH, t.bookkeeping_date) m,
+                COUNT(a.id) delivery_count
+            FROM transactions t
+            INNER JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN trans_articles ta ON t.id = ta.transaction_id
+            LEFT JOIN articles a ON a.id = ta.article_id
+            LEFT JOIN transaction_causals tc ON tc.id = t.transaction_causal_id
+            WHERE t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description IN ('" . $shop_name . "')
+                AND tc.description = 'DELIVERY'
+            GROUP BY DATEPART(MONTH, t.bookkeeping_date), DATEPART(YEAR, t.bookkeeping_date)
+            ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date)
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function get_y_delivery_amount($conn, $date, $shop_name){
+        $sql = "
+            SELECT
+                DATEPART(YEAR, t.bookkeeping_date) y, DATEPART(MONTH, t.bookkeeping_date) m,
+                SUM(t.total_amount) delivery_amount
+            FROM transactions t
+            INNER JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN transaction_causals tc ON tc.id = t.transaction_causal_id
+            WHERE t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description IN ('" . $shop_name . "')
+                AND tc.description = 'DELIVERY'
             GROUP BY DATEPART(MONTH, t.bookkeeping_date), DATEPART(YEAR, t.bookkeeping_date)
             ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date)
         ";

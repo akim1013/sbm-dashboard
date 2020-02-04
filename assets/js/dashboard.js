@@ -793,7 +793,7 @@ $(document).ready(() => {
                     let d_w_7       = []; // Week
                     let d_series = [];
                     let d_temp_shop = '';
-                    if(JSON.parse(localStorage.getItem('_shop_name')).length > 3){
+                    if(JSON.parse(localStorage.getItem('_shop_name')).length > 6){
                         for(let item of d_data){
                             d_last_7.push(parseFloat(item.netsale));
                             d_w_7.push(moment(dateFromDay(moment().format('Y'), item.d)).format('ddd'));
@@ -971,7 +971,7 @@ $(document).ready(() => {
                     let w_days = [...weeks];
                     let w_sale = [0, 0, 0, 0, 0];
                     let w_series = [];
-                    if(JSON.parse(localStorage.getItem('_shop_name')).length > 3){
+                    if(JSON.parse(localStorage.getItem('_shop_name')).length > 6){
                         let idx = 0;
                         for(let item of w_data){
                             if(item.w < 5){
@@ -1079,7 +1079,7 @@ $(document).ready(() => {
                     let m_label = [...months];
                     let m_sale = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                     let m_series = [];
-                    if(JSON.parse(localStorage.getItem('_shop_name')).length > 3){
+                    if(JSON.parse(localStorage.getItem('_shop_name')).length > 6){
                         let idx = 0;
                         for(let item of m_data){
                             m_sale[item.m - 1] = parseFloat(item.netsale);
@@ -2201,7 +2201,7 @@ $(document).ready(() => {
     })
     $('#export_csv').click(function(){
         if(!$(this).hasClass('disabled')){
-            let filename = + new Date() + '.csv';
+            let filename = localStorage.getItem('user_name') + '_DETAIL-COMPARISON-REPORT_' + ' (' + moment().format('YYYY-MM-DD HH:mm:ss') + ') ' + '.csv';
             let csv = [];
             let rows = document.querySelectorAll("#detail_comparison_table tr");
 
@@ -2345,7 +2345,7 @@ $(document).ready(() => {
     })
     $('.payment_view_export').click(function(){
         if(!$(this).hasClass('disabled')){
-            let filename = localStorage.getItem('user_name') + ' (' + moment().format('YYYY-MM-DD HH:mm:ss') + ') ' + '.csv';
+            let filename = localStorage.getItem('user_name') + '_PAYMENT-DETAIL-REPORT_' + ' (' + moment().format('YYYY-MM-DD HH:mm:ss') + ') ' + '.csv';
             let csv = [];
             let rows = document.querySelectorAll("#payment_table tr");
 
@@ -2462,7 +2462,7 @@ $(document).ready(() => {
     })
     $('.monthly_view_export').click(function(){
         if(!$(this).hasClass('disabled')){
-            let filename = localStorage.getItem('user_name') + ' (' + moment().format('YYYY-MM-DD HH:mm:ss') + ') ' + '.csv';
+            let filename = localStorage.getItem('user_name') + '_MONTHLY-SALES-REPORT_' + ' (' + moment().format('YYYY-MM-DD HH:mm:ss') + ') ' + '.csv';
             let csv = [];
             let rows = document.querySelectorAll("#monthly_table tr");
 
@@ -2547,11 +2547,22 @@ $(document).ready(() => {
                     // Deliver amount
                     td_array = [];
                     total_value = 0;
-                    td_array.push('Deliver amount');
-                    for(let i = 0; i < 12; i++){
+                    td_array.push('Deliver Amount');
+                    for(let i = 0; i < 12; i ++){
                         td_array.push(0);
                     }
-                    td_array.push(process_price_secondary(total_value / 12));
+                    if(response.data.y_delivery_amount.length > 0){
+                        for(let item of response.data.y_delivery_amount){
+                            for(let i = 0; i < 12; i++){
+                                if(item.m == (i + 1)){
+                                    total_value += parseFloat(item.delivery_amount);
+                                    td_array[i + 1] = (process_price_secondary(item.delivery_amount));
+                                }
+                            }
+                        }
+                    }
+
+                    td_array.push(process_price_secondary(total_value));
                     tr = $('<tr></tr>');
                     for(let item of td_array){
                         tr.append('<td>' + item + '</td>');
@@ -2561,11 +2572,23 @@ $(document).ready(() => {
                     // Deliver amount percent
                     td_array = [];
                     total_value = 0;
-                    td_array.push('Deliver amount percent');
-                    for(let i = 0; i < 12; i++){
-                        td_array.push('0%');
+                    td_array.push('Deliver amount Percent');
+                    for(let i = 0; i < 12; i ++){
+                        td_array.push(0);
                     }
-                    td_array.push('0%');
+                    let idx = 0;
+                    if(response.data.y_delivery_amount.length > 0){
+                        for(let item of response.data.y_sale){
+                            for(let i = 0; i < 12; i++){
+                                if(item.m == (i + 1)){
+                                    total_value += parseFloat(response.data.y_delivery_amount[idx].delivery_amount) / parseFloat(response.data.y_sale[idx].netsale);
+                                    td_array[i + 1] = (((parseFloat(response.data.y_delivery_amount[idx].delivery_amount) / parseFloat(response.data.y_sale[idx].netsale)) * 100).toFixed(2) + '%');
+                                }
+                            }
+                            idx ++;
+                        }
+                    }
+                    td_array.push((total_value * 100).toFixed(2) + '%');
                     tr = $('<tr></tr>');
                     for(let item of td_array){
                         tr.append('<td>' + item + '</td>');
@@ -2625,7 +2648,7 @@ $(document).ready(() => {
                     for(let i = 0; i < 12; i ++){
                         td_array.push(0);
                     }
-                    let idx = 0;
+                    idx = 0;
                     for(let item of response.data.y_sale){
                         for(let i = 0; i < 12; i++){
                             if(item.m == (i + 1)){
@@ -2817,6 +2840,24 @@ $(document).ready(() => {
             }
         })
         //$('.loader').removeClass('hide');
+    })
+    $('.yearly_view_export').click(function(){
+        if(!$(this).hasClass('disabled')){
+            let filename = localStorage.getItem('user_name') + '_YEARLY-SALES-REPORT_' + ' (' + moment().format('YYYY-MM-DD HH:mm:ss') + ') ' + '.csv';
+            let csv = [];
+            let rows = document.querySelectorAll("#yearly_table tr");
+
+            for (let i = 0; i < rows.length; i++) {
+                let row = [], cols = rows[i].querySelectorAll("td, th");
+
+                for (let j = 0; j < cols.length; j++)
+                    row.push(cols[j].innerText);
+
+                csv.push(row.join(","));
+            }
+            // Download CSV file
+            downloadCSV(csv.join("\n"), filename);
+        }
     })
     // Temp modify
     $('#monthly_table tbody').delegate('td:nth-child(3)', 'click', function(){
