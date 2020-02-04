@@ -42,6 +42,7 @@ $lang['lb_extras']          = '額外';
 $lang['lb_export']          = '匯出';
 $lang['lb_overview']        = '選擇的店鋪';
 $lang['lb_turnover']        = '營收';
+$lang['lb_netsale']         = 'Net Sale';
 $lang['lb_discount']        = '折扣';
 $lang['lb_promotion']       = '促銷';
 $lang['lb_transaction']      = '交易';

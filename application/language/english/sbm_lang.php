@@ -42,6 +42,7 @@ $lang['lb_extras']          = 'Extras';
 $lang['lb_export']          = 'Export';
 $lang['lb_overview']        = 'Selected shops';
 $lang['lb_turnover']        = 'Turnover';
+$lang['lb_netsale']         = 'Net Sale';
 $lang['lb_discount']        = 'Discount';
 $lang['lb_promotion']       = 'Promotion';
 $lang['lb_transaction']      = 'Transaction';

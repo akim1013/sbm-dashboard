@@ -224,7 +224,7 @@ $(document).ready(() => {
         }
     }
     let flat_process = (data) => {
-
+        
         netsale             = [];
         promotion           = [];
         discount            = [];

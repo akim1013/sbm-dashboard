@@ -131,7 +131,7 @@
                                     <table class="table table-striped table-sm">
                                         <thead>
                                             <tr>
-                                                <th><?php echo lang('lb_turnover');?>[$]</th>
+                                                <th><?php echo lang('lb_netsale');?>[$]</th>
                                                 <th><?php echo lang('lb_discount');?>[$]</th>
                                                 <th><?php echo lang('lb_promotion');?>[$]</th>
                                                 <th><?php echo lang('lb_transaction_count');?></th>
@@ -158,7 +158,7 @@
                                     <table class="table table-striped table-sm">
                                         <thead>
                                             <tr>
-                                                <th><?php echo lang('lb_turnover');?>[$]</th>
+                                                <th><?php echo lang('lb_netsale');?>[$]</th>
                                                 <th><?php echo lang('lb_discount');?>[$]</th>
                                                 <th><?php echo lang('lb_promotion');?>[$]</th>
                                             </tr>
@@ -282,7 +282,7 @@
                                             <tr>
                                                 <th width="10%">#</th>
                                                 <th width="50%"><?php echo lang('lb_shop');?></th>
-                                                <th width="20%"><?php echo lang('lb_turnover');?> [$] <i class="fa fa-sort sort turnover_comparison_sort"></i></th>
+                                                <th width="20%"><?php echo lang('lb_netsale');?> [$] <i class="fa fa-sort sort turnover_comparison_sort"></i></th>
                                                 <th width="20%"><?php echo lang('lb_transaction');?> <i class="fa fa-sort sort transaction_comparison_sort"></i></th>
                                             </tr>
                                         </thead>
