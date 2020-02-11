@@ -75,7 +75,7 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => '68.178.217.42',
+	'hostname' => '107.180.14.68',
 	'username' => 'sbmdashboard',
 	'password' => 'Sbmtec2019!',
 	'database' => 'sbmdashboard',

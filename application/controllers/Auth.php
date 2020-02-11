@@ -59,7 +59,6 @@ class Auth extends CI_Controller {
         $data = array(
             'name'              => $this->input->post('name'),
             'email'             => $this->input->post('email'),
-            'verification_key'  => md5(rand()),
             'password'          => md5($this->input->post('password')),
 			'database'			=> $this->input->post('database'),
 			'shop_name'			=> json_encode($this->input->post('shop'))
