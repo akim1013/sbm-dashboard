@@ -224,7 +224,7 @@ $(document).ready(() => {
         }
     }
     let flat_process = (data) => {
-        
+
         netsale             = [];
         promotion           = [];
         discount            = [];
@@ -1350,31 +1350,31 @@ $(document).ready(() => {
                     last_week_group_percent += parseFloat(_item.last_week_price) / parseFloat(last_week_price) * 100;
                     sub_item += ('<tr class="sub-items sub_' + item.group_name.replace(/[^A-Z0-9]/ig, "") + ' hide"><td> ' + _item.article_name
                         + '</td><td>' + _item.last_week_amount
-                        + '</td><td>' + parseFloat(_item.last_week_price).toFixed(2)
+                        + '</td><td>' + process_price_secondary(parseFloat(_item.last_week_price))
                         + '</td><td>' + (parseFloat(_item.last_week_price) / parseFloat(item.last_group_price) * 100).toFixed(3) + '%'
                         + '</td><td>' + _item.amount
-                        + '</td><td>' + parseFloat(_item.price).toFixed(2)
+                        + '</td><td>' + process_price_secondary(parseFloat(_item.price))
                         + '</td><td>' + (parseFloat(_item.price) / parseFloat(item.group_price) * 100).toFixed(3) + '%'
                         + '</td><td>' + (_item.amount - _item.last_week_amount).toString()
-                        + '</td><td>' + (parseFloat(_item.price) - parseFloat(_item.last_week_price)).toFixed(2)
+                        + '</td><td>' + process_price_secondary((parseFloat(_item.price) - parseFloat(_item.last_week_price)))
                         + '</td></tr>')
                 }
             }
             sub_item += '<tr class="sub-items sub_' + item.group_name.replace(/[^A-Z0-9]/ig, "") + ' hide"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>';
             table.append('<tr class="sub-total group_' + item.group_name.replace(/[^A-Z0-9]/ig, "") + '" style="cursor: pointer"><td style="color: #55a">' + item.group_name
                 + '</td><td>' + last_week_group_qty
-                + '</td><td>' + last_week_group_amount.toFixed(2)
+                + '</td><td>' + process_price_secondary(last_week_group_amount)
                 + '</td><td>' + last_week_group_percent.toFixed(3) + '%'
                 + '</td><td>' + group_qty
-                + '</td><td>' + group_amount.toFixed(2)
+                + '</td><td>' + process_price_secondary(group_amount)
                 + '</td><td>' + group_percent.toFixed(3) + '%'
                 + '</td><td>' + (group_qty - last_week_group_qty).toString()
-                + '</td><td>' + (group_amount - last_week_group_amount).toFixed(2)
+                + '</td><td>' + process_price_secondary((group_amount - last_week_group_amount))
                 + '</td></tr>');
             table.append(sub_item);
         }
-        table.append('<tr class="total"><td>' + lang[site_lang]['lb_sales_total'] + '</td><td>' + last_week_qty.toString() + '</td><td>' + process_price(last_week_price) + '</td><td></td><td>' + qty.toString() + '</td><td>' + process_price(price) + '</td><td></td><td>'
-         + (qty - last_week_qty).toString() + '</td><td>' + process_price(price - last_week_price) + '</td></tr>');
+        table.append('<tr class="total"><td>' + lang[site_lang]['lb_sales_total'] + '</td><td>' + last_week_qty.toString() + '</td><td>' + process_price_secondary(last_week_price) + '</td><td></td><td>' + qty.toString() + '</td><td>' + process_price_secondary(price) + '</td><td></td><td>'
+         + (qty - last_week_qty).toString() + '</td><td>' + process_price_secondary(price - last_week_price) + '</td></tr>');
          // Discount details
          table.append('<tr class="title"><td colspan="9">' + lang[site_lang]['lb_discount'] + '<td><tr>');
          let this_week_discount_qty = 0;
@@ -1391,11 +1391,11 @@ $(document).ready(() => {
              this_week_discount_amount += parseFloat(item.this_week_amount);
              last_week_discount_qty += parseInt(item.last_week_quantity);
              last_week_discount_amount += parseFloat(item.last_week_amount);
-             table.append('<tr><td>' + item.discount_description + '</td><td>' + item.last_week_quantity + '</td><td>' + process_price(item.last_week_amount) + '</td><td></td><td>' + item.this_week_quantity + '</td><td>' + process_price(item.this_week_amount)
-             + '</td><td></td><td>' + (parseInt(item.this_week_quantity) - parseInt(item.last_week_quantity)).toString() + '</td><td>' + process_price(parseFloat(item.this_week_amount) - parseFloat(item.last_week_amount)) + '</td></tr>');
+             table.append('<tr><td>' + item.discount_description + '</td><td>' + item.last_week_quantity + '</td><td>' + process_price_secondary(item.last_week_amount) + '</td><td></td><td>' + item.this_week_quantity + '</td><td>' + process_price_secondary(item.this_week_amount)
+             + '</td><td></td><td>' + (parseInt(item.this_week_quantity) - parseInt(item.last_week_quantity)).toString() + '</td><td>' + process_price_secondary(parseFloat(item.this_week_amount) - parseFloat(item.last_week_amount)) + '</td></tr>');
          }
-         table.append('<tr class="total"><td>' + lang[site_lang]['lb_discount_total'] + '</td><td>' + last_week_discount_qty.toString() + '</td><td>' + process_price(last_week_discount_amount) + '</td><td></td><td>' + this_week_discount_qty.toString() + '</td><td>' + process_price(this_week_discount_amount)
-         + '</td><td></td><td>' + (this_week_discount_qty - last_week_discount_qty).toString() + '</td><td>' + process_price(this_week_discount_amount - last_week_discount_amount) + '</td></tr>')
+         table.append('<tr class="total"><td>' + lang[site_lang]['lb_discount_total'] + '</td><td>' + last_week_discount_qty.toString() + '</td><td>' + process_price_secondary(last_week_discount_amount) + '</td><td></td><td>' + this_week_discount_qty.toString() + '</td><td>' + process_price_secondary(this_week_discount_amount)
+         + '</td><td></td><td>' + (this_week_discount_qty - last_week_discount_qty).toString() + '</td><td>' + process_price_secondary(this_week_discount_amount - last_week_discount_amount) + '</td></tr>')
 
          // Payment details
          table.append('<tr class="title"><td colspan="9">' + lang[site_lang]['lb_payment'] + '<td><tr>');
@@ -1413,11 +1413,11 @@ $(document).ready(() => {
              this_week_payment_amount += parseFloat(item.this_week_amount);
              last_week_payment_qty += parseInt(item.last_week_qty);
              last_week_payment_amount += parseFloat(item.last_week_amount);
-             table.append('<tr><td>' + item.description + '</td><td>' + item.last_week_qty + '</td><td>' + process_price(item.last_week_amount) + '</td><td></td><td>' + item.this_week_qty + '</td><td>' + process_price(item.this_week_amount)
-             + '</td><td></td><td>' + (parseInt(item.this_week_qty) - parseInt(item.last_week_qty)).toString() + '</td><td>' + process_price(parseFloat(item.this_week_amount) - parseFloat(item.last_week_amount)) + '</td></tr>');
+             table.append('<tr><td>' + item.description + '</td><td>' + item.last_week_qty + '</td><td>' + process_price_secondary(item.last_week_amount) + '</td><td></td><td>' + item.this_week_qty + '</td><td>' + process_price_secondary(item.this_week_amount)
+             + '</td><td></td><td>' + (parseInt(item.this_week_qty) - parseInt(item.last_week_qty)).toString() + '</td><td>' + process_price_secondary(parseFloat(item.this_week_amount) - parseFloat(item.last_week_amount)) + '</td></tr>');
          }
-         table.append('<tr class="total"><td>' + lang[site_lang]['lb_payment_total'] + '</td><td>' + last_week_payment_qty.toString() + '</td><td>' + process_price(last_week_payment_amount) + '</td><td></td><td>' + this_week_payment_qty.toString() + '</td><td>' + process_price(this_week_payment_amount)
-         + '</td><td></td><td>' + (this_week_payment_qty - last_week_payment_qty).toString() + '</td><td>' + process_price(this_week_payment_amount - last_week_payment_amount) + '</td></tr>')
+         table.append('<tr class="total"><td>' + lang[site_lang]['lb_payment_total'] + '</td><td>' + last_week_payment_qty.toString() + '</td><td>' + process_price_secondary(last_week_payment_amount) + '</td><td></td><td>' + this_week_payment_qty.toString() + '</td><td>' + process_price_secondary(this_week_payment_amount)
+         + '</td><td></td><td>' + (this_week_payment_qty - last_week_payment_qty).toString() + '</td><td>' + process_price_secondary(this_week_payment_amount - last_week_payment_amount) + '</td></tr>')
     }
     let article_group_sort = (idx, dir) => {
 
@@ -2209,7 +2209,7 @@ $(document).ready(() => {
                 let row = [], cols = rows[i].querySelectorAll("td, th");
 
                 for (let j = 0; j < cols.length; j++)
-                    row.push(cols[j].innerText);
+                    row.push(cols[j].innerText.replace(',', ' '));
 
                 csv.push(row.join(","));
             }
@@ -2304,9 +2304,9 @@ $(document).ready(() => {
                                 __tax = parseFloat(_item.tax);
                             }
                         }
-                        tbody_array.push(__netsale + __tax); // Gross sale
-                        tbody_array.push(__tax); // Tax
-                        tbody_array.push(__netsale); // Net sale
+                        tbody_array.push(process_price_secondary(__netsale + __tax)); // Gross sale
+                        tbody_array.push(process_price_secondary(__tax)); // Tax
+                        tbody_array.push(process_price_secondary(__netsale)); // Net sale
                         let _temp_payment = [];
                         for(let _item of p_detail){
                             if(item == _item.d){
@@ -2328,7 +2328,7 @@ $(document).ready(() => {
                             }else{
                                 for(let __item of _temp_payment){
                                     if(__item.type == _item){
-                                        tbody_array.push(__item.amount);
+                                        tbody_array.push(process_price_secondary(__item.amount));
                                     }
                                 }
                             }
@@ -2353,7 +2353,7 @@ $(document).ready(() => {
                 let row = [], cols = rows[i].querySelectorAll("td, th");
 
                 for (let j = 0; j < cols.length; j++)
-                    row.push(cols[j].innerText);
+                    row.push(cols[j].innerText.replace(',', ' '));
 
                 csv.push(row.join(","));
             }
@@ -2470,7 +2470,7 @@ $(document).ready(() => {
                 let row = [], cols = rows[i].querySelectorAll("td, th");
 
                 for (let j = 0; j < cols.length; j++)
-                    row.push(cols[j].innerText);
+                    row.push(cols[j].innerText.replace(',', ' '));
 
                 csv.push(row.join(","));
             }
@@ -2851,7 +2851,7 @@ $(document).ready(() => {
                 let row = [], cols = rows[i].querySelectorAll("td, th");
 
                 for (let j = 0; j < cols.length; j++)
-                    row.push(cols[j].innerText);
+                    row.push(cols[j].innerText.replace(',', ' '));
 
                 csv.push(row.join(","));
             }
@@ -3180,7 +3180,7 @@ $(document).ready(() => {
                 let row = [], cols = rows[i].querySelectorAll("td, th");
 
                 for (let j = 0; j < cols.length; j++)
-                    row.push(cols[j].innerText);
+                    row.push(cols[j].innerText.replace(',', ' '));
 
                 csv.push(row.join(","));
             }
@@ -3279,7 +3279,7 @@ $(document).ready(() => {
             let row = [], cols = rows[i].querySelectorAll("td, th");
 
             for (let j = 0; j < cols.length; j++)
-                row.push(cols[j].innerText);
+                row.push(cols[j].innerText.replace(',', ' '));
 
             csv.push(row.join(","));
         }
