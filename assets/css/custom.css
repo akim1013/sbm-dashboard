@@ -234,6 +234,10 @@ select{
     text-align: left;
     vertical-align: middle;
 }
+.discount-detail-table tbody tr td{
+    font-weight: 400;
+    font-size: 12px;
+}
 @media(max-width: 575px){
     .brand-text strong{
         font-size: 15px !important;

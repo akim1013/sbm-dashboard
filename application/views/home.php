@@ -143,7 +143,7 @@
                                         <tbody>
                                             <tr>
                                                 <td style="color: #f55; cursor: pointer" class="_netsale">0</td>
-                                                <td class="_discount">0</td>
+                                                <td style="color: #f55; cursor: pointer" class="_discount">0</td>
                                                 <td class="_promotion">0</td>
                                                 <td style="color: #f55; cursor: pointer" class="_transaction_count">0</td>
                                                 <td class="_average_bill">0</td>
@@ -251,6 +251,29 @@
                                 </div>
                             </div>
                             <div class="row shop_article_detail_box">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section id="discount_detail" class="no-padding-top no-padding-bottom hide">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="block">
+                                    <h4>Discount detail</h4>
+                                    <table class="table table-sm table-striped discount-detail-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Discount description</th>
+                                                <th>Qty</th>
+                                                <th>Discount amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>

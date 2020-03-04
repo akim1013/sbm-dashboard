@@ -1707,6 +1707,33 @@ $(document).ready(() => {
             $('#sale_detail').addClass('hide')
         }
     })
+    $('._discount').click(() => {
+        if($('#discount_detail').hasClass('hide')){
+            let data = {
+                start: end.format('YYYY-MM-DD'),
+                end: end.format('YYYY-MM-DD'),
+                shop_name: localStorage.getItem('shop_name')
+            }
+            $('.loader').removeClass('hide');
+            $.ajax({
+                url: api_path + 'home/discount_detail',
+                method: 'post',
+                data: data,
+                success: function(res){
+                    let response = JSON.parse(res);
+                    //console.log(response);
+                    $('.loader').addClass('hide');
+                    $('#discount_detail').removeClass('hide');
+                    for(let item of response.data.discount_detail){
+                        let tr = $(`<tr><td>${ item.discount_description }</td><td>${ item.quantity }</td><td>${ item.amount }</td></tr>`);
+                        $('#discount_detail tbody').append(tr);
+                    }
+                }
+            });
+        }else{
+            $('#discount_detail').addClass('hide')
+        }
+    })
     $('._transaction_count').click(() => {
         if($('#transaction_detail').hasClass('hide')){
             let data = {

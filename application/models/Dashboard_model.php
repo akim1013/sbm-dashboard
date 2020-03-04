@@ -223,7 +223,20 @@ class Dashboard_model extends CI_Model{
         ";
         return $this->run_query($conn, $sql);
     }
-
+    function get_discount_detail($conn, $date, $shop_name){
+        $sql = "
+            SELECT d.description discount_description, sum(td.quantity) quantity, sum(td.amount) amount
+            FROM discounts d
+            LEFT JOIN trans_discounts td ON td.discount_id = d.id
+            INNER JOIN transactions t ON t.id = td.transaction_id
+            INNER JOIN shops s ON s.id = t.shop_id
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+            	AND s.description IN (" . $shop_name . ")
+            GROUP BY d.description, s.description
+        ";
+        return $this->run_query($conn, $sql);
+    }
     function get_payment_total($conn, $date, $shop_name){
         $sql = "
             SELECT sum(tp.amount) total
@@ -374,8 +387,7 @@ class Dashboard_model extends CI_Model{
             INNER JOIN articles a ON (a.id = ta.article_id) AND a.article_type Not In(2,3)
             INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
             INNER JOIN groups g ON g.id = a.group_a_id
-            WHERE t.delete_operator_id IS NULL
-                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+            WHERE t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
             AND s.description IN (" . $shop_name . ")
             GROUP BY a.id) sub_result ON a.id = sub_result.article_id
             LEFT JOIN (SELECT
@@ -389,8 +401,7 @@ class Dashboard_model extends CI_Model{
             INNER JOIN articles a ON (a.id = ta.article_id) AND a.article_type Not In(2,3)
             INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
             INNER JOIN groups g ON g.id = a.group_a_id
-            WHERE t.delete_operator_id IS NULL
-                AND t.bookkeeping_date BETWEEN '" . $date['last_week_start'] . "' AND '" . $date['last_week_end'] . "'
+            WHERE t.bookkeeping_date BETWEEN '" . $date['last_week_start'] . "' AND '" . $date['last_week_end'] . "'
             ";
             if($shop_name != 'All'){
                 $sql = $sql . " AND s.description IN (" . $shop_name . ")";
