@@ -160,15 +160,18 @@ $(document).ready(() => {
 
     let formatDate = (date) => {
         let monthNames = [
-            "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"
+            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
         ];
         let day = date.getDate();
         let monthIndex = date.getMonth();
         let year = date.getFullYear();
 
-        return year + '-' + monthNames[monthIndex] + '-' + day;
+        return monthNames[monthIndex] + ' ' + day + ', ' + year;
     } // Parse randomly given date value to YYYY-MM-DD format
-
+    let __getDate = (date) => {
+        console.log(__getDate);
+        return date;
+    }
     let downloadCSV = (csv, filename) => {
         let csvFile;
         let downloadLink;
@@ -551,10 +554,10 @@ $(document).ready(() => {
             x_sale = [];
             s_sale = [];
             for(let item of data.daily_sale){
-                let date = new Date(item.transaction_date.date);
+                let date = item.transaction_date.date.split(' ')[0];
                 let shop = find_shop_name(item.shop_id);
-                if(x_sale.indexOf(formatDate(date)) < 0){
-                    x_sale.push(formatDate(date));
+                if(x_sale.indexOf((date)) < 0){
+                    x_sale.push((date));
                 }
 
                 if(id == 0){
@@ -569,16 +572,15 @@ $(document).ready(() => {
                     }
                 }
             }
-            x_sale.sort((a, b) => {
-                return new Date(a) - new Date(b)
-            });
+
             x_transaction = [];
             s_transaction = [];
+
             for(let item of data.daily_transaction){
-                let date = new Date(item.transaction_date.date);
+                let date = item.transaction_date.date.split(' ')[0];
                 let shop = find_shop_name(item.shop_id);
-                if(x_transaction.indexOf(formatDate(date)) < 0){
-                    x_transaction.push(formatDate(date));
+                if(x_transaction.indexOf((date)) < 0){
+                    x_transaction.push((date));
                 }
                 if(id == 0){
                     if(s_transaction.indexOf(shop) < 0){
@@ -592,9 +594,7 @@ $(document).ready(() => {
                     }
                 }
             }
-            x_transaction.sort((a, b) => {
-                return new Date(a) - new Date(b)
-            });
+
             for(let _s of s_sale){
                 let _date = [];
                 let _date_checker = [];
@@ -602,7 +602,7 @@ $(document).ready(() => {
                 let _s_data = [];
                 for(let item of data.daily_sale){
                     if(_s == find_shop_name(item.shop_id)){
-                        _date.push(formatDate(new Date(item.transaction_date.date)));
+                        _date.push((item.transaction_date.date.split(' ')[0]));
                     }
                 }
                 _date_checker = x_sale.map((item) => (_date.indexOf(item) > -1 ? 1 : 0));
@@ -632,7 +632,7 @@ $(document).ready(() => {
                 let _s_data = [];
                 for(let item of data.daily_transaction){
                     if(_s == find_shop_name(item.shop_id)){
-                        _date.push(formatDate(new Date(item.transaction_date.date)));
+                        _date.push((item.transaction_date.date.split(' ')[0]));
                     }
                 }
                 _date_checker = x_sale.map((item) => (_date.indexOf(item) > -1 ? 1 : 0));
@@ -663,6 +663,10 @@ $(document).ready(() => {
                     text: lang[site_lang]['hc_comparison_30_days_1']
                 },
                 xAxis: {
+                    type: 'datetime',
+                    dateTimeLabelFormats: {
+                        day: '%e of %b'
+                    },
                     categories: x_sale
                 },
                 yAxis: {

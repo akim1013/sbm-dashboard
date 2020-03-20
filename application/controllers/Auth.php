@@ -1,4 +1,7 @@
 <?php
+header("Access-Control-Allow-Methods: *");
+header("Access-Control-Allow-Headers: *");
+
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Auth extends CI_Controller {
