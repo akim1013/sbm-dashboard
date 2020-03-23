@@ -28,6 +28,11 @@
             $this->db->where('password', $data['password']);
             $this->db->from('users');
             $res = $this->db->get();
+
+            $this->db->set('last_login', date("Y-m-d H:i:s"));
+            $this->db->where('id', $res->result()[0]->id);
+            $this->db->update('users');
+
             if($res->num_rows() == 0){
                 return '0';
             }else{
@@ -36,7 +41,7 @@
             }
         }
         public function users(){
-            $this->db->select('id, name, email, database, shop_name');
+            $this->db->select('id, name, email, database, shop_name, member_since, last_login');
             return $this->db->get('users');
         }
         private function validate($name){
