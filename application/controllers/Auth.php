@@ -36,13 +36,13 @@ class Auth extends CI_Controller {
 				echo json_encode(array(
 	                'status' => 'success',
 	                'msg'    => lang('admin_login_success'),
-					'shop_name' => 'admin'
+					'res' => $res
 	            ));
 			}else{
 				echo json_encode(array(
 	                'status' => 'success',
 	                'msg'    => lang('user_login_success'),
-					'shop_name'=> $res,
+					'res'=> $res,
 					'user_name'=> $this->input->post('name')
 	            ));
 			}
@@ -64,7 +64,8 @@ class Auth extends CI_Controller {
             'email'             => $this->input->post('email'),
             'password'          => md5($this->input->post('password')),
 			'database'			=> $this->input->post('database'),
-			'shop_name'			=> json_encode($this->input->post('shop'))
+			'shop_name'			=> json_encode($this->input->post('shop')),
+			'member_since'		=> date("Y-m-d")
         );
 
         $res = $this->user_model->create($data);

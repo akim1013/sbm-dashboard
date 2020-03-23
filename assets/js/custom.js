@@ -42,7 +42,7 @@ $('#login-form').submit(function(e){
                 })
                 setTimeout(function(){
                     if(response.shop_name != 'admin'){
-                        localStorage.setItem('shop_name', response.shop_name);
+                        localStorage.setItem('shop_name', response.res.shop_name);
                         localStorage.setItem('user_name', response.user_name);
                     }
                     window.location.reload();

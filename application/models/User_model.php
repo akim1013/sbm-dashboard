@@ -23,7 +23,7 @@
             }
         }
         public function login($data){
-            $this->db->select('*');
+            $this->db->select('id, name, email, database, shop_name, member_since, last_login');
             $this->db->where('name', $data['name']);
             $this->db->where('password', $data['password']);
             $this->db->from('users');
@@ -31,7 +31,7 @@
             if($res->num_rows() == 0){
                 return '0';
             }else{
-                $shop_name = $res->result()[0]->shop_name;
+                $shop_name = $res->result()[0];
                 return $shop_name;
             }
         }
