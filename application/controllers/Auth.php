@@ -64,7 +64,7 @@ class Auth extends CI_Controller {
             'email'             => $this->input->post('email'),
             'password'          => md5($this->input->post('password')),
 			'database'			=> $this->input->post('database'),
-			'shop_name'			=> json_encode($this->input->post('shop')),
+			'shop_name'			=> str_replace(']"', ']', str_replace('"[', '[', str_replace('\\', '', json_encode($this->input->post('shop'))))),
 			'member_since'		=> date("Y-m-d")
         );
 
@@ -91,7 +91,7 @@ class Auth extends CI_Controller {
 		$data = array(
 			'id'				=> $this->input->post('id'),
             'name'              => $this->input->post('name'),
-			'shop_name'			=> json_encode($this->input->post('shop'))
+			'shop_name'			=> str_replace(']"', ']', str_replace('"[', '[', str_replace('\\', '', json_encode($this->input->post('shop')))))
         );
 
         $res = $this->user_model->update($data);

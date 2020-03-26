@@ -29,13 +29,12 @@
             $this->db->from('users');
             $res = $this->db->get();
 
-            $this->db->set('last_login', date("Y-m-d H:i:s"));
-            $this->db->where('id', $res->result()[0]->id);
-            $this->db->update('users');
-
             if($res->num_rows() == 0){
                 return '0';
             }else{
+                $this->db->set('last_login', date("Y-m-d H:i:s"));
+                $this->db->where('id', $res->result()[0]->id);
+                $this->db->update('users');
                 $shop_name = $res->result()[0];
                 return $shop_name;
             }
