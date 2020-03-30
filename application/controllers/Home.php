@@ -2,13 +2,11 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Home extends MY_Controller {
-
 	public function __construct(){
 		parent::__construct();
 		$this->load->library('session');
 		$this->load->model('dashboard_model');
     }
-
 	public function index(){
 		if($this->session->has_userdata('user_name')){
             if($this->session->userdata('user_name') == 'admin'){
@@ -287,7 +285,35 @@ class Home extends MY_Controller {
 		));
 		sqlsrv_close($conn);
 	}
-
+	// Operators by database
+	public function all_operators(){
+		$database = $this->input->post('db');
+		$conn = parent::custom_dbconnect($database);
+		$ret = array(
+			"operators" => $this->dashboard_model->get_all_operators($conn, $database)
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
+	// Operators by shop name
+	public function operators(){
+		$database = $this->input->post('db');
+		$shop = $this->input->post('shop');
+		$conn = parent::custom_dbconnect($database);
+		$ret = array(
+			"operators" => $this->dashboard_model->get_operators($conn, '\'' . $shop . '\'')
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
 	public function operator_info(){
 		$conn = parent::dbconnect();
 		$shop_name = str_replace(array('"'), '\'', str_replace(array('[',']'), '', $this->input->post('shop_name')));
@@ -411,6 +437,30 @@ class Home extends MY_Controller {
 			"y_togo_amount"			=> $this->dashboard_model->get_y_togo_amount($conn, $date, $shop_name),
 			"y_transaction_count"	=> $this->dashboard_model->get_y_transaction_count($conn, $date, $shop_name),
 			"y_article_count"		=> $this->dashboard_model->get_y_article_count($conn, $date, $shop_name),
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
+
+	public function sum_data(){
+		$date = array(
+			"start" => $this->input->post('from'),
+			"end"	=> $this->input->post('to')
+		);
+		$shop = $this->input->post('shop');
+		$db = $this->input->post('db');
+		$conn = parent::custom_dbconnect($db);
+		$ret = array(
+			"netsale" 			=> $this->dashboard_model->_get_sale($conn, $date, $shop),
+			"discount"		=> $this->dashboard_model->_get_discount($conn, $date, $shop),
+			"transaction" 	=> $this->dashboard_model->_get_transaction($conn, $date, $shop),
+			"promotion"		=> $this->dashboard_model->_get_promotion($conn, $date, $shop),
+			"tip"			=> $this->dashboard_model->_get_tip($conn, $date, $shop),
+			"tax"			=> $this->dashboard_model->_get_tax($conn, $date, $shop)
 		);
 		echo json_encode(array(
 			'status' => 'success',

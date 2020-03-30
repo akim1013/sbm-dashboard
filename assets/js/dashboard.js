@@ -793,14 +793,18 @@ $(document).ready(() => {
                     let d_data = response.data.daily_turnover;
                     let d_today     = [];
                     let d_yesterday = [];
-                    let d_last_7    = [];
-                    let d_w_7       = []; // Week
+                    let d_last_7    = [0, 0, 0, 0, 0, 0, 0];
+                    let d_w_7       = ['', '', '', '', '', '', '']; // Week
+                    for(let i = 0; i < 7; i++){
+                        d_w_7[i] = moment().subtract((7 - i), 'days').format('ddd')
+                    }
                     let d_series = [];
                     let d_temp_shop = '';
                     if(JSON.parse(localStorage.getItem('_shop_name')).length > 6){
+                        let idx = 0;
                         for(let item of d_data){
-                            d_last_7.push(parseFloat(item.netsale));
-                            d_w_7.push(moment(dateFromDay(moment().format('Y'), item.d)).format('ddd'));
+                            d_last_7[d_w_7.indexOf(moment(dateFromDay(moment().format('Y'), item.d)).format('ddd'))] = parseFloat(item.netsale);
+                            idx ++;
                         }
                         d_series.push({
                             name: 'Turnover',
@@ -811,36 +815,32 @@ $(document).ready(() => {
                     }else{
                         let _date = [];
                         let _date_ = '';
-                        let _s = [];
-                        let _s_ = '';
+                        let _s = JSON.parse(localStorage.getItem('_shop_name'));
                         for(let item of d_data){
                             if((_date_ != item.d) && (_date.indexOf(item.d) < 0)){
                                 _date.push(item.d);
                                 _date_ = item.d;
                             }
-                            if((_s_ != item.shop_name) && (_s.indexOf(item.shop_name) < 0)){
-                                _s.push(item.shop_name);
-                                _s_ = item.shop_name;
-                            }
                         }
                         let _y = 0;
                         let _t = 0;
-                        for(let item of _date){
-                            d_w_7.push(moment(dateFromDay(moment().format('Y'), item)).format('ddd'));
-                        }
-                        for(let i = _s.length * 4; i < _s.length * 5; i++){
-                            _y += parseFloat(d_data[i].netsale);
-                        }
-                        for(let i = _s.length * 5; i < _s.length * 6; i++){
-                            _t += parseFloat(d_data[i].netsale);
-                        }
+
+                        // yesterday and today value issue || Not fixed yet
+
+                        // for(let i = _s.length * 4; i < _s.length * 5; i++){
+                        //     _y += parseFloat(d_data[i].netsale);
+                        // }
+                        // for(let i = _s.length * 5; i < _s.length * 6; i++){
+                        //     _t += parseFloat(d_data[i].netsale);
+                        // }
+
                         d_yesterday.push(_y);
                         d_today.push(_t);
                         for(let item of _s){
-                            let _values = [];
+                            let _values = [0, 0, 0, 0, 0, 0, 0];
                             for(let _item of d_data){
                                 if(item == _item.shop_name){
-                                    _values.push(parseFloat(_item.netsale));
+                                    _values[d_w_7.indexOf(moment(dateFromDay(moment().format('Y'), item.d)).format('ddd'))] = parseFloat(_item.netsale);
                                 }
                             }
                             d_series.push({
@@ -849,10 +849,13 @@ $(document).ready(() => {
                             })
                         }
                     }
-
-                    let percent = ((d_today[0] - d_yesterday[0]) / d_yesterday[0]) * 100;
+                    let percent = 0;
+                    if(d_yesterday[0] != 0){
+                        percent = ((d_today[0] - d_yesterday[0]) / d_yesterday[0]) * 100
+                    }
                     $('.yt_val').text(process_price(d_yesterday[0]));
                     $('.t_val').text(process_price(d_today[0]));
+
                     $('.t_growth_percent').text((percent > 0) ? '+' + percent.toFixed(2) + ' %' : percent.toFixed(2) + ' %');
                     $('#turnover_detail').removeClass('hide');
                     Highcharts.chart('yt_comparison', {

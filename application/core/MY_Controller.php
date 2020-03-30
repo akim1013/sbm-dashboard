@@ -19,4 +19,15 @@ class MY_Controller extends CI_Controller{
 		     return -1;
 		}
 	}
+
+    protected function custom_dbconnect($db){
+        $serverName = "198.11.172.117";
+		$connectionInfo = array( "Database"=>$db, "UID"=>"laguna", "PWD"=>"goqkdtks.1234");
+		$conn = sqlsrv_connect( $serverName, $connectionInfo);
+		if( $conn ) {
+		     return $conn;
+		}else{
+		     return -1;
+		}
+    }
 }

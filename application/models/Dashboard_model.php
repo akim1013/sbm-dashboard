@@ -501,6 +501,12 @@ class Dashboard_model extends CI_Model{
         }
         return $this->run_query($conn, $sql);
     }
+    function get_all_operators($conn){
+        $sql = "
+            SELECT *
+            FROM operators";
+        return $this->run_query($conn, $sql);
+    }
     function get_operators($conn, $shop_name){
         $sql = "
             SELECT DISTINCT(o.id), o.description, o.code, s.id shop_id
@@ -821,6 +827,103 @@ class Dashboard_model extends CI_Model{
                 AND s.description IN ('" . $shop_name . "')
             GROUP BY DATEPART(MONTH, t.bookkeeping_date), DATEPART(YEAR, t.bookkeeping_date)
             ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date)
+        ";
+        return $this->run_query($conn, $sql);
+    }
+
+    // API models redefine
+    // Net sale
+    function _get_sale($conn, $date, $shop_name){
+        $sql = "
+            SELECT
+                SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as netsale
+            FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+            INNER JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id AND tk.in_statistics=1
+            INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+            INNER JOIN articles a ON (a.id = ta.article_id) AND a.article_type Not In(2,3)
+            INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
+            WHERE t.delete_operator_id IS NULL
+                    AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                    AND s.description IN ('" . $shop_name . "')
+            GROUP BY t.shop_id
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    // Discount
+    function _get_discount($conn, $date, $shop_name){
+        $sql = "
+            SELECT COALESCE(SUM(ta.discount),0) as discount
+            FROM transactions t INNER JOIN trans_articles ta ON ta.transaction_id = t.id
+            INNER JOIN shops s ON s.id = t.shop_id
+            WHERE t.delete_operator_id IS NULL
+                    AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                    AND s.description IN ('" . $shop_name . "')
+            GROUP BY t.shop_id
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    // Tax
+    function _get_tax($conn, $date, $shop_name){
+        $sql = "
+            SELECT
+            SUM(t.tax_amount) as tax
+            FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+            INNER JOIN shops s ON s.id = t.shop_id
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description IN ('" . $shop_name . "')
+            GROUP BY t.shop_id
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    // Transaction numbers
+    function _get_transaction($conn, $date, $shop_name){
+        $sql = "
+            SELECT COUNT(*) transaction_count,
+                SUM(t.total_amount - COALESCE(t.tax_amount, 0)) / COUNT(*) as average_bill
+            FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+            LEFT JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description IN ('" . $shop_name . "')
+            GROUP BY t.shop_id
+        ";
+        return $this->run_query($conn, $sql);
+    }
+
+    // Promotions
+    function _get_promotion($conn, $date, $shop_name){
+        $sql = "
+            SELECT sum(coalesce(tp.discount,0))+ sum(coalesce(tp.amount,0))- sum(coalesce(tp.offered_amount,0)) + sum(tp.articles_amount) + sum(coalesce(tp.discount,0))+ sum(coalesce(tp.amount,0))- sum(CASE WHEN tp.offered_amount <> 0 then tp.articles_amount ELSE 0 END) as promotion
+            FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+            INNER JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN trans_promotions tp on tp.transaction_id = t.id
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description IN ('" . $shop_name . "')
+            GROUP BY t.shop_id
+        ";
+        return $this->run_query($conn, $sql);
+    }
+
+    // Tip
+    function _get_tip($conn, $date, $shop_name){
+        $sql = "
+            SELECT SUM(ta.price ) + SUM (COALESCE(ta.discount, 0)) tip
+            FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+            INNER JOIN shops s ON s.id = t.shop_id
+            INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+            INNER JOIN articles a ON (a.id = ta.article_id) AND a.article_type In(2)
+            INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
+            LEFT JOIN transaction_causals tcau ON tcau.id = t.transaction_causal_id
+            LEFT JOIN groups g ON g.id = a.group_a_id AND a.group_a_id IS NOT NULL
+            LEFT JOIN article_causals ac ON ta.causal_id = ac.id
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description IN ('" . $shop_name . "')
+            GROUP BY t.shop_id
         ";
         return $this->run_query($conn, $sql);
     }
