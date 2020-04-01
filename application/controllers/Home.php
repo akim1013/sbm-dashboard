@@ -469,4 +469,43 @@ class Home extends MY_Controller {
 		));
 		sqlsrv_close($conn);
 	}
+	public function sale_data(){
+		$date = array(
+			"start" => $this->input->post('from'),
+			"end"	=> $this->input->post('to')
+		);
+		$shop = $this->input->post('shop');
+		$db = $this->input->post('db');
+		$division = $this->input->post('division');
+		$conn = parent::custom_dbconnect($db);
+		$ret = array(
+			"division_sale" 	=> $this->dashboard_model->_get_division_sale($conn, $date, $shop, $division)
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
+	public function payment_data(){
+		$date = array(
+			"start" => $this->input->post('from'),
+			"end"	=> $this->input->post('to')
+		);
+		$shop = $this->input->post('shop');
+		$db = $this->input->post('db');
+		$conn = parent::custom_dbconnect($db);
+		$ret = array(
+			"hourly_sale" 	=> $this->dashboard_model->_get_hourly_sale($conn, $date, $shop),
+			"payment_detail"=> $this->dashboard_model->_get_payment_detail($conn, $date, $shop),
+			"today_items"	=> $this->dashboard_model->_get_today_items($conn, $date, $shop)
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
 }

@@ -836,7 +836,9 @@ class Dashboard_model extends CI_Model{
     function _get_sale($conn, $date, $shop_name){
         $sql = "
             SELECT
-                SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as netsale
+                cast(DATEPART(YEAR, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(MONTH, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(day, t.bookkeeping_date) as varchar) d,
+                SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as netsale,
+                count(*) as article_count
             FROM transactions t WITH (INDEX(idx_transactions_bookdate))
             INNER JOIN shops s ON s.id = t.shop_id
             LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id AND tk.in_statistics=1
@@ -846,20 +848,22 @@ class Dashboard_model extends CI_Model{
             WHERE t.delete_operator_id IS NULL
                     AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                     AND s.description IN ('" . $shop_name . "')
-            GROUP BY t.shop_id
+                    GROUP BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
+                    ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
         ";
         return $this->run_query($conn, $sql);
     }
     // Discount
     function _get_discount($conn, $date, $shop_name){
         $sql = "
-            SELECT COALESCE(SUM(ta.discount),0) as discount
+            SELECT COALESCE(SUM(ta.discount),0) as discount, cast(DATEPART(YEAR, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(MONTH, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(day, t.bookkeeping_date) as varchar) d
             FROM transactions t INNER JOIN trans_articles ta ON ta.transaction_id = t.id
             INNER JOIN shops s ON s.id = t.shop_id
             WHERE t.delete_operator_id IS NULL
                     AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                     AND s.description IN ('" . $shop_name . "')
-            GROUP BY t.shop_id
+                    GROUP BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
+                    ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
         ";
         return $this->run_query($conn, $sql);
     }
@@ -867,13 +871,14 @@ class Dashboard_model extends CI_Model{
     function _get_tax($conn, $date, $shop_name){
         $sql = "
             SELECT
-            SUM(t.tax_amount) as tax
+            SUM(t.tax_amount) as tax, cast(DATEPART(YEAR, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(MONTH, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(day, t.bookkeeping_date) as varchar) d
             FROM transactions t WITH (INDEX(idx_transactions_bookdate))
             INNER JOIN shops s ON s.id = t.shop_id
             WHERE t.delete_operator_id IS NULL
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                 AND s.description IN ('" . $shop_name . "')
-            GROUP BY t.shop_id
+                GROUP BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
+                ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
         ";
         return $this->run_query($conn, $sql);
     }
@@ -881,6 +886,7 @@ class Dashboard_model extends CI_Model{
     function _get_transaction($conn, $date, $shop_name){
         $sql = "
             SELECT COUNT(*) transaction_count,
+                cast(DATEPART(YEAR, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(MONTH, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(day, t.bookkeeping_date) as varchar) d,
                 SUM(t.total_amount - COALESCE(t.tax_amount, 0)) / COUNT(*) as average_bill
             FROM transactions t WITH (INDEX(idx_transactions_bookdate))
             LEFT JOIN shops s ON s.id = t.shop_id
@@ -888,7 +894,8 @@ class Dashboard_model extends CI_Model{
             WHERE t.delete_operator_id IS NULL
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                 AND s.description IN ('" . $shop_name . "')
-            GROUP BY t.shop_id
+                GROUP BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
+                ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
         ";
         return $this->run_query($conn, $sql);
     }
@@ -896,14 +903,15 @@ class Dashboard_model extends CI_Model{
     // Promotions
     function _get_promotion($conn, $date, $shop_name){
         $sql = "
-            SELECT sum(coalesce(tp.discount,0))+ sum(coalesce(tp.amount,0))- sum(coalesce(tp.offered_amount,0)) + sum(tp.articles_amount) + sum(coalesce(tp.discount,0))+ sum(coalesce(tp.amount,0))- sum(CASE WHEN tp.offered_amount <> 0 then tp.articles_amount ELSE 0 END) as promotion
+            SELECT sum(coalesce(tp.discount,0))+ sum(coalesce(tp.amount,0))- sum(coalesce(tp.offered_amount,0)) + sum(tp.articles_amount) + sum(coalesce(tp.discount,0))+ sum(coalesce(tp.amount,0))- sum(CASE WHEN tp.offered_amount <> 0 then tp.articles_amount ELSE 0 END) as promotion,cast(DATEPART(YEAR, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(MONTH, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(day, t.bookkeeping_date) as varchar) d
             FROM transactions t WITH (INDEX(idx_transactions_bookdate))
             INNER JOIN shops s ON s.id = t.shop_id
             LEFT JOIN trans_promotions tp on tp.transaction_id = t.id
             WHERE t.delete_operator_id IS NULL
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                 AND s.description IN ('" . $shop_name . "')
-            GROUP BY t.shop_id
+                GROUP BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
+                ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
         ";
         return $this->run_query($conn, $sql);
     }
@@ -911,7 +919,7 @@ class Dashboard_model extends CI_Model{
     // Tip
     function _get_tip($conn, $date, $shop_name){
         $sql = "
-            SELECT SUM(ta.price ) + SUM (COALESCE(ta.discount, 0)) tip
+            SELECT SUM(ta.price ) + SUM (COALESCE(ta.discount, 0)) tip, cast(DATEPART(YEAR, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(MONTH, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(day, t.bookkeeping_date) as varchar) d
             FROM transactions t WITH (INDEX(idx_transactions_bookdate))
             INNER JOIN shops s ON s.id = t.shop_id
             INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
@@ -923,7 +931,99 @@ class Dashboard_model extends CI_Model{
             WHERE t.delete_operator_id IS NULL
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                 AND s.description IN ('" . $shop_name . "')
-            GROUP BY t.shop_id
+                GROUP BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
+                ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function _get_division_sale($conn, $date, $shop_name, $division){
+        $sql = "
+            SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as netsale
+            FROM transactions t
+            INNER JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id AND tk.in_statistics=1
+            INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+            INNER JOIN articles a ON (a.id = ta.article_id) AND a.article_type Not In(2,3)
+            INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description IN ('" . $shop_name . "')
+        ";
+        if($division == '7'){
+           $sql = "
+               SELECT cast(DATEPART(WEEKDAY, t.bookkeeping_date) as varchar) d,
+           " . $sql . "
+               GROUP BY DATEPART(WEEKDAY, t.bookkeeping_date)
+               ORDER BY DATEPART(WEEKDAY, t.bookkeeping_date)
+           ";
+        }else if($division == '15'){
+            $sql = "
+                SELECT cast(DATEPART(day, t.bookkeeping_date) as varchar) d,
+            " . $sql . "
+                GROUP BY DATEPART(day, t.bookkeeping_date)
+                ORDER BY DATEPART(day, t.bookkeeping_date)
+            ";
+        }else if($division == '30'){
+            $sql = "
+                SELECT cast(DATEPART(week, t.bookkeeping_date) as varchar) d,
+            " . $sql . "
+                GROUP BY DATEPART(WEEK, t.bookkeeping_date)
+                ORDER BY DATEPART(WEEK, t.bookkeeping_date)
+            ";
+        }else{
+            $sql = "
+                SELECT cast(DATEPART(MONTH, t.bookkeeping_date) as varchar) d,
+            " . $sql . "
+                GROUP BY DATEPART(MONTH, t.bookkeeping_date)
+                ORDER BY DATEPART(MONTH, t.bookkeeping_date)
+            ";
+        }
+        return $this->run_query($conn, $sql);
+    }
+    function _get_hourly_sale($conn, $date, $shop_name){
+        $sql = "
+            SELECT DATEPART(hour, t.trans_date) h, COUNT(*) transaction_count
+            FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+            LEFT JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description IN ('" . $shop_name . "')
+            GROUP BY DATEPART(hour, t.trans_date)
+            ORDER BY h
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function _get_payment_detail($conn, $date, $shop_name){
+        $sql = "
+            SELECT p.description payment_description, sum(COALESCE(tp.amount, 0)) amount
+            FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+            LEFT JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN trans_payments tp ON tp.transaction_id = t.id
+            INNER JOIN payments p ON p.id = tp.payment_id
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description IN ('" . $shop_name . "')
+            GROUP BY p.description
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function _get_today_items($conn, $date, $shop_name){
+        $sql = "
+            SELECT
+            SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as price,
+            a.description as article_name, count(a.description) qty
+            FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+            INNER JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id AND tk.in_statistics=1
+            INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+            INNER JOIN articles a ON (a.id = ta.article_id) AND a.article_type Not In(2,3)
+            INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description IN ('" . $shop_name . "')
+            GROUP BY a.description, s.description
+            ORDER BY s.description, price DESC
         ";
         return $this->run_query($conn, $sql);
     }
