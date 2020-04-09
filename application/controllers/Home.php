@@ -508,4 +508,42 @@ class Home extends MY_Controller {
 		));
 		sqlsrv_close($conn);
 	}
+	public function causals_data(){
+		$db = $this->input->post('db');
+		$conn = parent::custom_dbconnect($db);
+		$ret = array(
+			"causals" 	=> $this->dashboard_model->_get_causals($conn)
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
+	public function sale_details(){
+		$date = array(
+			"start" => $this->input->post('from'),
+			"end"	=> $this->input->post('to')
+		);
+		$shop = $this->input->post('shop');
+		$db = $this->input->post('db');
+		$d = $this->input->post('d');
+		$group_id = $this->input->post('group_id');
+		$causals = $this->input->post('causals');
+		$conn = parent::custom_dbconnect($db);
+		$ret = array(
+			"sale"	=> $this->dashboard_model->_get_sale_details($conn, $date, $shop, $d)//,
+			// "discount" => $this->dashboard_model->_get_discount_details($conn, $date, $shop, $d),
+			// "transaction" => $this->dashboard_model->_get_transaction_details($conn, $date, $shop, $d),
+			// "payment" => $this->dashboard_model->_get_payment_details($conn, $date, $shop, $d),
+			// "articles" => $this->dashboard_model->_get_article_details($conn, $date, $shop, $d, $group_id)
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
 }

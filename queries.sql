@@ -321,4 +321,11 @@ GROUP BY g.id, DATEPART(day, t.bookkeeping_date), DATEPART(WEEKDAY, t.bookkeepin
 GROUP BY tb.y, tb.m, tb.d
 ORDER BY tb.y, tb.m, tb.d
 
-//
+// idxs
+create nonclustered index trans_articles_prices_idx
+on trans_articles (transaction_id, article_id)
+include(price, discount, promotion_discount)
+
+create nonclustered index transaction_netsale_idx
+on transactions (delete_operator_id, shop_id, bookkeeping_date)
+include(transaction_causal_id)
