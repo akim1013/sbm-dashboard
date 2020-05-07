@@ -329,3 +329,7 @@ include(price, discount, promotion_discount)
 create nonclustered index transaction_netsale_idx
 on transactions (delete_operator_id, shop_id, bookkeeping_date)
 include(transaction_causal_id)
+
+create nonclustered index trans_count_idx
+on transactions (shop_id, bookkeeping_date)
+include(total_amount, tax_amount)

@@ -460,7 +460,8 @@ class Home extends MY_Controller {
 			"transaction" 	=> $this->dashboard_model->_get_transaction($conn, $date, $shop),
 			"promotion"		=> $this->dashboard_model->_get_promotion($conn, $date, $shop),
 			"tip"			=> $this->dashboard_model->_get_tip($conn, $date, $shop),
-			"tax"			=> $this->dashboard_model->_get_tax($conn, $date, $shop)
+			"tax"			=> $this->dashboard_model->_get_tax($conn, $date, $shop),
+			"avg"			=> $this->dashboard_model->_get_avg($conn, $date, $shop)
 		);
 		echo json_encode(array(
 			'status' => 'success',
@@ -533,11 +534,197 @@ class Home extends MY_Controller {
 		$causals = $this->input->post('causals');
 		$conn = parent::custom_dbconnect($db);
 		$ret = array(
-			"sale"	=> $this->dashboard_model->_get_sale_details($conn, $date, $shop, $d)//,
-			// "discount" => $this->dashboard_model->_get_discount_details($conn, $date, $shop, $d),
-			// "transaction" => $this->dashboard_model->_get_transaction_details($conn, $date, $shop, $d),
-			// "payment" => $this->dashboard_model->_get_payment_details($conn, $date, $shop, $d),
-			// "articles" => $this->dashboard_model->_get_article_details($conn, $date, $shop, $d, $group_id)
+			"sale"	=> $this->dashboard_model->_get_sale_details($conn, $date, $shop, $d),
+			"discount" => $this->dashboard_model->_get_discount_details($conn, $date, $shop, $d),
+			"others" => $this->dashboard_model->_get_other_details($conn, $date, $shop, $d)
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
+	public function trans_details(){
+		$date = array(
+			"start" => $this->input->post('from'),
+			"end"	=> $this->input->post('to')
+		);
+		$shop = $this->input->post('shop');
+		$db = $this->input->post('db');
+		$d = $this->input->post('d');
+		$group_id = $this->input->post('group_id');
+		$causals = $this->input->post('causals');
+		$conn = parent::custom_dbconnect($db);
+		$ret = array(
+			"transaction"	=> $this->dashboard_model->_get_trans_details($conn, $date, $shop, $d)
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
+	public function payment_details(){
+		$date = array(
+			"start" => $this->input->post('from'),
+			"end"	=> $this->input->post('to')
+		);
+		$shop = $this->input->post('shop');
+		$db = $this->input->post('db');
+		$d = $this->input->post('d');
+		$group_id = $this->input->post('group_id');
+		$causals = $this->input->post('causals');
+		$conn = parent::custom_dbconnect($db);
+		$ret = array(
+			"payments"	=> $this->dashboard_model->_get_payment_descriptions($conn),
+			"payment_details"	=> $this->dashboard_model->_get_payment_details($conn, $date, $shop, $d)
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
+	public function article_details(){
+		$date = array(
+			"start" => $this->input->post('from'),
+			"end"	=> $this->input->post('to')
+		);
+		$shop = $this->input->post('shop');
+		$db = $this->input->post('db');
+		$d = $this->input->post('d');
+		$group_id = $this->input->post('group_id');
+		$causals = $this->input->post('causals');
+		$conn = parent::custom_dbconnect($db);
+		$ret = array(
+			"article_details"	=> $this->dashboard_model->_get_article_details($conn, $date, $shop, $d, $group_id)
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
+	public function sale_compare(){
+		$date = array(
+			"start" => $this->input->post('from'),
+			"end"	=> $this->input->post('to')
+		);
+		$shops = str_replace(',', '\',\'', $this->input->post('shops'));
+		$db = $this->input->post('db');
+		$conn = parent::custom_dbconnect($db);
+		$ret = array(
+			"sales"	=> $this->dashboard_model->_get_sale_compare($conn, $date, $shops),
+			"transactions" => $this->dashboard_model->_get_trans_compare($conn, $date, $shops)
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
+	public function other_compare(){
+		$date = array(
+			"start" => $this->input->post('from'),
+			"end"	=> $this->input->post('to')
+		);
+		$shops = str_replace(',', '\',\'', $this->input->post('shops'));
+		$db = $this->input->post('db');
+		$conn = parent::custom_dbconnect($db);
+		$ret = array(
+			"discount"		=> $this->dashboard_model->_get_discount_compare($conn, $date, $shops),
+			"tax" 			=> $this->dashboard_model->_get_tax_compare($conn, $date, $shops),
+			"promotion" 	=> $this->dashboard_model->_get_promotion_compare($conn, $date, $shops),
+			"tip" 			=> $this->dashboard_model->_get_tip_compare($conn, $date, $shops)
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
+	public function payment_compare(){
+		$date = array(
+			"start" => $this->input->post('from'),
+			"end"	=> $this->input->post('to')
+		);
+		$shops = str_replace(',', '\',\'', $this->input->post('shops'));
+		$db = $this->input->post('db');
+		$conn = parent::custom_dbconnect($db);
+		$ret = array(
+			"payment"	=> $this->dashboard_model->_get_payment_compare($conn, $date, $shops),
+			"article"	=> $this->dashboard_model->_get_article_compare($conn, $date, $shops)
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
+	public function sale_date_compare(){
+		$date = array(
+			"start" 			=> $this->input->post('from'),
+			"end"				=> $this->input->post('to'),
+			"start_secondary" 	=> $this->input->post('from_secondary'),
+			"end_secondary" 	=> $this->input->post('to_secondary')
+		);
+		$shop = $this->input->post('shop');
+		$db = $this->input->post('db');
+		$conn = parent::custom_dbconnect($db);
+		$ret = array(
+			'sales' => $this->dashboard_model->_get_sale_date_compare($conn, $date, $shop),
+			"transactions" => $this->dashboard_model->_get_trans_date_compare($conn, $date, $shops)
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
+	public function other_date_compare(){
+		$date = array(
+			"start" => $this->input->post('from'),
+			"end"	=> $this->input->post('to'),
+			"start_secondary" => $this->input->post('from_secondary'),
+			"end_secondary" => $this->input->post('to_secondary')
+		);
+		$shop = $this->input->post('shop');
+		$db = $this->input->post('db');
+		$conn = parent::custom_dbconnect($db);
+		$ret = array(
+			"discount"	=> $this->dashboard_model->_get_discount_date_compare($conn, $date, $shop),
+			"tax" 		=> $this->dashboard_model->_get_tax_date_compare($conn, $date, $shop),
+			"promotion" => $this->dashboard_model->_get_promotion_date_compare($conn, $date, $shop),
+			"tip" 		=> $this->dashboard_model->_get_tip_date_compare($conn, $date, $shop)
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
+	public function payment_date_compare(){
+		$date = array(
+			"start" => $this->input->post('from'),
+			"end"	=> $this->input->post('to'),
+			"start_secondary" => $this->input->post('from_secondary'),
+			"end_secondary" => $this->input->post('to_secondary')
+		);
+		$shop = $this->input->post('shop');
+		$db = $this->input->post('db');
+		$conn = parent::custom_dbconnect($db);
+		$ret = array(
+			"payment"	=> $this->dashboard_model->_get_payment_date_compare($conn, $date, $shop),
+			"article"	=> $this->dashboard_model->_get_article_date_compare($conn, $date, $shop)
 		);
 		echo json_encode(array(
 			'status' => 'success',

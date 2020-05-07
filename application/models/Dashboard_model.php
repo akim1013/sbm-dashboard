@@ -882,6 +882,26 @@ class Dashboard_model extends CI_Model{
         ";
         return $this->run_query($conn, $sql);
     }
+    // average item price | exclude toppings
+    function _get_avg($conn, $date, $shop_name){
+        $sql = "
+            SELECT
+                COALESCE(SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) / count(ta.price), 0) as avg_per_item
+            FROM transactions t
+            INNER JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id
+            LEFT JOIN trans_articles ta ON (ta.transaction_id = t.id)
+            LEFT JOIN articles a ON (a.id = ta.article_id)
+            LEFT JOIN groups g ON g.id = a.group_a_id
+            WHERE
+                a.article_type = 1
+                AND t.bookkeeping_date BETWEEN '" . $date['end'] . "' AND '" . $date['end'] . "'
+                AND s.description = '" . $shop_name . "'
+                AND g.description NOT LIKE '%topping%'
+            ORDER BY avg_per_item DESC
+        ";
+        return $this->run_query($conn, $sql);
+    }
     // Transaction numbers
     function _get_transaction($conn, $date, $shop_name){
         $sql = "
@@ -956,7 +976,15 @@ class Dashboard_model extends CI_Model{
                GROUP BY DATEPART(WEEKDAY, t.bookkeeping_date)
                ORDER BY DATEPART(WEEKDAY, t.bookkeeping_date)
            ";
-        }else if($division == '15'){
+       }else if($division == '10'){
+            $sql = "
+                SELECT (case when day(t.bookkeeping_date) <= 10 then 'first' when day(t.bookkeeping_date) <= 20 then 'second' else 'third' end) as d,
+            " . $sql . "
+                GROUP BY (case when day(t.bookkeeping_date) <= 10 then 'first' when day(t.bookkeeping_date) <= 20 then 'second' else 'third' end)
+                ORDER BY d
+            ";
+        }
+        else if($division == '15'){
             $sql = "
                 SELECT cast(DATEPART(day, t.bookkeeping_date) as varchar) d,
             " . $sql . "
@@ -1039,9 +1067,7 @@ class Dashboard_model extends CI_Model{
     function _get_sale_details($conn, $date, $shop_name, $d){
         $sql = "
                 COALESCE(tk.description, 'Other') as causal_desc,
-                SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as netsale,
-                SUM(ta.price) as grossale,
-                count(*) as article_count
+                SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as netsale
             FROM transactions t
             INNER JOIN shops s ON s.id = t.shop_id
             LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id
@@ -1085,6 +1111,14 @@ class Dashboard_model extends CI_Model{
                 DATEPART(YEAR, t.bookkeeping_date), DATEPART(week, t.bookkeeping_date)
                 ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(week, t.bookkeeping_date)
             ";
+        }else if($d == '10days'){
+            $sql = "
+                SELECT
+                (case when day(t.bookkeeping_date) <= 10 then 'first' when day(t.bookkeeping_date) <= 20 then 'second' else 'third' end) as d,
+            " . $sql . "
+                (case when day(t.bookkeeping_date) <= 10 then 'first' when day(t.bookkeeping_date) <= 20 then 'second' else 'third' end)
+                ORDER BY d
+            ";
         }else if($d == 'month'){
             $sql = "
                 SELECT
@@ -1104,6 +1138,601 @@ class Dashboard_model extends CI_Model{
         }else{
 
         }
+        return $this->run_query($conn, $sql);
+    }
+    function _get_discount_details($conn, $date, $shop_name){
+        $sql = "
+            SELECT d.description description, sum(td.quantity) qty, sum(td.amount) amount
+            FROM discounts d
+            LEFT JOIN trans_discounts td ON td.discount_id = d.id
+            INNER JOIN transactions t ON t.id = td.transaction_id
+            INNER JOIN shops s ON s.id = t.shop_id
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description = '" . $shop_name . "'
+            GROUP BY d.description
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function _get_other_details($conn, $date, $shop_name){
+        $sql = "
+            SELECT
+            'tax' as description, SUM(t.tax_amount) as amount
+            FROM transactions t
+            INNER JOIN shops s ON s.id = t.shop_id
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description = '" . $shop_name . "'
+            UNION
+            SELECT
+            'promotion' as description, sum(coalesce(tp.discount,0))+ sum(coalesce(tp.amount,0))- sum(coalesce(tp.offered_amount,0)) + sum(tp.articles_amount) + sum(coalesce(tp.discount,0))+ sum(coalesce(tp.amount,0))- sum(CASE WHEN tp.offered_amount <> 0 then tp.articles_amount ELSE 0 END) as amount
+            FROM transactions t
+            INNER JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN trans_promotions tp on tp.transaction_id = t.id
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description = '" . $shop_name . "'
+            UNION
+            SELECT
+            'tip' as description, SUM(ta.price ) + SUM (COALESCE(ta.discount, 0)) as amount
+            FROM transactions t
+            INNER JOIN shops s ON s.id = t.shop_id
+            INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+            INNER JOIN articles a ON (a.id = ta.article_id)
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description = '" . $shop_name . "'
+                AND a.article_type = 2
+        ";
+        return $this->run_query($conn, $sql);
+    }
+
+    function _get_trans_details($conn, $date, $shop_name, $d){
+        $sql = "
+            COUNT(*) qty, SUM(t.total_amount - COALESCE(t.tax_amount, 0)) / COUNT(*) as average_bill
+            FROM transactions t
+            LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id
+            LEFT JOIN shops s ON s.id = t.shop_id
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description = '" . $shop_name . "'
+            GROUP BY
+        ";
+        if($d == 'hour'){
+            $sql = "
+                SELECT
+                cast(DATEPART(YEAR, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(MONTH, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(day, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(hour, t.beginning_timestamp) as varchar) d,
+            " . $sql . "
+                DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date), DATEPART(hour, t.beginning_timestamp)
+                ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date), DATEPART(hour, t.beginning_timestamp)
+            ";
+        }else if($d == 'day'){
+            $sql = "
+                SELECT
+                cast(DATEPART(YEAR, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(MONTH, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(day, t.bookkeeping_date) as varchar) d,
+            " . $sql . "
+                DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
+                ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
+            ";
+        }else if($d == 'weekday'){
+            $sql = "
+                SELECT
+                cast(DATEPART(YEAR, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(MONTH, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(day, t.bookkeeping_date) as varchar) d,
+            " . $sql . "
+                DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
+                ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
+            ";
+        }else if($d == 'week'){
+            $sql = "
+                SELECT
+                cast(DATEPART(YEAR, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(week, t.bookkeeping_date) as varchar) d,
+            " . $sql . "
+                DATEPART(YEAR, t.bookkeeping_date), DATEPART(week, t.bookkeeping_date)
+                ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(week, t.bookkeeping_date)
+            ";
+        }else if($d == '10days'){
+            $sql = "
+                SELECT
+                (case when day(t.bookkeeping_date) <= 10 then 'first' when day(t.bookkeeping_date) <= 20 then 'second' else 'third' end) as d,
+            " . $sql . "
+                (case when day(t.bookkeeping_date) <= 10 then 'first' when day(t.bookkeeping_date) <= 20 then 'second' else 'third' end)
+                ORDER BY d
+            ";
+        }else if($d == 'month'){
+            $sql = "
+                SELECT
+                cast(DATEPART(YEAR, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(MONTH, t.bookkeeping_date) as varchar) d,
+            " . $sql . "
+                DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date)
+                ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date)
+            ";
+        }else if($d == 'year'){
+            $sql = "
+                SELECT
+                cast(DATEPART(YEAR, t.bookkeeping_date) as varchar) d,
+            " . $sql . "
+                DATEPART(YEAR, t.bookkeeping_date)
+                ORDER BY DATEPART(YEAR, t.bookkeeping_date)
+            ";
+        }else{
+
+        }
+        return $this->run_query($conn, $sql);
+    }
+    function _get_payment_descriptions($conn){
+        $sql = "
+            SELECT description FROM payments
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function _get_payment_details($conn, $date, $shop_name, $d){
+        $sql = "
+            p.description payment_detail, sum(COALESCE(tp.amount, 0)) amount, count(tp.transaction_id) qty
+            FROM transactions t
+            LEFT JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN trans_payments tp ON tp.transaction_id = t.id
+            INNER JOIN payments p ON p.id = tp.payment_id
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description = '" . $shop_name . "'
+            GROUP BY p.description,
+        ";
+        if($d == 'hour'){
+            $sql = "
+                SELECT
+                cast(DATEPART(YEAR, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(MONTH, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(day, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(hour, t.beginning_timestamp) as varchar) d,
+            " . $sql . "
+                DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date), DATEPART(hour, t.beginning_timestamp)
+                ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date), DATEPART(hour, t.beginning_timestamp)
+            ";
+        }else if($d == 'day'){
+            $sql = "
+                SELECT
+                cast(DATEPART(YEAR, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(MONTH, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(day, t.bookkeeping_date) as varchar) d,
+            " . $sql . "
+                DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
+                ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
+            ";
+        }else if($d == 'weekday'){
+            $sql = "
+                SELECT
+                cast(DATEPART(YEAR, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(MONTH, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(day, t.bookkeeping_date) as varchar) d,
+            " . $sql . "
+                DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
+                ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
+            ";
+        }else if($d == 'week'){
+            $sql = "
+                SELECT
+                cast(DATEPART(YEAR, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(week, t.bookkeeping_date) as varchar) d,
+            " . $sql . "
+                DATEPART(YEAR, t.bookkeeping_date), DATEPART(week, t.bookkeeping_date)
+                ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(week, t.bookkeeping_date)
+            ";
+        }else if($d == '10days'){
+            $sql = "
+                SELECT
+                (case when day(t.bookkeeping_date) <= 10 then 'first' when day(t.bookkeeping_date) <= 20 then 'second' else 'third' end) as d,
+            " . $sql . "
+                (case when day(t.bookkeeping_date) <= 10 then 'first' when day(t.bookkeeping_date) <= 20 then 'second' else 'third' end)
+                ORDER BY d
+            ";
+        }else if($d == 'month'){
+            $sql = "
+                SELECT
+                cast(DATEPART(YEAR, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(MONTH, t.bookkeeping_date) as varchar) d,
+            " . $sql . "
+                DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date)
+                ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date)
+            ";
+        }else if($d == 'year'){
+            $sql = "
+                SELECT
+                cast(DATEPART(YEAR, t.bookkeeping_date) as varchar) d,
+            " . $sql . "
+                DATEPART(YEAR, t.bookkeeping_date)
+                ORDER BY DATEPART(YEAR, t.bookkeeping_date)
+            ";
+        }else{
+
+        }
+        return $this->run_query($conn, $sql);
+    }
+
+    function _get_article_details($conn, $date, $shop_name, $d, $group_id){
+        $sql = "
+            SELECT
+                g.id as group_id,
+                g.description as group_description,
+                a.id as article_id,
+            	a.description as article_description,
+                SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as price,
+                count(ta.price) amount
+            FROM transactions t
+            INNER JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id
+            INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+            INNER JOIN articles a ON (a.id = ta.article_id)
+            INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
+            INNER JOIN groups g ON g.id = a." . $group_id . "
+            WHERE
+                  a.article_type = 1
+                  AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                  AND s.description = '" . $shop_name . "'
+            GROUP BY a.id, a.description, g.id, g.description
+            ORDER BY g.description, amount DESC, price DESC
+        ";
+        return $this->run_query($conn, $sql);
+    }
+
+    function _get_sale_compare($conn, $date, $shops){
+        $sql = "
+            SELECT
+            	cast(DATEPART(YEAR, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(MONTH, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(day, t.bookkeeping_date) as varchar) d,
+                s.description shop_name,
+                SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as netsale,
+                SUM(ta.price) as grossale
+            FROM transactions t
+            LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id
+            INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+            INNER JOIN articles a ON (a.id = ta.article_id)
+            LEFT JOIN shops s ON s.id = t.shop_id
+            WHERE t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+            AND s.description IN ('" . $shops . "')
+            	AND a.article_type = 1
+            GROUP BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date), s.description
+            ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date), s.description
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function _get_trans_compare($conn, $date, $shops){
+        $sql = "
+            SELECT
+                s.description shop_name,
+                COUNT(*) transaction_count,
+                SUM(t.total_amount - COALESCE(t.tax_amount, 0)) / COUNT(*) as average_bill
+            FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+            LEFT JOIN shops s ON s.id = t.shop_id
+            WHERE t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description IN ('" . $shops . "')
+            GROUP BY s.description
+            ORDER BY s.description
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function _get_discount_compare($conn, $date, $shops){
+        $sql = "
+            SELECT
+                s.description shop_name,
+                d.description discount_description,
+                sum(td.quantity) qty,
+                sum(td.amount) price
+            FROM discounts d
+            LEFT JOIN trans_discounts td ON td.discount_id = d.id
+            INNER JOIN transactions t ON t.id = td.transaction_id
+            INNER JOIN shops s ON s.id = t.shop_id
+            WHERE t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description IN ('" . $shops . "')
+            GROUP BY s.description, d.description
+            ORDER BY s.description, d.description
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function _get_tax_compare($conn, $date, $shops){
+        $sql = "
+            SELECT
+                s.description shop_name,
+                SUM(t.tax_amount) as tax
+            FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+            INNER JOIN shops s ON s.id = t.shop_id
+            WHERE t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description IN ('" . $shops . "')
+            GROUP BY s.description
+            ORDER BY s.description
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function _get_promotion_compare($conn, $date, $shops){
+        $sql = "
+            SELECT
+                s.description shop_name,
+                sum(coalesce(tp.discount,0))+ sum(coalesce(tp.amount,0))- sum(coalesce(tp.offered_amount,0)) + sum(tp.articles_amount) + sum(coalesce(tp.discount,0))+ sum(coalesce(tp.amount,0))- sum(CASE WHEN tp.offered_amount <> 0 then tp.articles_amount ELSE 0 END) promotion
+            FROM transactions t LEFT JOIN trans_promotions tp on tp.transaction_id = t.id
+            LEFT JOIN shops s ON s.id = t.shop_id
+            WHERE t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description IN ('" . $shops . "')
+            GROUP BY s.description
+            ORDER BY s.description
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function _get_tip_compare($conn, $date, $shops){
+        $sql = "
+            SELECT
+                s.description shop_name,
+                SUM(ta.price ) + SUM (COALESCE(ta.discount, 0)) tip
+            FROM transactions t
+            INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+            INNER JOIN articles a ON (a.id = ta.article_id)
+            LEFT JOIN groups g ON g.id = a.group_a_id AND a.group_a_id IS NOT NULL
+            LEFT JOIN shops s ON s.id = t.shop_id
+            WHERE t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description IN ('" . $shops . "')
+                AND a.article_type = 2
+            GROUP BY s.description
+            ORDER BY s.description
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function _get_article_compare($conn, $date, $shops){
+        $sql = "
+            SELECT
+                s.description shop_name,
+                g.description as group_description,
+                a.description as article_description,
+                SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as price,
+                count(ta.price) amount
+            FROM transactions t
+            INNER JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id
+            INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+            INNER JOIN articles a ON (a.id = ta.article_id)
+            INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
+            INNER JOIN groups g ON g.id = a.group_a_id
+            WHERE a.article_type = 1
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description IN ('" . $shops . "')
+            GROUP BY a.description, g.description, s.description
+            ORDER BY s.description, g.description, amount DESC, price DESC
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function _get_payment_compare($conn, $date, $shops){
+        $sql = "
+            SELECT
+                s.description shop_name,
+                p.description payment_detail,
+                sum(COALESCE(tp.amount, 0)) price,
+                count(tp.transaction_id) qty
+            FROM transactions t
+            LEFT JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN trans_payments tp ON tp.transaction_id = t.id
+            INNER JOIN payments p ON p.id = tp.payment_id
+            WHERE t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description IN ('" . $shops . "')
+            GROUP BY s.description, p.description
+            ORDER BY s.description, p.description
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function _get_sale_date_compare($conn, $date, $shop_name){
+        $sql = "
+            SELECT
+                cast(DATEPART(YEAR, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(MONTH, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(day, t.bookkeeping_date) as varchar) d,
+                SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as netsale,
+                SUM(ta.price) as grossale
+            FROM transactions t
+            LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id
+            INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+            INNER JOIN articles a ON (a.id = ta.article_id)
+            LEFT JOIN shops s ON s.id = t.shop_id
+                WHERE t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description = '" . $shop_name . "'
+                AND a.article_type = 1
+            GROUP BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
+            UNION
+            SELECT
+                cast(DATEPART(YEAR, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(MONTH, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(day, t.bookkeeping_date) as varchar) d,
+                SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as netsale,
+                SUM(ta.price) as grossale
+            FROM transactions t
+            LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id
+            INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+            INNER JOIN articles a ON (a.id = ta.article_id)
+            LEFT JOIN shops s ON s.id = t.shop_id
+                WHERE t.bookkeeping_date BETWEEN '" . $date['start_secondary'] . "' AND '" . $date['end_secondary'] . "'
+                AND s.description = '" . $shop_name . "'
+                AND a.article_type = 1
+            GROUP BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function _get_trans_date_compare($conn, $date, $shop_name){
+        $sql = "
+            SELECT
+                'f' as od,
+                COUNT(*) transaction_count,
+                SUM(t.total_amount - COALESCE(t.tax_amount, 0)) / COUNT(*) as average_bill
+            FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+            LEFT JOIN shops s ON s.id = t.shop_id
+            WHERE t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description = '" . $shop_name . "'
+            GROUP BY s.description
+            UNION
+            SELECT
+                's' as od,
+                COUNT(*) transaction_count,
+                SUM(t.total_amount - COALESCE(t.tax_amount, 0)) / COUNT(*) as average_bill
+            FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+            LEFT JOIN shops s ON s.id = t.shop_id
+            WHERE t.bookkeeping_date BETWEEN '" . $date['start_secondary'] . "' AND '" . $date['end_secondary'] . "'
+                AND s.description = '" . $shop_name . "'
+            GROUP BY s.description
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function _get_discount_date_compare($conn, $date, $shop_name){
+        $sql = "
+            SELECT
+                'f' as od,
+                d.description discount_description,
+                sum(td.quantity) qty,
+                sum(td.amount) price
+            FROM discounts d
+            LEFT JOIN trans_discounts td ON td.discount_id = d.id
+            INNER JOIN transactions t ON t.id = td.transaction_id
+            INNER JOIN shops s ON s.id = t.shop_id
+            WHERE t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description = '" . $shop_name . "'
+            GROUP BY d.description
+            UNION
+            SELECT
+                's' as od,
+                d.description discount_description,
+                sum(td.quantity) qty,
+                sum(td.amount) price
+            FROM discounts d
+            LEFT JOIN trans_discounts td ON td.discount_id = d.id
+            INNER JOIN transactions t ON t.id = td.transaction_id
+            INNER JOIN shops s ON s.id = t.shop_id
+            WHERE t.bookkeeping_date BETWEEN '" . $date['start_secondary'] . "' AND '" . $date['end_secondary'] . "'
+                AND s.description = '" . $shop_name . "'
+            GROUP BY d.description
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function _get_tax_date_compare($conn, $date, $shop_name){
+        $sql = "
+            SELECT
+                'f' as od,
+                SUM(t.tax_amount) as tax
+            FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+            INNER JOIN shops s ON s.id = t.shop_id
+            WHERE t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description = '" . $shop_name . "'
+            GROUP BY s.description
+            UNION
+            SELECT
+                's' as od,
+                SUM(t.tax_amount) as tax
+            FROM transactions t WITH (INDEX(idx_transactions_bookdate))
+            INNER JOIN shops s ON s.id = t.shop_id
+            WHERE t.bookkeeping_date BETWEEN '" . $date['start_secondary'] . "' AND '" . $date['end_secondary'] . "'
+                AND s.description = '" . $shop_name . "'
+            GROUP BY s.description
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function _get_promotion_date_compare($conn, $date, $shop_name){
+        $sql = "
+            SELECT
+                'f' as od,
+                sum(coalesce(tp.discount,0))+ sum(coalesce(tp.amount,0))- sum(coalesce(tp.offered_amount,0)) + sum(tp.articles_amount) + sum(coalesce(tp.discount,0))+ sum(coalesce(tp.amount,0))- sum(CASE WHEN tp.offered_amount <> 0 then tp.articles_amount ELSE 0 END) promotion
+            FROM transactions t LEFT JOIN trans_promotions tp on tp.transaction_id = t.id
+            LEFT JOIN shops s ON s.id = t.shop_id
+            WHERE t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description = '" . $shop_name . "'
+            GROUP BY s.description
+            UNION
+            SELECT
+                's' as od,
+                sum(coalesce(tp.discount,0))+ sum(coalesce(tp.amount,0))- sum(coalesce(tp.offered_amount,0)) + sum(tp.articles_amount) + sum(coalesce(tp.discount,0))+ sum(coalesce(tp.amount,0))- sum(CASE WHEN tp.offered_amount <> 0 then tp.articles_amount ELSE 0 END) promotion
+            FROM transactions t LEFT JOIN trans_promotions tp on tp.transaction_id = t.id
+            LEFT JOIN shops s ON s.id = t.shop_id
+            WHERE t.bookkeeping_date BETWEEN '" . $date['start_secondary'] . "' AND '" . $date['end_secondary'] . "'
+                AND s.description = '" . $shop_name . "'
+            GROUP BY s.description
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function _get_tip_date_compare($conn, $date, $shop_name){
+        $sql = "
+            SELECT
+                'f' as od,
+                SUM(ta.price ) + SUM (COALESCE(ta.discount, 0)) tip
+            FROM transactions t
+            INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+            INNER JOIN articles a ON (a.id = ta.article_id)
+            LEFT JOIN groups g ON g.id = a.group_a_id AND a.group_a_id IS NOT NULL
+            LEFT JOIN shops s ON s.id = t.shop_id
+            WHERE t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description = '" . $shop_name . "'
+                AND a.article_type = 2
+            GROUP BY s.description
+            UNION
+            SELECT
+                's' as od,
+                SUM(ta.price ) + SUM (COALESCE(ta.discount, 0)) tip
+            FROM transactions t
+            INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+            INNER JOIN articles a ON (a.id = ta.article_id)
+            LEFT JOIN groups g ON g.id = a.group_a_id AND a.group_a_id IS NOT NULL
+            LEFT JOIN shops s ON s.id = t.shop_id
+            WHERE t.bookkeeping_date BETWEEN '" . $date['start_secondary'] . "' AND '" . $date['end_secondary'] . "'
+                AND s.description = '" . $shop_name . "'
+                AND a.article_type = 2
+            GROUP BY s.description
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function _get_article_date_compare($conn, $date, $shop_name){
+        $sql = "
+            SELECT
+                'f' as od,
+                g.description as group_description,
+                a.description as article_description,
+                SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as price,
+                count(ta.price) amount
+            FROM transactions t
+            INNER JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id
+            INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+            INNER JOIN articles a ON (a.id = ta.article_id)
+            INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
+            INNER JOIN groups g ON g.id = a.group_a_id
+            WHERE a.article_type = 1
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description = '" . $shop_name . "'
+            GROUP BY a.description, g.description
+            UNION
+            SELECT
+                's' as od,
+                g.description as group_description,
+                a.description as article_description,
+                SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as price,
+                count(ta.price) amount
+            FROM transactions t
+            INNER JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id
+            INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+            INNER JOIN articles a ON (a.id = ta.article_id)
+            INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
+            INNER JOIN groups g ON g.id = a.group_a_id
+            WHERE a.article_type = 1
+                AND t.bookkeeping_date BETWEEN '" . $date['start_secondary'] . "' AND '" . $date['end_secondary'] . "'
+                AND s.description = '" . $shop_name . "'
+            GROUP BY a.description, g.description
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function _get_payment_date_compare($conn, $date, $shop_name){
+        $sql = "
+            SELECT
+                'f' as od,
+                p.description payment_detail,
+                sum(COALESCE(tp.amount, 0)) price,
+                count(tp.transaction_id) qty
+            FROM transactions t
+            LEFT JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN trans_payments tp ON tp.transaction_id = t.id
+            INNER JOIN payments p ON p.id = tp.payment_id
+            WHERE t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description = '" . $shop_name . "'
+            GROUP BY p.description
+            UNION
+            SELECT
+                's' as od,
+                p.description payment_detail,
+                sum(COALESCE(tp.amount, 0)) price,
+                count(tp.transaction_id) qty
+            FROM transactions t
+            LEFT JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN trans_payments tp ON tp.transaction_id = t.id
+            INNER JOIN payments p ON p.id = tp.payment_id
+            WHERE t.bookkeeping_date BETWEEN '" . $date['start_secondary'] . "' AND '" . $date['end_secondary'] . "'
+                AND s.description = '" . $shop_name . "'
+            GROUP BY p.description
+        ";
         return $this->run_query($conn, $sql);
     }
 }
