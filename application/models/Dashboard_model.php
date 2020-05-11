@@ -1508,7 +1508,7 @@ class Dashboard_model extends CI_Model{
     function _get_sale_date_compare($conn, $date, $shop_name){
         $sql = "
             SELECT
-                cast(DATEPART(YEAR, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(MONTH, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(day, t.bookkeeping_date) as varchar) d,
+                'f' as od,
                 SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as netsale,
                 SUM(ta.price) as grossale
             FROM transactions t
@@ -1519,10 +1519,10 @@ class Dashboard_model extends CI_Model{
                 WHERE t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                 AND s.description = '" . $shop_name . "'
                 AND a.article_type = 1
-            GROUP BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
+            GROUP BY s.description
             UNION
             SELECT
-                cast(DATEPART(YEAR, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(MONTH, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(day, t.bookkeeping_date) as varchar) d,
+                's' as od,
                 SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as netsale,
                 SUM(ta.price) as grossale
             FROM transactions t
@@ -1533,7 +1533,7 @@ class Dashboard_model extends CI_Model{
                 WHERE t.bookkeeping_date BETWEEN '" . $date['start_secondary'] . "' AND '" . $date['end_secondary'] . "'
                 AND s.description = '" . $shop_name . "'
                 AND a.article_type = 1
-            GROUP BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
+            GROUP BY s.description
         ";
         return $this->run_query($conn, $sql);
     }

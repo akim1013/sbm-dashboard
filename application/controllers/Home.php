@@ -680,7 +680,7 @@ class Home extends MY_Controller {
 		$conn = parent::custom_dbconnect($db);
 		$ret = array(
 			'sales' => $this->dashboard_model->_get_sale_date_compare($conn, $date, $shop),
-			"transactions" => $this->dashboard_model->_get_trans_date_compare($conn, $date, $shops)
+			"transactions" => $this->dashboard_model->_get_trans_date_compare($conn, $date, $shop)
 		);
 		echo json_encode(array(
 			'status' => 'success',
