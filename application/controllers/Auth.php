@@ -54,6 +54,31 @@ class Auth extends CI_Controller {
             ));
         }
 	}
+	public function logHistory(){
+        $data = array(
+			'user_id' => $this->input->post('user_id'),
+			'event_description' => $this->input->post('event_description'),
+			'event_detail' => $this->input->post('event_detail')
+		);
+		$res = $this->user_model->logHistory($data);
+		echo json_encode(array(
+			'res' => $res
+		));
+	}
+	public function getHistory(){
+        $data = array(
+			'user' => $this->input->post('user_name')
+		);
+		$res = array(
+			'events' => $this->user_model->getEvents($data),
+			'logs' => $this->user_model->getLogs($data),
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+	}
     public function logout(){
         $this->session->unset_userdata('user_name');
         echo 1;

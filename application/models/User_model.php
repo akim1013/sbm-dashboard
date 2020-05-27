@@ -39,6 +39,93 @@
                 return $shop_name;
             }
         }
+        public function logHistory($data){
+
+            // Update events table
+            $this->db->select('*');
+            $this->db->where('user_id', $data['user_id']);
+            $this->db->from('events');
+            $events = $this->db->get();
+            if($events->num_rows() == 0){
+                $login = 0;
+                $page = 0;
+                $export = 0;
+                if($data['event_detail'] == 'login'){
+                    $login ++;
+                }else if($data['event_detail'] == 'page'){
+                    $page ++;
+                }else if($data['event_detail'] == 'export'){
+                    $export ++;
+                }else{
+
+                }
+                $this->db->insert('events', array(
+                    'user_id' => $data['user_id'],
+                    'login_counts' => $login,
+                    'page_visits' => $page,
+                    'export_counts' => $export
+                ));
+            }else{
+                $login = (int)$events->result()[0]->login_counts;
+                $page = (int)$events->result()[0]->page_visits;
+                $export = (int)$events->result()[0]->export_counts;
+                if($data['event_detail'] == 'login'){
+                    $login ++;
+                }else if($data['event_detail'] == 'page'){
+                    $page ++;
+                }else if($data['event_detail'] == 'export'){
+                    $export ++;
+                }else{
+
+                }
+                $update_event = array(
+                    'login_counts' => $login,
+                    'page_visits' => $page,
+                    'export_counts' => $export
+                );
+                $this->db->where('user_id', $data['user_id']);
+                $this->db->update('events', $update_event);
+            }
+
+            // Insert logs table
+            $this->db->insert('logs', array(
+                'user_id' => $data['user_id'],
+                'event_description' => $data['event_description']
+            ));
+        }
+        public function getEvents($data){
+            // Get user id, member_since and last_login
+            $this->db->select('*');
+            $this->db->where('name', $data['user']);
+            $this->db->from('users');
+            $res = $this->db->get();
+            $user_id = $res->result()[0]->id;
+            $member_since = $res->result()[0]->member_since;
+            $last_login = $res->result()[0]->last_login;
+            // Get events
+            $this->db->select('*');
+            $this->db->where('user_id', $user_id);
+            $this->db->from('events');
+            $events = $this->db->get()->result();
+
+            return array(
+                'member_since' => $member_since,
+                'last_login' => $last_login,
+                'events'    => $events
+            );
+        }
+        public function getLogs($data){
+            $this->db->select('*');
+            $this->db->where('name', $data['user']);
+            $this->db->from('users');
+            $user_id = $this->db->get()->result()[0]->id;
+
+            $this->db->select('*');
+            $this->db->where('user_id', $user_id);
+            $this->db->from('logs');
+            $logs = $this->db->get()->result();
+            return $logs;
+        }
         public function users(){
             $this->db->select('id, name, email, database, shop_name, member_since, last_login');
             return $this->db->get('users');
