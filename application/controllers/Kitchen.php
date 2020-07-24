@@ -19,12 +19,14 @@ class Kitchen extends CI_Controller {
 		);
 	}
 	public function logHistory(){
+        // Key check here.
         $data = array(
 			'shop_id'   => $this->input->post('shop_id'),
 			'type'      => $this->input->post('type'),
             'item_id'   => $this->input->post('item_id'),
             'item_name' => $this->input->post('item_name'),
             'qty'       => $this->input->post('qty'),
+            'reason'    => $this->input->post('reason'),
             'timestamp' => $this->input->post('timestamp')
 		);
 		$res = $this->kitchen_model->log_history($data);
