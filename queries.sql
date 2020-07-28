@@ -333,3 +333,32 @@ include(transaction_causal_id)
 create nonclustered index trans_count_idx
 on transactions (shop_id, bookkeeping_date)
 include(total_amount, tax_amount)
+
+
+// Kitchen
+SELECT
+	kt.item_id,
+    kt.item_name,
+    IFNULL(kt_cooked.qty, 0) cooked_qty,
+    IFNULL(kt_disposed.qty, 0) disposed_qty,
+    DATE_FORMAT(kt.timestamp, '%Y-%m-%d')
+FROM kt_histories kt
+LEFT JOIN (
+    SELECT  item_id,
+            SUM(qty) qty,
+            DATE_FORMAT(timestamp, '%Y-%m-%d')
+    FROM kt_histories
+    WHERE type = 'cook'
+    GROUP BY item_id, DATE_FORMAT(timestamp, '%Y-%m-%d')
+) kt_cooked ON kt.item_id = kt_cooked.item_id
+LEFT JOIN (
+    SELECT  item_id,
+            SUM(qty) qty,
+            DATE_FORMAT(timestamp, '%Y-%m-%d')
+    FROM kt_histories
+    WHERE type = 'dispose'
+    GROUP BY item_id, DATE_FORMAT(timestamp, '%Y-%m-%d')
+) kt_disposed ON kt.item_id = kt_disposed.item_id
+WHERE shop_id = 1 AND timestamp BETWEEN '2020-07-25' AND '2020-07-29'
+GROUP BY kt.item_id, DATE_FORMAT(kt.timestamp, '%Y-%m-%d')
+ORDER BY DATE_FORMAT(kt.timestamp, '%Y-%m-%d')
