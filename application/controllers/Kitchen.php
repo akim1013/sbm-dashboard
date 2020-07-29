@@ -34,4 +34,17 @@ class Kitchen extends CI_Controller {
 			'res' => $res
 		));
 	}
+
+	public function getHistory(){
+        // Key check here.
+        $data = array(
+			'shop_id'   => $this->input->post('shop_id'),
+			'from'      => $this->input->post('start'),
+            'to'   => $this->input->post('end')
+		);
+		$res = $this->kitchen_model->get_history($data);
+		echo json_encode(array(
+			'res' => $res
+		));
+	}
 }
