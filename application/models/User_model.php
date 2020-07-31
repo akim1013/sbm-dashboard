@@ -14,6 +14,7 @@
         public function update($data){
             $this->db->set('name', $data['name']);
             $this->db->set('shop_name', $data['shop_name']);
+            $this->db->set('password', $data['password']);
             $this->db->where('id', $data['id']);
             $res = $this->db->update('users');
             if($res > 0){
@@ -127,7 +128,7 @@
             return $logs;
         }
         public function users(){
-            $this->db->select('id, name, email, database, shop_name, member_since, last_login');
+            $this->db->select('id, name, email, password, database, shop_name, member_since, last_login');
             return $this->db->get('users');
         }
         private function validate($name){

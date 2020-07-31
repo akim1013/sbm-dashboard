@@ -22,7 +22,7 @@ class Auth extends CI_Controller {
 	public function login(){
 		$data = array(
 			'name' => $this->input->post('name'),
-			'password' => md5($this->input->post('password'))
+			'password' => $this->input->post('password')
 		);
 		$res = $this->user_model->login($data);
 		if($res != '0'){
@@ -87,7 +87,7 @@ class Auth extends CI_Controller {
         $data = array(
             'name'              => $this->input->post('name'),
             'email'             => $this->input->post('email'),
-            'password'          => md5($this->input->post('password')),
+            'password'          => $this->input->post('password'),
 			'database'			=> $this->input->post('database'),
 			'shop_name'			=> str_replace(']"', ']', str_replace('"[', '[', str_replace('\\', '', json_encode($this->input->post('shop'))))),
 			'member_since'		=> date("Y-m-d")
@@ -116,6 +116,7 @@ class Auth extends CI_Controller {
 		$data = array(
 			'id'				=> $this->input->post('id'),
             'name'              => $this->input->post('name'),
+			'password'			=> $this->input->post('password'),
 			'shop_name'			=> str_replace(']"', ']', str_replace('"[', '[', str_replace('\\', '', json_encode($this->input->post('shop')))))
         );
 
