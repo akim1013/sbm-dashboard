@@ -72,6 +72,7 @@ $lang['user_login_success']            = 'User logged in successfully';
 $lang['login_error']            = 'User name or Password incorrect';
 $lang['user_created_success']            = 'User created successfully';
 $lang['user_name_exist']            = 'User name exists. Please try with different name';
+$lang['user_code_exist']            = 'User code exists. Please try with different code';
 $lang['user_read_success']            = 'Read user data successfully';
 $lang['user_read_failed']            = 'Read user data failed';
 $lang['db_error']            = 'DB connection error';

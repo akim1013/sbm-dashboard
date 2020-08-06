@@ -112,6 +112,7 @@ class Auth extends CI_Controller {
             ));
         }
     }
+
 	public function update(){
 		$data = array(
 			'id'				=> $this->input->post('id'),
@@ -210,5 +211,81 @@ class Auth extends CI_Controller {
 				"msg" => lang('db_error')
 			 ));
 		}
+	}
+	public function kt_register(){
+        $data = array(
+            'username'              => $this->input->post('username'),
+            'usercode'             => $this->input->post('usercode'),
+            'db'          => $this->input->post('db'),
+			'shop'			=> $this->input->post('shop'),
+			'ktkey'			=> $this->input->post('ktkey'),
+			'created_at'	=> date("Y-m-d H:i:s")
+        );
+
+        $res = $this->user_model->kt_create($data);
+
+        if($res == 1){
+            echo json_encode(array(
+                'status' => 'success',
+                'msg'    => lang('user_created_success')
+            ));
+        }else if($res == 0){
+            echo json_encode(array(
+                'status' => 'failed',
+                'msg'    => lang('user_code_exist')
+            ));
+        }else{
+            echo json_encode(array(
+                'status' => 'failed',
+                'msg'    => lang('user_code_exist')
+            ));
+        }
+    }
+	public function kt_update(){
+        $data = array(
+            'id'              => $this->input->post('id'),
+			'username'              => $this->input->post('username'),
+            'usercode'             => $this->input->post('usercode'),
+            'db'          => $this->input->post('db'),
+			'shop'			=> $this->input->post('shop'),
+			'ktkey'			=> $this->input->post('ktkey')
+        );
+
+        $res = $this->user_model->kt_update($data);
+
+        if($res == 1){
+            echo json_encode(array(
+                'status' => 'success',
+                'msg'    => 'User updated'
+            ));
+        }else{
+            echo json_encode(array(
+                'status' => 'failed',
+                'msg'    => 'Unknown error'
+            ));
+        }
+    }
+	public function kt_users(){
+		$users = $this->user_model->kt_users();
+		if($users){
+			$res = array();
+			foreach ($users->result() as $row){
+				array_push($res, $row);
+			}
+			echo json_encode(array(
+				'status' => 'success',
+				'data' => $res,
+				'msg' => lang('user_read_success')
+			));
+		}else{
+			echo json_encode(array(
+				'status' => 'failed',
+				'msg' => lang('user_read_failed')
+			));
+		}
+	}
+	public function kt_delete(){
+		$res = $this->user_model->kt_delete($this->input->post('id'));
+		echo $res;
 	}
 }

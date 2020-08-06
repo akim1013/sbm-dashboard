@@ -169,5 +169,45 @@
         public function delete_presence($id){
             return $this->db->delete('presence', array('id' => $id));
         }
+
+        // Kitchen users
+        private function kt_validate($code){
+            $this->db->where('usercode', $code);
+            $this->db->from('kt_users');
+            return $this->db->get()->num_rows();
+        }
+
+        public function kt_create($data){
+            if($this->kt_validate($data['usercode']) > 0){
+                return 0; // User code exists
+            }
+            $res = $this->db->insert('kt_users', $data);
+            if($res > 0){
+                return 1; // User created successfully
+            }else{
+                return -1; // Database error
+            }
+        }
+        public function kt_update($data){
+            $this->db->set('username', $data['username']);
+            $this->db->set('usercode', $data['usercode']);
+            $this->db->set('db', $data['db']);
+            $this->db->set('shop', $data['shop']);
+            $this->db->set('ktkey', $data['ktkey']);
+            $this->db->where('id', $data['id']);
+            $res = $this->db->update('kt_users');
+            if($res > 0){
+                return 1; // User updated successfully
+            }else{
+                return -1; // Database error
+            }
+        }
+        public function kt_users(){
+            $this->db->select('id, username, usercode, db, shop, ktkey, activated, created_at, updated_at');
+            return $this->db->get('kt_users');
+        }
+        public function kt_delete($id){
+            return $this->db->delete('kt_users', array('id' => $id));
+        }
     }
 ?>
