@@ -831,7 +831,7 @@ class Dashboard_model extends CI_Model{
         return $this->run_query($conn, $sql);
     }
 
-    // API models redefine
+    // API models redefine v3
     // Net sale
     function _get_sale($conn, $date, $shop_name){
         $sql = "
@@ -935,7 +935,6 @@ class Dashboard_model extends CI_Model{
         ";
         return $this->run_query($conn, $sql);
     }
-
     // Tip
     function _get_tip($conn, $date, $shop_name){
         $sql = "
@@ -1363,6 +1362,39 @@ class Dashboard_model extends CI_Model{
             ORDER BY g.description, amount DESC, price DESC
         ";
         return $this->run_query($conn, $sql);
+    }
+
+    function _get_weekly_group_detail($conn, $date, $shop_name, $d, $group_id){
+        $sql = "
+            SELECT
+            cast(DATEPART(YEAR, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(MONTH, t.bookkeeping_date) as varchar) + '-' + cast(DATEPART(day, t.bookkeeping_date) as varchar) d,
+            g.id as group_id,
+            g.description as group_description,
+            a.id as article_id,
+            a.description as article_description,
+            SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as price,
+            count(ta.price) amount
+            FROM transactions t
+            INNER JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id
+            INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+            INNER JOIN articles a ON (a.id = ta.article_id)
+            INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
+            INNER JOIN groups g ON g.id = a." . $group_id . "
+            WHERE
+                a.article_type = 1
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description = '" . $shop_name . "'
+            GROUP BY a.id, a.description, g.id, g.description, DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
+            ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date), g.description, amount DESC, price DESC
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function _get_weekly_sale_detail($conn, $date, $shop_name, $d, $group_id){
+        return 'sale detail';
+    }
+    function _get_weekly_payment_detail($conn, $date, $shop_name, $d, $group_id){
+        return 'payment detail';
     }
 
     function _get_sale_compare($conn, $date, $shops){
