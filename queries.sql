@@ -362,3 +362,24 @@ LEFT JOIN (
 WHERE shop_id = 1 AND timestamp BETWEEN '2020-07-25' AND '2020-07-29'
 GROUP BY kt.item_id, DATE_FORMAT(kt.timestamp, '%Y-%m-%d')
 ORDER BY DATE_FORMAT(kt.timestamp, '%Y-%m-%d')
+
+// Hourly detail
+SELECT a.h, a.article_count article_count, b.trans_count trans_count, a.netsale netsale
+FROM (SELECT DATEPART(hour, t.trans_date) h, COUNT(t.id) article_count, SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as netsale
+FROM transactions t
+LEFT JOIN shops s ON s.id = t.shop_id
+INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+WHERE t.delete_operator_id IS NULL
+    AND t.bookkeeping_date BETWEEN '2020-08-10' AND '2020-08-10'
+    AND s.description = 'TEMPLE'
+GROUP BY DATEPART(hour, t.trans_date)
+) a
+LEFT JOIN (SELECT DATEPART(hour, t.trans_date) h, COUNT(t.id) trans_count
+FROM transactions t
+LEFT JOIN shops s ON s.id = t.shop_id
+WHERE t.delete_operator_id IS NULL
+    AND t.bookkeeping_date BETWEEN '2020-08-10' AND '2020-08-10'
+    AND s.description = 'TEMPLE'
+GROUP BY DATEPART(hour, t.trans_date)
+) b ON a.h = b.h
+ORDER BY a.h

@@ -1767,5 +1767,29 @@ class Dashboard_model extends CI_Model{
         ";
         return $this->run_query($conn, $sql);
     }
+    function _get_hourly_detail($conn, $date, $shop_name){
+        $sql = "
+            SELECT a.h, a.article_count article_count, b.trans_count trans_count, a.netsale netsale
+            FROM (SELECT DATEPART(hour, t.trans_date) h, COUNT(t.id) article_count, SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as netsale
+            FROM transactions t
+            LEFT JOIN shops s ON s.id = t.shop_id
+            INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description = '" . $shop_name . "'
+            GROUP BY DATEPART(hour, t.trans_date)
+            ) a
+            LEFT JOIN (SELECT DATEPART(hour, t.trans_date) h, COUNT(t.id) trans_count
+            FROM transactions t
+            LEFT JOIN shops s ON s.id = t.shop_id
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description = '" . $shop_name . "'
+            GROUP BY DATEPART(hour, t.trans_date)
+            ) b ON a.h = b.h
+            ORDER BY a.h
+        ";
+        return $this->run_query($conn, $sql);
+    }
 }
 ?>

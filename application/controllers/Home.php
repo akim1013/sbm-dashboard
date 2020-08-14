@@ -761,4 +761,23 @@ class Home extends MY_Controller {
 		));
 		sqlsrv_close($conn);
 	}
+
+	public function hourly_detail(){
+		$date = array(
+			"start" => $this->input->post('from'),
+			"end"	=> $this->input->post('to')
+		);
+		$shop = $this->input->post('shop');
+		$db = $this->input->post('db');
+		$conn = parent::custom_dbconnect($db);
+		$ret = array(
+			"hourly_detail"		=> $this->dashboard_model->_get_hourly_detail($conn, $date, $shop)
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
 }
