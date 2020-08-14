@@ -1791,5 +1791,31 @@ class Dashboard_model extends CI_Model{
         ";
         return $this->run_query($conn, $sql);
     }
+    function _get_hourly_detail_article($conn, $date, $shop_name, $group_id, $h){
+        $sql = "
+            SELECT
+            g.id as group_id,
+            g.description as group_description,
+            a.id as article_id,
+            a.description as article_description,
+            SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as price,
+            count(ta.price) amount
+            FROM transactions t
+            INNER JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id
+            INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+            INNER JOIN articles a ON (a.id = ta.article_id)
+            INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
+            INNER JOIN groups g ON g.id = a." . $group_id . "
+            WHERE
+                a.article_type = 1
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description = '" . $shop_name . "'
+                AND DATEPART(hour, t.trans_date) = '" . $h . "'
+            GROUP BY DATEPART(hour, t.trans_date), a.id, a.description, g.id, g.description
+            ORDER BY DATEPART(hour, t.trans_date), g.description, amount DESC, price DESC
+        ";
+        return $this->run_query($conn, $sql);
+    }
 }
 ?>

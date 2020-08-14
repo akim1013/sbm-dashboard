@@ -780,4 +780,24 @@ class Home extends MY_Controller {
 		));
 		sqlsrv_close($conn);
 	}
+	public function hourly_detail_article(){
+		$date = array(
+			"start" => $this->input->post('from'),
+			"end"	=> $this->input->post('to')
+		);
+		$shop = $this->input->post('shop');
+		$db = $this->input->post('db');
+		$group_id = $this->input->post('group_id');
+		$h = $this->input->post('h');
+		$conn = parent::custom_dbconnect($db);
+		$ret = array(
+			"hourly_detail_article"		=> $this->dashboard_model->_get_hourly_detail_article($conn, $date, $shop, $group_id, $h)
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
 }

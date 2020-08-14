@@ -383,3 +383,26 @@ WHERE t.delete_operator_id IS NULL
 GROUP BY DATEPART(hour, t.trans_date)
 ) b ON a.h = b.h
 ORDER BY a.h
+
+// Hourly items
+SELECT
+    g.id as group_id,
+    g.description as group_description,
+    a.id as article_id,
+    a.description as article_description,
+    SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as price,
+    count(ta.price) amount
+FROM transactions t
+INNER JOIN shops s ON s.id = t.shop_id
+LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id
+INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+INNER JOIN articles a ON (a.id = ta.article_id)
+INNER JOIN measure_units mu ON (mu.id = a.measure_unit_id)
+INNER JOIN groups g ON g.id = a.group_a_id
+WHERE
+        a.article_type = 1
+        AND t.bookkeeping_date BETWEEN '2020-08-10' AND '2020-08-10'
+		AND s.description = 'TEMPLE'
+		AND DATEPART(hour, t.trans_date) = '11'
+GROUP BY DATEPART(hour, t.trans_date), a.id, a.description, g.id, g.description
+ORDER BY DATEPART(hour, t.trans_date), g.description, amount DESC, price DESC
