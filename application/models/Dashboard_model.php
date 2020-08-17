@@ -1774,7 +1774,9 @@ class Dashboard_model extends CI_Model{
             FROM transactions t
             LEFT JOIN shops s ON s.id = t.shop_id
             INNER JOIN trans_articles ta ON (ta.transaction_id = t.id)
+            LEFT JOIN articles ar ON ar.id = ta.article_id
             WHERE t.delete_operator_id IS NULL
+            	AND ar.article_type = 1
                 AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                 AND s.description = '" . $shop_name . "'
             GROUP BY DATEPART(hour, t.trans_date)
