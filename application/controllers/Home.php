@@ -800,4 +800,27 @@ class Home extends MY_Controller {
 		));
 		sqlsrv_close($conn);
 	}
+
+	public function monthly_detail(){
+		$date = array(
+			"start" => $this->input->post('from'),
+			"end"	=> $this->input->post('to')
+		);
+		$shop = $this->input->post('shop');
+		$db = $this->input->post('db');
+		$conn = parent::custom_dbconnect($db);
+		$ret = array(
+			"m_sale" 		=> $this->dashboard_model->get_m_sale($conn, $date, $shop),
+			"m_count" 		=> $this->dashboard_model->get_m_count($conn, $date, $shop),
+			"m_cup" 		=> $this->dashboard_model->get_m_cups($conn, $date, $shop),
+			"m_ac" 			=> $this->dashboard_model->get_m_ac($conn, $date, $shop),
+			"m_drink" 		=> $this->dashboard_model->get_m_drinks($conn, $date, $shop)
+		);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $ret
+		));
+		sqlsrv_close($conn);
+	}
 }
