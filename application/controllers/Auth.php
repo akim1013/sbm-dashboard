@@ -67,7 +67,9 @@ class Auth extends CI_Controller {
 	}
 	public function getHistory(){
         $data = array(
-			'user' => $this->input->post('user_name')
+			'user' => $this->input->post('user_name'),
+			'start' => $this->input->post('from'),
+			"end"	=> $this->input->post('to')
 		);
 		$res = array(
 			'events' => $this->user_model->getEvents($data),
@@ -89,7 +91,7 @@ class Auth extends CI_Controller {
             'email'             => $this->input->post('email'),
             'password'          => $this->input->post('password'),
 			'database'			=> $this->input->post('database'),
-			'shop_name'			=> str_replace(']"', ']', str_replace('"[', '[', str_replace('\\', '', json_encode($this->input->post('shop'))))),
+			'shop_name'			=> $this->input->post('shop'),
 			'member_since'		=> date("Y-m-d")
         );
 
@@ -118,7 +120,7 @@ class Auth extends CI_Controller {
 			'id'				=> $this->input->post('id'),
             'name'              => $this->input->post('name'),
 			'password'			=> $this->input->post('password'),
-			'shop_name'			=> str_replace(']"', ']', str_replace('"[', '[', str_replace('\\', '', json_encode($this->input->post('shop')))))
+			'shop_name'			=> $this->input->post('shop')
         );
 
         $res = $this->user_model->update($data);
@@ -161,8 +163,10 @@ class Auth extends CI_Controller {
 		echo $res;
 	}
 	public function db(){
+		// $serverName = "84.242.182.150,9433";
+		// $connectionInfo = array( "Database"=>"master", "UID"=>"sa", "PWD"=>"Tcpos2020*!", "CharacterSet" => "UTF-8");
 		$serverName = "198.11.172.117";
-		$connectionInfo = array( "Database"=>"master", "UID"=>"laguna", "PWD"=>"goqkdtks.1234");
+		$connectionInfo = array( "Database"=>'master', "UID"=>"laguna", "PWD"=>"goqkdtks.1234");
 		$conn = sqlsrv_connect( $serverName, $connectionInfo);
 		if( $conn ) {
 			$sql = "SELECT name FROM master.sys.databases";
@@ -184,9 +188,12 @@ class Auth extends CI_Controller {
 	}
 	public function shop(){
 		$db = $this->input->post('db');
+		// $serverName = "84.242.182.150,9433";
+		// $connectionInfo = array( "Database"=>$db, "UID"=>"sa", "PWD"=>"Tcpos2020*!", "CharacterSet" => "UTF-8");
 		$serverName = "198.11.172.117";
 		$connectionInfo = array( "Database"=>$db, "UID"=>"laguna", "PWD"=>"goqkdtks.1234");
 		$conn = sqlsrv_connect( $serverName, $connectionInfo);
+
 		if( $conn ) {
 			$sql = "SELECT id, description FROM shops";
 			$query = sqlsrv_query( $conn, $sql );
@@ -202,7 +209,8 @@ class Auth extends CI_Controller {
 				}
 				echo json_encode(array(
 				   "status" => 'success',
-				   "data" => $ret
+				   "data" => $ret,
+				   "test" => bin2hex($ret[3]['description'])
 				));
 			}
 		}else{

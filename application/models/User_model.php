@@ -123,6 +123,8 @@
 
             $this->db->select('*');
             $this->db->where('user_id', $user_id);
+            $this->db->where('timestamp >=', $data['start']);
+            $this->db->where('timestamp <=', $data['end']);
             $this->db->from('logs');
             $logs = $this->db->get()->result();
             return $logs;

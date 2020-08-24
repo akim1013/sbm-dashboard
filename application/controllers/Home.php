@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-
+header('Content-Type: text/html; charset=utf-8');
 class Home extends MY_Controller {
 	public function __construct(){
 		parent::__construct();
