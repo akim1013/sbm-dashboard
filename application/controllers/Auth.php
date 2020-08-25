@@ -186,12 +186,70 @@ class Auth extends CI_Controller {
 			 ));
 		}
 	}
+	public function __db(){
+		$serverName = "84.242.182.150,9433";
+		$connectionInfo = array( "Database"=>"master", "UID"=>"sa", "PWD"=>"Tcpos2020*!", "CharacterSet" => "UTF-8");
+		// $serverName = "198.11.172.117";
+		// $connectionInfo = array( "Database"=>'master', "UID"=>"laguna", "PWD"=>"goqkdtks.1234");
+		$conn = sqlsrv_connect( $serverName, $connectionInfo);
+		if( $conn ) {
+			$sql = "SELECT name FROM master.sys.databases";
+			$query = sqlsrv_query( $conn, $sql );
+	        $ret = array();
+	        while( $row = sqlsrv_fetch_array( $query, SQLSRV_FETCH_ASSOC) ) {
+				  array_push($ret, $row);
+			}
+			echo json_encode(array(
+			   "status" => 'success',
+			   "data" => $ret
+			));
+		}else{
+		     echo json_encode(array(
+				"status" => 'failed',
+				"msg" => lang('db_error')
+			 ));
+		}
+	}
 	public function shop(){
 		$db = $this->input->post('db');
 		// $serverName = "84.242.182.150,9433";
 		// $connectionInfo = array( "Database"=>$db, "UID"=>"sa", "PWD"=>"Tcpos2020*!", "CharacterSet" => "UTF-8");
 		$serverName = "198.11.172.117";
 		$connectionInfo = array( "Database"=>$db, "UID"=>"laguna", "PWD"=>"goqkdtks.1234");
+		$conn = sqlsrv_connect( $serverName, $connectionInfo);
+
+		if( $conn ) {
+			$sql = "SELECT id, description FROM shops";
+			$query = sqlsrv_query( $conn, $sql );
+			if(!$query){
+				echo json_encode(array(
+				   "status" => 'failed',
+				   "msg" => lang('not_found_shop')
+				));
+			}else{
+				$ret = array();
+		        while( $row = sqlsrv_fetch_array( $query, SQLSRV_FETCH_ASSOC) ) {
+					  array_push($ret, $row);
+				}
+				echo json_encode(array(
+				   "status" => 'success',
+				   "data" => $ret,
+				   "test" => bin2hex($ret[3]['description'])
+				));
+			}
+		}else{
+		     echo json_encode(array(
+				"status" => 'failed',
+				"msg" => lang('db_error')
+			 ));
+		}
+	}
+	public function __shop(){
+		$db = $this->input->post('db');
+		$serverName = "84.242.182.150,9433";
+		$connectionInfo = array( "Database"=>$db, "UID"=>"sa", "PWD"=>"Tcpos2020*!", "CharacterSet" => "UTF-8");
+		// $serverName = "198.11.172.117";
+		// $connectionInfo = array( "Database"=>$db, "UID"=>"laguna", "PWD"=>"goqkdtks.1234");
 		$conn = sqlsrv_connect( $serverName, $connectionInfo);
 
 		if( $conn ) {
