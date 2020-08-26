@@ -186,7 +186,7 @@ class Auth extends CI_Controller {
 			 ));
 		}
 	}
-	public function __db(){
+	public function db_secondary(){
 		$serverName = "84.242.182.150,9433";
 		$connectionInfo = array( "Database"=>"master", "UID"=>"sa", "PWD"=>"Tcpos2020*!", "CharacterSet" => "UTF-8");
 		// $serverName = "198.11.172.117";
@@ -244,7 +244,7 @@ class Auth extends CI_Controller {
 			 ));
 		}
 	}
-	public function __shop(){
+	public function shop_secondary(){
 		$db = $this->input->post('db');
 		$serverName = "84.242.182.150,9433";
 		$connectionInfo = array( "Database"=>$db, "UID"=>"sa", "PWD"=>"Tcpos2020*!", "CharacterSet" => "UTF-8");
