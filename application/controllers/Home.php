@@ -814,7 +814,11 @@ class Home extends MY_Controller {
 			"m_count" 		=> $this->dashboard_model->get_m_count($conn, $date, $shop),
 			"m_cup" 		=> $this->dashboard_model->get_m_cups($conn, $date, $shop),
 			"m_ac" 			=> $this->dashboard_model->get_m_ac($conn, $date, $shop),
-			"m_drink" 		=> $this->dashboard_model->get_m_drinks($conn, $date, $shop)
+			"m_drink" 		=> $this->dashboard_model->get_m_drinks($conn, $date, $shop),
+			"m_waffle"		=> $this->dashboard_model->get_m_waffle($conn, $date, $shop),
+			"m_desert"		=> $this->dashboard_model->get_m_desert($conn, $date, $shop),
+			"m_toastie"		=> $this->dashboard_model->get_m_toastie($conn, $date, $shop),
+			"m_hl_cup"		=> $this->dashboard_model->get_m_hl_cup($conn, $date, $shop)
 		);
 		echo json_encode(array(
 			'status' => 'success',

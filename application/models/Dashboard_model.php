@@ -668,10 +668,91 @@ class Dashboard_model extends CI_Model{
             LEFT JOIN articles a ON a.id = ta.article_id
             LEFT JOIN groups g ON a.group_a_id = g.id
             WHERE t.delete_operator_id IS NULL
-        		AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+        		    AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                 AND s.description IN ('" . $shop_name . "')
                 AND g.description LIKE '%drink%'
                 AND g.description NOT LIKE '%coffee%'
+                GROUP BY DATEPART(day, t.bookkeeping_date), DATEPART(WEEKDAY, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(YEAR, t.bookkeeping_date)
+                ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
+        ";
+        return $this->run_query($conn, $sql);
+    }
+
+    function get_m_waffle($conn, $date, $shop_name){
+        $sql = "
+            SELECT
+                DATEPART(YEAR, t.bookkeeping_date) y, DATEPART(MONTH, t.bookkeeping_date) m, DATEPART(day, t.bookkeeping_date) d,
+                SUM(ta.price) waffle
+            FROM trans_articles ta
+            LEFT JOIN transactions t ON t.id=ta.transaction_id
+            LEFT JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN articles a ON a.id = ta.article_id
+            LEFT JOIN groups g ON a.group_a_id = g.id
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description IN ('" . $shop_name . "')
+                AND g.description LIKE '%snack%'
+                AND a.description LIKE '%waffle%'
+            GROUP BY DATEPART(day, t.bookkeeping_date), DATEPART(WEEKDAY, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(YEAR, t.bookkeeping_date)
+            ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
+        ";
+        return $this->run_query($conn, $sql);
+    }
+
+    function get_m_desert($conn, $date, $shop_name){
+        $sql = "
+            SELECT
+                DATEPART(YEAR, t.bookkeeping_date) y, DATEPART(MONTH, t.bookkeeping_date) m, DATEPART(day, t.bookkeeping_date) d,
+                SUM(ta.price) desert
+            FROM trans_articles ta
+            LEFT JOIN transactions t ON t.id=ta.transaction_id
+            LEFT JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN articles a ON a.id = ta.article_id
+            LEFT JOIN groups g ON a.group_a_id = g.id
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description IN ('" . $shop_name . "')
+                AND g.description = 'Cake'
+            GROUP BY DATEPART(day, t.bookkeeping_date), DATEPART(WEEKDAY, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(YEAR, t.bookkeeping_date)
+            ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function get_m_toastie($conn, $date, $shop_name){
+        $sql = "
+            SELECT
+                DATEPART(YEAR, t.bookkeeping_date) y, DATEPART(MONTH, t.bookkeeping_date) m, DATEPART(day, t.bookkeeping_date) d,
+                SUM(ta.price) toastie
+            FROM trans_articles ta
+            LEFT JOIN transactions t ON t.id=ta.transaction_id
+            LEFT JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN articles a ON a.id = ta.article_id
+            LEFT JOIN groups g ON a.group_a_id = g.id
+            WHERE t.delete_operator_id IS NULL
+                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description IN ('" . $shop_name . "')
+                AND g.description = 'toastie'
+            GROUP BY DATEPART(day, t.bookkeeping_date), DATEPART(WEEKDAY, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(YEAR, t.bookkeeping_date)
+            ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
+        ";
+        return $this->run_query($conn, $sql);
+    }
+    function get_m_hl_cup($conn, $date, $shop_name){
+        $sql = "
+            SELECT
+                DATEPART(YEAR, t.bookkeeping_date) y, DATEPART(MONTH, t.bookkeeping_date) m, DATEPART(day, t.bookkeeping_date) d, DATEPART(WEEKDAY, t.bookkeeping_date) w,
+                COUNT(*) hl_cup
+            FROM trans_articles ta
+            LEFT JOIN transactions t ON t.id=ta.transaction_id
+            LEFT JOIN shops s ON s.id = t.shop_id
+            LEFT JOIN articles a ON a.id = ta.article_id
+            LEFT JOIN groups g ON a.group_c_id = g.id
+            WHERE t.delete_operator_id IS NULL
+        		    AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND s.description IN ('" . $shop_name . "')
+                AND g.description NOT LIKE '%snack%'
+                AND g.description NOT LIKE '%cake%'
+                AND g.description NOT LIKE '%topping%'
                 GROUP BY DATEPART(day, t.bookkeeping_date), DATEPART(WEEKDAY, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(YEAR, t.bookkeeping_date)
                 ORDER BY DATEPART(YEAR, t.bookkeeping_date), DATEPART(MONTH, t.bookkeeping_date), DATEPART(day, t.bookkeeping_date)
         ";
