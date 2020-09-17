@@ -87,12 +87,14 @@ class Auth extends CI_Controller {
 	}
     public function register(){
         $data = array(
-            'name'              => $this->input->post('name'),
-            'email'             => $this->input->post('email'),
-            'password'          => $this->input->post('password'),
-			'database'			=> $this->input->post('database'),
-			'shop_name'			=> $this->input->post('shop'),
-			'member_since'		=> date("Y-m-d")
+            'name'            => $this->input->post('name'),
+            'email'           => $this->input->post('email'),
+            'password'        => $this->input->post('password'),
+						'database'				=> $this->input->post('database'),
+						'shop_name'				=> $this->input->post('shop'),
+						'access'					=> $this->input->post('access'),
+						'role'						=> $this->input->post('role'),
+						'member_since'		=> date("Y-m-d")
         );
 
         $res = $this->user_model->create($data);
@@ -118,24 +120,26 @@ class Auth extends CI_Controller {
 	public function update(){
 		$data = array(
 			'id'				=> $this->input->post('id'),
-            'name'              => $this->input->post('name'),
-			'password'			=> $this->input->post('password'),
-			'shop_name'			=> $this->input->post('shop')
-        );
+      'name'      => $this->input->post('name'),
+			'password'	=> $this->input->post('password'),
+			'shop_name'	=> $this->input->post('shop'),
+			'role'			=> $this->input->post('role'),
+			'database' 	=> $this->input->post('database'),
+			'access'		=> $this->input->post('access')
+    );
 
-        $res = $this->user_model->update($data);
-
-        if($res == 1){
-            echo json_encode(array(
-                'status' => 'success',
-                'msg'    => 'User updated'
-            ));
-        }else{
-            echo json_encode(array(
-                'status' => 'failed',
-                'msg'    => 'Unknown error'
-            ));
-        }
+    $res = $this->user_model->update($data);
+    if($res == 1){
+        echo json_encode(array(
+            'status' => 'success',
+            'msg'    => 'User updated'
+        ));
+    }else{
+        echo json_encode(array(
+            'status' => 'failed',
+            'msg'    => 'Unknown error'
+        ));
+    }
 	}
 	public function users(){
 		$users = $this->user_model->users();
@@ -233,8 +237,7 @@ class Auth extends CI_Controller {
 				}
 				echo json_encode(array(
 				   "status" => 'success',
-				   "data" => $ret,
-				   "test" => bin2hex($ret[3]['description'])
+				   "data" => $ret
 				));
 			}
 		}else{

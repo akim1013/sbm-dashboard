@@ -14,7 +14,10 @@
         public function update($data){
             $this->db->set('name', $data['name']);
             $this->db->set('shop_name', $data['shop_name']);
+            $this->db->set('database', $data['database']);
             $this->db->set('password', $data['password']);
+            $this->db->set('role', $data['role']);
+            $this->db->set('access', $data['access']);
             $this->db->where('id', $data['id']);
             $res = $this->db->update('users');
             if($res > 0){
@@ -24,7 +27,7 @@
             }
         }
         public function login($data){
-            $this->db->select('id, name, email, database, shop_name, member_since, last_login');
+            $this->db->select('*');
             $this->db->where('name', $data['name']);
             $this->db->where('password', $data['password']);
             $this->db->from('users');
@@ -36,8 +39,8 @@
                 $this->db->set('last_login', date("Y-m-d H:i:s"));
                 $this->db->where('id', $res->result()[0]->id);
                 $this->db->update('users');
-                $shop_name = $res->result()[0];
-                return $shop_name;
+                $user_info = $res->result()[0];
+                return $user_info;
             }
         }
         public function logHistory($data){
@@ -130,7 +133,7 @@
             return $logs;
         }
         public function users(){
-            $this->db->select('id, name, email, password, database, shop_name, member_since, last_login');
+            $this->db->select('*');
             return $this->db->get('users');
         }
         private function validate($name){
