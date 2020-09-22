@@ -54,6 +54,27 @@ class Auth extends CI_Controller {
             ));
         }
 	}
+	public function ps_login(){
+		$data = array(
+			'name' => $this->input->post('name'),
+			'password' => $this->input->post('password'),
+			'access' => 'purchasing_system'
+		);
+		$res = $this->user_model->ps_login($data);
+		if($res != '0'){
+			echo json_encode(array(
+				'status' => 'success',
+				'msg'    => lang('user_login_success'),
+				'res' => $res
+			));
+    }else{
+			echo json_encode(array(
+				'status' => 'failed',
+				'msg'    => lang('login_error'),
+				'res'	=> $res
+			));
+		}
+	}
 	public function logHistory(){
         $data = array(
 			'user_id' => $this->input->post('user_id'),

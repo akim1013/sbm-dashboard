@@ -43,6 +43,24 @@
                 return $user_info;
             }
         }
+        public function ps_login($data){
+            $this->db->select('*');
+            $this->db->where('name', $data['name']);
+            $this->db->where('password', $data['password']);
+            $this->db->where('access', $data['access']);
+            $this->db->from('users');
+            $res = $this->db->get();
+
+            if($res->num_rows() == 0){
+                return '0';
+            }else{
+                $this->db->set('last_login', date("Y-m-d H:i:s"));
+                $this->db->where('id', $res->result()[0]->id);
+                $this->db->update('users');
+                $user = $res->result()[0];
+                return $user;
+            }
+        }
         public function logHistory($data){
 
             // Update events table
