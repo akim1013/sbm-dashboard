@@ -76,7 +76,7 @@ class Auth extends CI_Controller {
 		}
 	}
 	public function logHistory(){
-        $data = array(
+    $data = array(
 			'user_id' => $this->input->post('user_id'),
 			'event_description' => $this->input->post('event_description'),
 			'event_detail' => $this->input->post('event_detail')
