@@ -132,4 +132,28 @@ class Ps extends CI_Controller {
 			'data' => $res
 		));
   }
+	public function filter_items($items){
+		$valid = array();
+		$invalid_ids = array();
+		foreach($items as $item){
+			$flag = $this->ps_model->validate($item->inventory_id);
+			if($flag == 0){
+				array_push($valid, $item);
+			}else{
+				array_push($invalid_ids, $item->inventory_id);
+			}
+		}
+		return array('items' => $valid, 'invalid_ids' => $invalid_ids);
+	}
+	public function add_batch_item(){
+		$items = json_decode($this->input->post('items'));
+		$filtered = $this->filter_items($items);
+		$res = $this->ps_model->add_batch_item($filtered['items']);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res,
+			'invalid_ids' => $filtered['invalid_ids']
+		));
+	}
 }

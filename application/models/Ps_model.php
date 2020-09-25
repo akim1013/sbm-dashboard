@@ -46,7 +46,7 @@ class Ps_model extends CI_model{
         return -1;
     }
   }
-  private function validate($inventory_id){
+  public function validate($inventory_id){
     $this->db->where('inventory_id', $inventory_id);
     $this->db->from('ps_items');
     return $this->db->get()->num_rows();
@@ -79,6 +79,28 @@ class Ps_model extends CI_model{
   }
   public function remove_item($inventory_id){
     return $this->db->delete('ps_items', array('inventory_id' => $inventory_id));
+  }
+  public function add_batch_item($data){
+    $sql = "INSERT INTO ps_items (inventory_id,branch,gross_weight,category,vendor_description,description,image,packing_info,uom,price,cbm,qty,moq,status,qty_display,user_access,created_user_id) VALUES ";
+    $idx = 0;
+    foreach($data as $array){
+      $idx++;
+      $sql = $sql . "(";
+      $count = 0;
+      foreach($array as $item){
+        $count++;
+        $sql = $sql . "'" . $item . "'";
+        if($count != 17){
+          $sql = $sql . ", ";
+        }
+      }
+      $sql = $sql . ")";
+      if($idx != count($data)){
+        $sql = $sql . ", ";
+      }
+    }
+    $res = $this->db->query($sql);
+    return $res;
   }
 }
 ?>
