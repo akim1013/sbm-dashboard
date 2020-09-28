@@ -154,6 +154,17 @@
             $this->db->select('*');
             return $this->db->get('users');
         }
+        public function get_ps_users(){
+          $res = array();
+          $this->db->select('id, name');
+          $this->db->where('access', 'purchasing_system');
+          $this->db->from('users');
+          $data = $this->db->get();
+          foreach ($data->result() as $row){
+              array_push($res, $row);
+          }
+          return $res;
+        }
         private function validate($name){
             $this->db->where('name', $name);
             $this->db->from('users');

@@ -8,6 +8,7 @@ class Ps extends CI_Controller {
 		$this->load->helper('url');
 		$this->load->library('session');
 		$this->load->model('ps_model');
+		$this->load->model('user_model');
   }
   public function add_item(){
     $item = array(
@@ -154,6 +155,57 @@ class Ps extends CI_Controller {
 			'status_code' => 200,
 			'data' => $res,
 			'invalid_ids' => $filtered['invalid_ids']
+		));
+	}
+	public function add_order(){
+		$order = array(
+			'order_id' => $this->input->post('order_id'),
+			'customer_id' => $this->input->post('customer_id'),
+			'order_time' => $this->input->post('order_time')
+		);
+		$items = json_decode($this->input->post('items'));
+		$res = $this->ps_model->add_order($order);
+		if($res == 1){
+			$res = $this->ps_model->add_order_items($this->input->post('order_id'), $items);
+		}
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+	}
+	public function get_orders(){
+		$customer_id = $this->input->post('customer_id');
+    $res = $this->ps_model->get_orders($customer_id);
+    echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+  }
+	public function get_all_orders(){
+    $res = $this->ps_model->get_all_orders();
+    echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+  }
+	public function get_order_details(){
+		$order_id = $this->input->post('order_id');
+    $res = $this->ps_model->get_order_details($order_id);
+    echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+  }
+	public function get_ps_users(){
+		$res = $this->user_model->get_ps_users();
+    echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
 		));
 	}
 }

@@ -102,5 +102,55 @@ class Ps_model extends CI_model{
     $res = $this->db->query($sql);
     return $res;
   }
+  public function add_order($order){
+    $res = $this->db->insert('ps_orders', $order);
+    if($res > 0){
+      return 1;
+    }else{
+      return -1;
+    }
+  }
+  public function add_order_items($order_id, $items){
+    $sql = "INSERT INTO ps_order_details (order_id, item_id, qty) VALUES";
+    $idx = 0;
+    foreach($items as $item){
+      $idx++;
+      $sql = $sql . "('" . $order_id . "', " . "'" . $item->item_id . "', " . "'" . $item->qty . "')";
+      if($idx != count($items)){
+        $sql = $sql . ", ";
+      }
+    }
+    $res = $this->db->query($sql);
+    return $res;
+  }
+  public function get_orders($customer_id){
+    $ret = array();
+    $this->db->select('*');
+    $this->db->where('customer_id', $customer_id);
+    $query = $this->db->get('ps_orders');
+    foreach ($query->result() as $row){
+      array_push($ret, $row);
+    }
+    return $ret;
+  }
+  public function get_all_orders(){
+    $ret = array();
+    $this->db->select('*');
+    $query = $this->db->get('ps_orders');
+    foreach ($query->result() as $row){
+      array_push($ret, $row);
+    }
+    return $ret;
+  }
+  public function get_order_details($order_id){
+    $ret = array();
+    $this->db->select('*');
+    $this->db->where('order_id', $order_id);
+    $query = $this->db->get('ps_order_details');
+    foreach ($query->result() as $row){
+      array_push($ret, $row);
+    }
+    return $ret;
+  }
 }
 ?>
