@@ -123,9 +123,12 @@ class Ps_model extends CI_model{
     $res = $this->db->query($sql);
     return $res;
   }
-  public function get_orders($customer_id){
+  public function get_orders($customer_id, $limit){
     $ret = array();
     $this->db->select('*');
+    if($limit != 0){
+      $this->db->limit($limit);
+    }
     $this->db->where('customer_id', $customer_id);
     $query = $this->db->get('ps_orders');
     foreach ($query->result() as $row){
@@ -151,6 +154,21 @@ class Ps_model extends CI_model{
       array_push($ret, $row);
     }
     return $ret;
+  }
+  public function approve_order($order_id){
+    $this->db->set('status', 'approved');
+    $this->db->where('order_id', $order_id);
+    $res = $this->db->update('ps_orders');
+    if($res > 0){
+        return true;
+    }else{
+        return false;
+    }
+  }
+  public function delete_order($order_id){
+    $res1 = $this->db->delete('ps_orders', array('order_id' => $order_id));
+    $res2 = $this->db->delete('ps_order_details', array('order_id' => $order_id));
+    return $res1 && $res2;
   }
 }
 ?>

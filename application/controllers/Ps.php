@@ -175,8 +175,9 @@ class Ps extends CI_Controller {
 		));
 	}
 	public function get_orders(){
+		$limit = $this->input->post('limit');
 		$customer_id = $this->input->post('customer_id');
-    $res = $this->ps_model->get_orders($customer_id);
+    $res = $this->ps_model->get_orders($customer_id, $limit);
     echo json_encode(array(
 			'status' => 'success',
 			'status_code' => 200,
@@ -202,6 +203,24 @@ class Ps extends CI_Controller {
   }
 	public function get_ps_users(){
 		$res = $this->user_model->get_ps_users();
+    echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+	}
+	public function approve_order(){
+		$order_id = $this->input->post('order_id');
+		$res = $this->ps_model->approve_order($order_id);
+    echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+	}
+	public function delete_order(){
+		$order_id = $this->input->post('order_id');
+		$res = $this->ps_model->delete_order($order_id);
     echo json_encode(array(
 			'status' => 'success',
 			'status_code' => 200,
