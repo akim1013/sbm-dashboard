@@ -12,7 +12,6 @@ class Ps_model extends CI_model{
     }
   }
   public function update_item($data, $inventory_id){
-    $this->db->set('branch', $data['branch']);
     $this->db->set('created_user_id', $data['created_user_id']);
     $this->db->set('user_access', $data['user_access']);
     $this->db->set('gross_weight', $data['gross_weight']);
@@ -81,7 +80,7 @@ class Ps_model extends CI_model{
     return $this->db->delete('ps_items', array('inventory_id' => $inventory_id));
   }
   public function add_batch_item($data){
-    $sql = "INSERT INTO ps_items (inventory_id,branch,gross_weight,category,vendor_description,description,image,packing_info,uom,price,cbm,qty,moq,status,qty_display,user_access,created_user_id) VALUES ";
+    $sql = "INSERT INTO ps_items (inventory_id,gross_weight,category,vendor_description,description,image,packing_info,uom,price,cbm,qty,moq,status,qty_display,user_access,created_user_id) VALUES ";
     $idx = 0;
     foreach($data as $array){
       $idx++;
@@ -90,7 +89,7 @@ class Ps_model extends CI_model{
       foreach($array as $item){
         $count++;
         $sql = $sql . "'" . $item . "'";
-        if($count != 17){
+        if($count != 16){
           $sql = $sql . ", ";
         }
       }

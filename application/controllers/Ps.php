@@ -13,7 +13,6 @@ class Ps extends CI_Controller {
   public function add_item(){
     $item = array(
       'inventory_id' => $this->input->post('inventory_id'),
-      'branch' => $this->input->post('branch'),
       'created_user_id' => $this->input->post('created_user_id'),
       'user_access' => $this->input->post('user_access'),
       'gross_weight' => $this->input->post('gross_weight'),
@@ -50,7 +49,6 @@ class Ps extends CI_Controller {
   }
   public function update_item(){
     $item = array(
-      'branch' => $this->input->post('branch'),
       'created_user_id' => $this->input->post('created_user_id'),
       'user_access' => $this->input->post('user_access'),
       'gross_weight' => $this->input->post('gross_weight'),
