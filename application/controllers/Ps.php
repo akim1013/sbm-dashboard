@@ -225,4 +225,38 @@ class Ps extends CI_Controller {
 			'data' => $res
 		));
 	}
+	public function send_mail(){
+		$this->load->library('email');
+		$config = array();
+		$config['protocol'] = 'smtp';
+		$config['smtp_host'] = 'a2plcpnl0005.prod.iad2.secureserver.net';
+		$config['smtp_user'] = 'purchasing-system@dashboard.sbmtec.com';
+		$config['smtp_pass'] = 'M=+,36S!eQt5';
+		$config['smtp_port'] = 587;
+		$this->email->initialize($config);
+
+		$from = 'purchasing-system@dashboard.sbmtec.com';
+    $to = $this->input->post('to');
+    $subject = $this->input->post('subject');
+    $message = $this->input->post('message');
+
+		$this->email->set_newline("\r\n");
+    $this->email->from($from);
+    $this->email->to($to);
+    $this->email->subject($subject);
+    $this->email->message($message);
+		if ($this->email->send()) {
+			echo json_encode(array(
+				'status' => 'success',
+				'status_code' => 200,
+				'data' => "Mail sent successfully!"
+			));
+    } else {
+			echo json_encode(array(
+				'status' => 'failed',
+				'status_code' => 400,
+				'data' => show_error($this->email->print_debugger())
+			));
+    }
+	}
 }
