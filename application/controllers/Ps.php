@@ -2,6 +2,12 @@
 header("Access-Control-Allow-Methods: *");
 header("Access-Control-Allow-Headers: *");
 defined('BASEPATH') OR exit('No direct script access allowed');
+
+require 'vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 class Ps extends CI_Controller {
 	public function __construct(){
 		parent::__construct();
@@ -226,30 +232,76 @@ class Ps extends CI_Controller {
 		));
 	}
 	public function send_mail(){
+
+		$spreadsheet = new Spreadsheet();
+		$sheet = $spreadsheet->getActiveSheet();
+		$sheet->setCellValue('A1', "Branch ID");
+		$sheet->setCellValue('B1', "sorting order by weights");
+		$sheet->setCellValue('C1', "Inventory ID");
+		$sheet->setCellValue('D1', "Vendor description");
+		$sheet->setCellValue('E1', "Description");
+		$sheet->setCellValue('F1', "Packing info");
+		$sheet->setCellValue('G1', "Cost");
+		$sheet->setCellValue('H1', "Q'ty");
+		$sheet->setCellValue('I1', "Customer Unit of Measurment");
+		$sheet->setCellValue('J1', "Subtotal");
+		$sheet->setCellValue('K1', "G.W. (lb)");
+		$sheet->setCellValue('L1', "Total G.W. (lb)");
+		$sheet->setCellValue('M1', 'Subcharge(20%)');
+		$sheet->setCellValue('N1', "max order q'ty");
+		$sheet->setCellValue('O1', "cbm");
+		$data = json_decode($this->input->post('order_details'));
+		$file_name = $this->input->post('po_id') . '.xlsx';
+
+		$rows = 2;
+		foreach ($data as $val){
+      $sheet->setCellValue('A' . $rows, $val->branch_id);
+      $sheet->setCellValue('B' . $rows, $val->g_weight);
+      $sheet->setCellValue('C' . $rows, $val->i_id);
+      $sheet->setCellValue('D' . $rows, $val->v_desc);
+			$sheet->setCellValue('E' . $rows, $val->desc);
+      $sheet->setCellValue('F' . $rows, $val->p_info);
+			$sheet->setCellValue('G' . $rows, $val->cost);
+			$sheet->setCellValue('H' . $rows, $val->qty);
+			$sheet->setCellValue('I' . $rows, $val->uom);
+			$sheet->setCellValue('J' . $rows, $val->subtotal);
+			$sheet->setCellValue('K' . $rows, $val->gw);
+			$sheet->setCellValue('L' . $rows, $val->t_gw);
+			$sheet->setCellValue('M' . $rows, $val->subcharge);
+			$sheet->setCellValue('N' . $rows, $val->moq);
+			$sheet->setCellValue('O' . $rows, $val->cbm);
+      $rows++;
+    }
+		$writer = new Xlsx($spreadsheet);
+
+		$writer->save("C:/inetpub/wwwroot/sbm-dashboard/uploads/orders/".$file_name);
+
 		$this->load->library('email');
 		$config = array();
 		$config['protocol'] = 'smtp';
 		$config['smtp_host'] = 'a2plcpnl0005.prod.iad2.secureserver.net';
-		$config['smtp_user'] = 'purchasing-system@dashboard.sbmtec.com';
-		$config['smtp_pass'] = 'M=+,36S!eQt5';
+		$config['smtp_user'] = 'dashboard@sbmtec.com';
+		$config['smtp_pass'] = '#R%c2O[G]WL@';
 		$config['smtp_port'] = 587;
 		$this->email->initialize($config);
 
-		$from = 'purchasing-system@dashboard.sbmtec.com';
+		$from = 'dashboard@sbmtec.com';
     $to = $this->input->post('to');
     $subject = $this->input->post('subject');
     $message = $this->input->post('message');
-
+		
 		$this->email->set_newline("\r\n");
-    $this->email->from($from);
+    $this->email->from($from, 'Purchasing System');
     $this->email->to($to);
     $this->email->subject($subject);
     $this->email->message($message);
+		$this->email->attach("C:/inetpub/wwwroot/sbm-dashboard/uploads/orders/".$file_name);
 		if ($this->email->send()) {
 			echo json_encode(array(
 				'status' => 'success',
 				'status_code' => 200,
-				'data' => "Mail sent successfully!"
+				'data' => "Mail sent successfully!",
+				'content' => $data
 			));
     } else {
 			echo json_encode(array(
