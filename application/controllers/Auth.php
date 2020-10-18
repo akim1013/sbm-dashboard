@@ -102,41 +102,41 @@ class Auth extends CI_Controller {
 			'data' => $res
 		));
 	}
-    public function logout(){
-        $this->session->unset_userdata('user_name');
-        echo 1;
+  public function logout(){
+    $this->session->unset_userdata('user_name');
+    echo 1;
 	}
-    public function register(){
-        $data = array(
-            'name'            => $this->input->post('name'),
-            'email'           => $this->input->post('email'),
-            'password'        => $this->input->post('password'),
-						'database'				=> $this->input->post('database'),
-						'shop_name'				=> $this->input->post('shop'),
-						'access'					=> $this->input->post('access'),
-						'role'						=> $this->input->post('role'),
-						'member_since'		=> date("Y-m-d")
-        );
+  public function register(){
+      $data = array(
+          'name'            => $this->input->post('name'),
+          'email'           => $this->input->post('email'),
+          'password'        => $this->input->post('password'),
+					'database'				=> $this->input->post('database'),
+					'shop_name'				=> $this->input->post('shop'),
+					'access'					=> $this->input->post('access'),
+					'role'						=> $this->input->post('role'),
+					'member_since'		=> date("Y-m-d")
+      );
 
-        $res = $this->user_model->create($data);
+      $res = $this->user_model->create($data);
 
-        if($res == 1){
-            echo json_encode(array(
-                'status' => 'success',
-                'msg'    => lang('user_created_success')
-            ));
-        }else if($res == 0){
-            echo json_encode(array(
-                'status' => 'failed',
-                'msg'    => lang('user_name_exist')
-            ));
-        }else{
-            echo json_encode(array(
-                'status' => 'failed',
-                'msg'    => lang('user_name_exist')
-            ));
-        }
-    }
+      if($res == 1){
+          echo json_encode(array(
+              'status' => 'success',
+              'msg'    => lang('user_created_success')
+          ));
+      }else if($res == 0){
+          echo json_encode(array(
+              'status' => 'failed',
+              'msg'    => lang('user_name_exist')
+          ));
+      }else{
+          echo json_encode(array(
+              'status' => 'failed',
+              'msg'    => lang('user_name_exist')
+          ));
+      }
+  }
 
 	public function update(){
 		$data = array(

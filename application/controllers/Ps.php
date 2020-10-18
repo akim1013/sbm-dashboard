@@ -276,6 +276,11 @@ class Ps extends CI_Controller {
 
 		$writer->save("C:/inetpub/wwwroot/sbm-dashboard/uploads/orders/".$file_name);
 
+		$order_info = array();
+		$order_info['order_id'] = $this->input->post('po_id');
+		$order_info['items'] = $data;
+		$order_info['user_name'] = $this->input->post('user_name');
+
 		$this->load->library('email');
 		$config = array();
 		$config['protocol'] = 'smtp';
@@ -283,13 +288,16 @@ class Ps extends CI_Controller {
 		$config['smtp_user'] = 'dashboard@sbmtec.com';
 		$config['smtp_pass'] = '#R%c2O[G]WL@';
 		$config['smtp_port'] = 587;
+		$config['charset'] = 'utf-8';
+		$config['wordwrap'] = TRUE;
+		$config['mailtype'] = 'html';
 		$this->email->initialize($config);
 
 		$from = 'dashboard@sbmtec.com';
     $to = $this->input->post('to');
     $subject = $this->input->post('subject');
-    $message = $this->input->post('message');
-		
+    $message = $this->load->view('email/po_mail', $order_info, true);
+
 		$this->email->set_newline("\r\n");
     $this->email->from($from, 'Purchasing System');
     $this->email->to($to);
