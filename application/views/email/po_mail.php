@@ -832,7 +832,7 @@
 													Your order is pending. You will get an email notification when your order is approved by team.
 												</p>
 												<p style="Margin-top: 0;Margin-bottom: 10px;"><em>Thank you for your business.</em></p>
-                        <p style="Margin-top: 0;Margin-bottom: 20px;">#SHOP_NAME</p>
+                        <p style="Margin-top: 0;Margin-bottom: 20px; color: red;"><?php echo $company;?></p>
 											</div>
 										</div>
 

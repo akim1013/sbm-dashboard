@@ -99,11 +99,15 @@ class Ps extends CI_Controller {
       'data' => $res
     ));
   }
+	private function get_extension($file) {
+		$ret = explode('/', explode(';', $file)[0])[1];
+		return $ret;
+	}
   private function upload_file($file, $inventory_id){
     $target_dir = 'C:/inetpub/wwwroot/sbm-dashboard/uploads/'; // add the specific path to save the file
     $data = explode(',', $file);
     $decoded_file = base64_decode($data[1]); // decode the file
-    $extension = explode('/', mime_content_type($file))[1]; // extract extension from mime type
+    $extension = $this->get_extension($file); // extract extension from mime type
     $file_name = uniqid() .'.'. $extension; // rename file as a unique name
     $file_dir = $target_dir . $file_name;
     try {
@@ -114,7 +118,8 @@ class Ps extends CI_Controller {
     }
   }
   public function get_item(){
-    $res = $this->ps_model->get_item();
+		$company = $this->input->post('company');
+    $res = $this->ps_model->get_item($company);
     echo json_encode(array(
 			'status' => 'success',
 			'status_code' => 200,
@@ -189,7 +194,8 @@ class Ps extends CI_Controller {
 		));
   }
 	public function get_all_orders(){
-    $res = $this->ps_model->get_all_orders();
+		$company = $this->input->post('company');
+    $res = $this->ps_model->get_all_orders($company);
     echo json_encode(array(
 			'status' => 'success',
 			'status_code' => 200,
@@ -280,6 +286,7 @@ class Ps extends CI_Controller {
 		$order_info['order_id'] = $this->input->post('po_id');
 		$order_info['items'] = $data;
 		$order_info['user_name'] = $this->input->post('user_name');
+		$order_info['company'] = $this->input->post('company');
 
 		$this->load->library('email');
 		$config = array();

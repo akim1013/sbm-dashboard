@@ -60,10 +60,13 @@ class Ps_model extends CI_model{
         return 0;
     }
   }
-  public function get_item(){
+  public function get_item($company){
     $ret = array();
-    $this->db->select('*');
-    $query = $this->db->get('ps_items');
+    $this->db->select('ps_items.*');
+    $this->db->from('ps_items');
+    $this->db->join('users', 'users.id = ps_items.created_user_id', 'left');
+    $this->db->where('users.company', $company);
+    $query = $this->db->get();
     foreach ($query->result() as $row){
       array_push($ret, $row);
     }
@@ -135,10 +138,13 @@ class Ps_model extends CI_model{
     }
     return $ret;
   }
-  public function get_all_orders(){
+  public function get_all_orders($company){
     $ret = array();
-    $this->db->select('*');
-    $query = $this->db->get('ps_orders');
+    $this->db->select('ps_orders.*');
+    $this->db->from('ps_orders');
+    $this->db->join('users', 'users.id = ps_orders.customer_id', 'left');
+    $this->db->where('users.company', $company);
+    $query = $this->db->get();
     foreach ($query->result() as $row){
       array_push($ret, $row);
     }
