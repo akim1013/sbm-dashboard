@@ -115,6 +115,7 @@ class Auth extends CI_Controller {
 					'shop_name'				=> $this->input->post('shop'),
 					'access'					=> $this->input->post('access'),
 					'role'						=> $this->input->post('role'),
+					'company'					=> $this->input->post('company'),
 					'member_since'		=> date("Y-m-d")
       );
 
@@ -146,7 +147,8 @@ class Auth extends CI_Controller {
 			'shop_name'	=> $this->input->post('shop'),
 			'role'			=> $this->input->post('role'),
 			'database' 	=> $this->input->post('database'),
-			'access'		=> $this->input->post('access')
+			'access'		=> $this->input->post('access'),
+			'company'					=> $this->input->post('company')
     );
 
     $res = $this->user_model->update($data);

@@ -18,6 +18,7 @@
             $this->db->set('password', $data['password']);
             $this->db->set('role', $data['role']);
             $this->db->set('access', $data['access']);
+            $this->db->set('company', $data['company']);
             $this->db->where('id', $data['id']);
             $res = $this->db->update('users');
             if($res > 0){
@@ -156,7 +157,7 @@
         }
         public function get_ps_users(){
           $res = array();
-          $this->db->select('id, name');
+          $this->db->select('id, name, email, company');
           $this->db->where('access', 'purchasing_system');
           $this->db->from('users');
           $data = $this->db->get();
