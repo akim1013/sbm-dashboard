@@ -240,6 +240,8 @@ class Ps extends CI_Controller {
 	public function send_mail(){
 
 		$spreadsheet = new Spreadsheet();
+		$spreadsheet->getActiveSheet()->getDefaultColumnDimension()->setWidth(20);
+		$spreadsheet->getActiveSheet()->getDefaultRowDimension()->setRowHeight(20);
 		$sheet = $spreadsheet->getActiveSheet();
 		$sheet->setCellValue('A1', "Branch ID");
 		$sheet->setCellValue('B1', "sorting order by weights");
