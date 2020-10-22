@@ -160,8 +160,11 @@ class Ps_model extends CI_model{
     }
     return $ret;
   }
-  public function approve_order($order_id){
-    $this->db->set('status', 'approved');
+  public function update_order_status($order_id, $status, $shipment_date, $shipment_ref_number, $updated_date){
+    $this->db->set('status', $status);
+    $this->db->set('shipment_date', $shipment_date);
+    $this->db->set('shipment_ref_number', $shipment_ref_number);
+    $this->db->set('updated_date', $updated_date);
     $this->db->where('order_id', $order_id);
     $res = $this->db->update('ps_orders');
     if($res > 0){
@@ -174,6 +177,20 @@ class Ps_model extends CI_model{
     $res1 = $this->db->delete('ps_orders', array('order_id' => $order_id));
     $res2 = $this->db->delete('ps_order_details', array('order_id' => $order_id));
     return $res1 && $res2;
+  }
+  public function update_order($ordered_item, $item){
+    $this->db->set('qty', $ordered_item->qty);
+    $this->db->where('id', $ordered_item->id);
+    $res1 = $this->db->update('ps_order_details');
+
+    $this->db->set('price', $item->price);
+    $this->db->where('id', $item->id);
+    $res2 = $this->db->update('ps_items');
+
+    return $res1 && $res2;
+  }
+  public function delete_ordered_item($item){
+    return $this->db->delete('ps_order_details', array('id' => $item->id));
   }
 }
 ?>

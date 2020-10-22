@@ -99,6 +99,34 @@ class Ps extends CI_Controller {
       'data' => $res
     ));
   }
+	public function update_order(){
+		$ordered_item = json_decode($this->input->post('item'));
+		$item = json_decode($this->input->post('g_item'));
+		$res = $this->ps_model->update_order($ordered_item, $item);
+		echo json_encode(array(
+      'status' => 'success',
+      'status_code' => 200,
+      'data' => $res
+    ));
+	}
+	public function delete_ordered_item(){
+		$ordered_item = json_decode($this->input->post('item'));
+		$res = $this->ps_model->delete_ordered_item($ordered_item);
+		echo json_encode(array(
+      'status' => 'success',
+      'status_code' => 200,
+      'data' => $res
+    ));
+	}
+	public function add_additional_items_to_order(){
+		$items = json_decode($this->input->post('items'));
+		$res = $this->ps_model->add_order_items($this->input->post('order_id'), $items);
+		echo json_encode(array(
+      'status' => 'success',
+      'status_code' => 200,
+      'data' => $res
+    ));
+	}
 	private function get_extension($file) {
 		$ret = explode('/', explode(';', $file)[0])[1];
 		return $ret;
@@ -219,9 +247,13 @@ class Ps extends CI_Controller {
 			'data' => $res
 		));
 	}
-	public function approve_order(){
+	public function update_order_status(){
 		$order_id = $this->input->post('order_id');
-		$res = $this->ps_model->approve_order($order_id);
+		$status = $this->input->post('status');
+		$shipment_date = $this->input->post('shipment_date');
+		$shipment_ref_number = $this->input->post('shipment_ref_number');
+		$updated_date = date("Y-m-d H:i:s");
+		$res = $this->ps_model->update_order_status($order_id, $status, $shipment_date, $shipment_ref_number, $updated_date);
     echo json_encode(array(
 			'status' => 'success',
 			'status_code' => 200,
