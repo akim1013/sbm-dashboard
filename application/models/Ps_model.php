@@ -105,14 +105,34 @@ class Ps_model extends CI_model{
     return $res;
   }
   public function add_order($order){
-    $res = $this->db->insert('ps_orders', $order);
-    if($res > 0){
-      return 1;
+    $this->db->where('order_id', $order['order_id']);
+    $this->db->from('ps_orders');
+    $temp = $this->db->get()->num_rows();
+    if($temp == 0){
+      $res = $this->db->insert('ps_orders', $order);
+      if($res > 0){
+        return 1;
+      }else{
+        return -1;
+      }
     }else{
-      return -1;
+      // update if order is existing -- for draft orders
+      $this->db->set('status', $order['status']);
+      $this->db->set('updated_date', date("Y-m-d H:i:s"));
+      $this->db->where('order_id', $order['order_id']);
+      $res = $this->db->update('ps_orders');
+      if($res > 0){
+        return 1;
+      }else{
+        return -1;
+      }
     }
   }
-  public function add_order_items($order_id, $items){
+  public function add_order_items($order_id, $items, $flag){
+    if($flag != 1){
+      $this->db->delete('ps_order_details', array('order_id' => $order_id));
+    }
+
     $sql = "INSERT INTO ps_order_details (order_id, item_id, qty) VALUES";
     $idx = 0;
     foreach($items as $item){
@@ -132,6 +152,8 @@ class Ps_model extends CI_model{
       $this->db->limit($limit);
     }
     $this->db->where('customer_id', $customer_id);
+    $this->db->order_by('order_time', 'DESC');
+    
     $query = $this->db->get('ps_orders');
     foreach ($query->result() as $row){
       array_push($ret, $row);
@@ -144,6 +166,9 @@ class Ps_model extends CI_model{
     $this->db->from('ps_orders');
     $this->db->join('users', 'users.id = ps_orders.customer_id', 'left');
     $this->db->where('users.company', $company);
+
+    $this->db->order_by('order_time', 'DESC');
+    
     $query = $this->db->get();
     foreach ($query->result() as $row){
       array_push($ret, $row);

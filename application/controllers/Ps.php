@@ -120,7 +120,7 @@ class Ps extends CI_Controller {
 	}
 	public function add_additional_items_to_order(){
 		$items = json_decode($this->input->post('items'));
-		$res = $this->ps_model->add_order_items($this->input->post('order_id'), $items);
+		$res = $this->ps_model->add_order_items($this->input->post('order_id'), $items, 1);
 		echo json_encode(array(
       'status' => 'success',
       'status_code' => 200,
@@ -198,12 +198,17 @@ class Ps extends CI_Controller {
 		$order = array(
 			'order_id' => $this->input->post('order_id'),
 			'customer_id' => $this->input->post('customer_id'),
-			'order_time' => $this->input->post('order_time')
+			'order_time' => $this->input->post('order_time'),
+			'status' => $this->input->post('status')
 		);
 		$items = json_decode($this->input->post('items'));
 		$res = $this->ps_model->add_order($order);
 		if($res == 1){
-			$res = $this->ps_model->add_order_items($this->input->post('order_id'), $items);
+			$res = $this->ps_model->add_order_items($this->input->post('order_id'), $items, 0);
+		}else{
+			echo json_encode(array(
+				'status' => 'failed'
+			));
 		}
 		echo json_encode(array(
 			'status' => 'success',
