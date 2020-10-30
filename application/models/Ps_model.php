@@ -83,26 +83,41 @@ class Ps_model extends CI_model{
     return $this->db->delete('ps_items', array('inventory_id' => $inventory_id));
   }
   public function add_batch_item($data){
-    $sql = "INSERT INTO ps_items (inventory_id,gross_weight,category,vendor_description,description,image,packing_info,uom,price,cbm,qty,moq,status,qty_display,user_access,created_user_id) VALUES ";
-    $idx = 0;
-    foreach($data as $array){
-      $idx++;
-      $sql = $sql . "(";
-      $count = 0;
-      foreach($array as $item){
-        $count++;
-        $sql = $sql . "'" . $item . "'";
-        if($count != 16){
-          $sql = $sql . ", ";
+    if(count($data) == 0){
+      return 1; // Nothing to be added
+    }
+    $res = $this->db->insert_batch('ps_items', $data);
+    return $res;
+  }
+  public function update_batch_item($ids, $data){
+    if(count($data) == 0){
+      return 1;
+    }
+    // $this->db->update_batch('ps_items', $data, 'sales_price');
+    // $this->db->update_batch('ps_items', $data, 'qty');
+    // $this->db->update_batch('ps_items', $data, 'moq');
+    // $this->db->update_batch('ps_items', $data, 'cbm');
+    // $this->db->update_batch('ps_items', $data, 'price');
+    // $this->db->update_batch('ps_items', $data, 'gross_weight');
+    // $this->db->update_batch('ps_items', $data, 'packing_info');
+    foreach($ids as $id){
+      foreach($data as $item){
+        if($id == $item->inventory_id){
+          $_item = array(
+            'sales_price' => $item->sales_price,
+            'qty' => $item->qty,
+            'moq' => $item->moq,
+            'cbm' => $item->cbm,
+            'price' => $item->price,
+            'gross_weight' => $item->gross_weight,
+            'packing_info' => $item->packing_info
+          );
+          $this->db->where('inventory_id', $id);
+          $this->db->update('ps_items', $_item);
         }
       }
-      $sql = $sql . ")";
-      if($idx != count($data)){
-        $sql = $sql . ", ";
-      }
     }
-    $res = $this->db->query($sql);
-    return $res;
+    return 1;
   }
   public function add_order($order){
     $this->db->where('order_id', $order['order_id']);
@@ -153,7 +168,7 @@ class Ps_model extends CI_model{
     }
     $this->db->where('customer_id', $customer_id);
     $this->db->order_by('order_time', 'DESC');
-    
+
     $query = $this->db->get('ps_orders');
     foreach ($query->result() as $row){
       array_push($ret, $row);
@@ -168,7 +183,7 @@ class Ps_model extends CI_model{
     $this->db->where('users.company', $company);
 
     $this->db->order_by('order_time', 'DESC');
-    
+
     $query = $this->db->get();
     foreach ($query->result() as $row){
       array_push($ret, $row);
