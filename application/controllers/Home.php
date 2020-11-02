@@ -32,7 +32,7 @@ class Home extends MY_Controller {
 		}
 	}
 	public function dbtest2(){
-		$servername = "107.180.14.68:3306";
+		$servername = "148.72.102.229:3306";
 		$username = "admin-present";
 		$password = "Tcpos2018";
 

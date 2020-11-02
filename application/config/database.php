@@ -75,14 +75,11 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => '107.180.14.68',
+	'hostname' => '148.72.102.229',
 	'username' => 'sbmdashboard',
 	'password' => 'Sbmtec2019!',
 	'database' => 'sbmdashboard',
-	// 'hostname' => 'localhost',
-	// 'username' => 'root',
-	// 'password' => '',
-	// 'database' => 'sbm-dashboard',
+
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
