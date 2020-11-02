@@ -255,6 +255,15 @@ class Ps extends CI_Controller {
 			'data' => $res
 		));
 	}
+	public function get_ps_admin(){
+		$company = $this->input->post('company');
+		$res = $this->user_model->get_ps_admin($company);
+    echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+	}
 	public function update_order_status(){
 		$order_id = $this->input->post('order_id');
 		$status = $this->input->post('status');
@@ -277,72 +286,31 @@ class Ps extends CI_Controller {
 			'data' => $res
 		));
 	}
-	public function send_mail(){
-
-		$spreadsheet = new Spreadsheet();
-		$spreadsheet->getActiveSheet()->getDefaultColumnDimension()->setWidth(20);
-		$spreadsheet->getActiveSheet()->getDefaultRowDimension()->setRowHeight(20);
-		$sheet = $spreadsheet->getActiveSheet();
-		$sheet->setCellValue('A1', "Branch ID");
-		$sheet->setCellValue('B1', "sorting order by weights");
-		$sheet->setCellValue('C1', "Inventory ID");
-		$sheet->setCellValue('D1', "Vendor description");
-		$sheet->setCellValue('E1', "Description");
-		$sheet->setCellValue('F1', "Packing info");
-		$sheet->setCellValue('G1', "Cost");
-		$sheet->setCellValue('H1', "Q'ty");
-		$sheet->setCellValue('I1', "Customer Unit of Measurment");
-		$sheet->setCellValue('J1', "Subtotal");
-		$sheet->setCellValue('K1', "G.W. (lb)");
-		$sheet->setCellValue('L1', "Total G.W. (lb)");
-		$sheet->setCellValue('M1', 'Subcharge(20%)');
-		$sheet->setCellValue('N1', "max order q'ty");
-		$sheet->setCellValue('O1', "cbm");
-		$data = json_decode($this->input->post('order_details'));
-		$file_name = $this->input->post('po_id') . '.xlsx';
-
-		$rows = 2;
-		foreach ($data as $val){
-      $sheet->setCellValue('A' . $rows, $val->branch_id);
-      $sheet->setCellValue('B' . $rows, $val->g_weight);
-      $sheet->setCellValue('C' . $rows, $val->i_id);
-      $sheet->setCellValue('D' . $rows, $val->v_desc);
-			$sheet->setCellValue('E' . $rows, $val->desc);
-      $sheet->setCellValue('F' . $rows, $val->p_info);
-			$sheet->setCellValue('G' . $rows, $val->cost);
-			$sheet->setCellValue('H' . $rows, $val->qty);
-			$sheet->setCellValue('I' . $rows, $val->uom);
-			$sheet->setCellValue('J' . $rows, $val->subtotal);
-			$sheet->setCellValue('K' . $rows, $val->gw);
-			$sheet->setCellValue('L' . $rows, $val->t_gw);
-			$sheet->setCellValue('M' . $rows, $val->subcharge);
-			$sheet->setCellValue('N' . $rows, $val->moq);
-			$sheet->setCellValue('O' . $rows, $val->cbm);
-      $rows++;
-    }
-		$writer = new Xlsx($spreadsheet);
-
-		$writer->save("C:/inetpub/wwwroot/sbm-dashboard/uploads/orders/".$file_name);
-
+	public function send_mail_to_user(){
 		$order_info = array();
-		$order_info['order_id'] = $this->input->post('po_id');
-		$order_info['items'] = $data;
+		$order_info['order_id'] = $this->input->post('order_id');
+		$order_info['items'] = json_decode($this->input->post('item_details'));
 		$order_info['user_name'] = $this->input->post('user_name');
 		$order_info['company'] = $this->input->post('company');
+
+		$order_info['total_price'] = $this->input->post('total_price');
+		$order_info['info_dry'] = json_decode($this->input->post('info_dry'));
+		$order_info['info_frozen'] = json_decode($this->input->post('info_frozen'));
+		$order_info['message'] = $this->input->post('message');
 
 		$this->load->library('email');
 		$config = array();
 		$config['protocol'] = 'smtp';
 		$config['smtp_host'] = 'a2plcpnl0005.prod.iad2.secureserver.net';
-		$config['smtp_user'] = 'dashboard@sbmtec.com';
-		$config['smtp_pass'] = '#R%c2O[G]WL@';
+		$config['smtp_user'] = 'purchasingsystem@sbmtec.com';
+		$config['smtp_pass'] = '@a3Q(3,iCOAR';
 		$config['smtp_port'] = 587;
 		$config['charset'] = 'utf-8';
 		$config['wordwrap'] = TRUE;
 		$config['mailtype'] = 'html';
 		$this->email->initialize($config);
 
-		$from = 'dashboard@sbmtec.com';
+		$from = 'purchasingsystem@sbmtec.com';
     $to = $this->input->post('to');
     $subject = $this->input->post('subject');
     $message = $this->load->view('email/po_mail', $order_info, true);
@@ -352,13 +320,102 @@ class Ps extends CI_Controller {
     $this->email->to($to);
     $this->email->subject($subject);
     $this->email->message($message);
-		$this->email->attach("C:/inetpub/wwwroot/sbm-dashboard/uploads/orders/".$file_name);
+
 		if ($this->email->send()) {
 			echo json_encode(array(
 				'status' => 'success',
 				'status_code' => 200,
-				'data' => "Mail sent successfully!",
-				'content' => $data
+				'data' => "Mail sent successfully!"
+			));
+    } else {
+			echo json_encode(array(
+				'status' => 'failed',
+				'status_code' => 400,
+				'data' => show_error($this->email->print_debugger())
+			));
+    }
+	}
+	public function send_mail_to_admin(){
+		$order_info = array();
+		$order_info['order_id'] = $this->input->post('order_id');
+		$order_info['items'] = json_decode($this->input->post('item_details'));
+		$order_info['user_name'] = $this->input->post('user_name');
+		$order_info['admin_name'] = $this->input->post('admin_name');
+		$order_info['company'] = $this->input->post('company');
+
+		$order_info['total_price'] = $this->input->post('total_price');
+		$order_info['info_dry'] = json_decode($this->input->post('info_dry'));
+		$order_info['info_frozen'] = json_decode($this->input->post('info_frozen'));
+		$order_info['message'] = $this->input->post('message');
+
+		$this->load->library('email');
+		$config = array();
+		$config['protocol'] = 'smtp';
+		$config['smtp_host'] = 'a2plcpnl0005.prod.iad2.secureserver.net';
+		$config['smtp_user'] = 'purchasingsystem@sbmtec.com';
+		$config['smtp_pass'] = '@a3Q(3,iCOAR';
+		$config['smtp_port'] = 587;
+		$config['charset'] = 'utf-8';
+		$config['wordwrap'] = TRUE;
+		$config['mailtype'] = 'html';
+		$this->email->initialize($config);
+
+		$from = 'purchasingsystem@sbmtec.com';
+    $to = $this->input->post('to');
+    $subject = $this->input->post('subject');
+    $message = $this->load->view('email/po_admin_mail', $order_info, true);
+
+		$this->email->set_newline("\r\n");
+    $this->email->from($from, 'Purchasing System');
+    $this->email->to($to);
+    $this->email->subject($subject);
+    $this->email->message($message);
+
+		if ($this->email->send()) {
+			echo json_encode(array(
+				'status' => 'success',
+				'status_code' => 200,
+				'data' => "Mail sent successfully!"
+			));
+    } else {
+			echo json_encode(array(
+				'status' => 'failed',
+				'status_code' => 400,
+				'data' => show_error($this->email->print_debugger())
+			));
+    }
+	}
+	public function send_status_update_mail(){
+		$user = json_decode($this->input->post('user'));
+
+		$this->load->library('email');
+		$config = array();
+		$config['protocol'] = 'smtp';
+		$config['smtp_host'] = 'a2plcpnl0005.prod.iad2.secureserver.net';
+		$config['smtp_user'] = 'purchasingsystem@sbmtec.com';
+		$config['smtp_pass'] = '@a3Q(3,iCOAR';
+		$config['smtp_port'] = 587;
+		$config['charset'] = 'utf-8';
+		$config['wordwrap'] = TRUE;
+		$config['mailtype'] = 'html';
+		$this->email->initialize($config);
+
+		$from = 'purchasingsystem@sbmtec.com';
+    $to = $user->email;
+    $subject = $this->input->post('subject');
+    $message = $this->input->post('message');
+
+		$this->email->set_newline("\r\n");
+    $this->email->from($from, 'Purchasing System');
+    $this->email->to($to);
+    $this->email->subject($subject);
+    $this->email->message($message);
+
+		if ($this->email->send()) {
+			echo json_encode(array(
+				'status' => 'success',
+				'status_code' => 200,
+				'data' => "Mail sent successfully!"
 			));
     } else {
 			echo json_encode(array(

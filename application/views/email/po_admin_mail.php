@@ -789,10 +789,10 @@
 										<div style="Margin-left: 20px;Margin-right: 20px; margin-bottom: 10px;">
 											<div style="mso-line-height-rule: exactly;mso-text-raise: 11px;vertical-align: middle;">
 												<h1 style="Margin-top: 0;Margin-bottom: 0;font-style: normal;font-weight: normal;color: #565656;font-size: 30px;line-height: 38px;text-align: center;">
-													<strong>Your order <span style="color: brown;">#<?php echo $order_id;?></span> has been placed successfully!</strong>
+													<strong>New order: <span style="color: brown;">#<?php echo $order_id;?></span> has been placed!</strong>
 												</h1>
 												<p style="Margin-top: 20px;Margin-bottom: 0;">&nbsp;<br />
-													Hi <?php echo $user_name;?>, thank you for your order.
+													Hi <?php echo $admin_name;?>, a new order has been placed by <?php echo $user_name;?>. Order details are as below
 												</p>
 											</div>
 										</div>
@@ -820,6 +820,29 @@
 											<?php
 												}
 											?>
+											<div style="padding: 15px 25px; margin-bottom: 15px; text-align: right;">
+												<div style="max-width: 100%; margin-left: 20px; margin-bottom:10px; margin-right: auto;">
+													<div style="width: 100%; position: relative;">
+														<div style="display: inline-block; color: black;">Total Charge:
+															<span style="position: absolute; right: 0; top: 0; color: red;">$<?php echo $total_price;?></span>
+														</div>
+													</div>
+												</div>
+												<div style="max-width: 100%; margin-left: 20px; margin-bottom:10px; margin-right: auto;">
+													<div style="width: 100%; position: relative;">
+														<div style="display: inline-block; color: black;">Dry CBF:
+															<span style="position: absolute; right: 0; top: 0; color: red;"><?php echo $info_dry->total_pallet;?> pallets(<?php echo $info_dry->total_cbf;?> lb)</span>
+														</div>
+													</div>
+												</div>
+												<div style="max-width: 100%; margin-left: 20px; margin-bottom:10px; margin-right: auto;">
+													<div style="width: 100%; position: relative;">
+														<div style="display: inline-block; color: black;">Frozen CBF:
+															<span style="position: absolute; right: 0; top: 0; color: red;"><?php echo $info_frozen->total_pallet;?> pallets(<?php echo $info_frozen->total_cbf;?> lb)</span>
+														</div>
+													</div>
+												</div>
+											</div>
 										</div>
 
 										<div style="Margin-left: 20px;Margin-right: 20px;">
@@ -829,7 +852,7 @@
 										<div style="Margin-left: 20px;Margin-right: 20px;">
 											<div style="mso-line-height-rule: exactly;mso-text-raise: 11px;vertical-align: middle;">
                         <p style="Margin-top: 20px;Margin-bottom: 20px;">
-													Your order is pending. You will get an email notification when your order is approved by team.
+													<?php echo $message;?>
 												</p>
 												<p style="Margin-top: 0;Margin-bottom: 10px;"><em>Thank you for your business.</em></p>
                         <p style="Margin-top: 0;Margin-bottom: 20px; color: red;"><?php echo $company;?></p>

@@ -166,6 +166,19 @@
           }
           return $res;
         }
+        public function get_ps_admin($company){
+          $res = array();
+          $this->db->select('id, name, email, company');
+          $this->db->where('access', 'purchasing_system');
+          $this->db->where('role', 'admin');
+          $this->db->where('company', $company);
+          $this->db->from('users');
+          $data = $this->db->get();
+          foreach ($data->result() as $row){
+              array_push($res, $row);
+          }
+          return $res;
+        }
         private function validate($name){
             $this->db->where('name', $name);
             $this->db->from('users');
