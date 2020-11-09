@@ -14,20 +14,25 @@ class Kitchen extends CI_Controller {
     }
 	public function login(){
 		$data = array(
-			'shop_id' => $this->input->post('name'),
-			'key' => md5($this->input->post('password'))
+			'name' => $this->input->post('name'),
+			'email' => $this->input->post('key')
 		);
+		$res = $this->kitchen_model->kt_login($data);
+		echo json_encode(array(
+			'res' => $res
+		));
 	}
 	public function logHistory(){
         // Key check here.
-        $data = array(
+    $data = array(
 			'shop_id'   => $this->input->post('shop_id'),
 			'type'      => $this->input->post('type'),
-            'item_id'   => $this->input->post('item_id'),
-            'item_name' => $this->input->post('item_name'),
-            'qty'       => $this->input->post('qty'),
-            'reason'    => $this->input->post('reason'),
-            'timestamp' => $this->input->post('timestamp')
+			'item_id'   => $this->input->post('item_id'),
+			'item_code' => $this->input->post('item_code'),
+			'item_name' => $this->input->post('item_name'),
+			'amount'    => $this->input->post('amount'),
+			'reason'    => $this->input->post('reason'),
+			'timestamp' => $this->input->post('timestamp')
 		);
 		$res = $this->kitchen_model->log_history($data);
 		echo json_encode(array(
@@ -37,12 +42,25 @@ class Kitchen extends CI_Controller {
 
 	public function getHistory(){
         // Key check here.
-        $data = array(
-			'shop_id'   => $this->input->post('shop_id'),
-			'from'      => $this->input->post('start'),
-            'to'   => $this->input->post('end')
+    $data = array(
+			'shop_id'   => $this->input->post('kitchen'),
+			'from'      => $this->input->post('from'),
+      'to'   			=> $this->input->post('to'),
+			'd'					=> $this->input->post('d')
 		);
-		$res = $this->kitchen_model->get_history($data);
+		$amount = $this->kitchen_model->get_amount_history($data);
+		$item = $this->kitchen_model->get_item_history($data);
+		$history = $this->kitchen_model->get_history($data);
+		echo json_encode(array(
+			'amount_history' => $amount,
+			'item_history' => $item,
+			'history' => $history
+		));
+	}
+
+	public function getKitchens(){
+		$data = $this->input->post('company');
+		$res = $this->kitchen_model->get_kitchens($data);
 		echo json_encode(array(
 			'res' => $res
 		));

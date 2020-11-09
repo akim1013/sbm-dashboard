@@ -13,6 +13,7 @@
         }
         public function update($data){
             $this->db->set('name', $data['name']);
+            $this->db->set('email', $data['email']);
             $this->db->set('shop_name', $data['shop_name']);
             $this->db->set('database', $data['database']);
             $this->db->set('password', $data['password']);
