@@ -16,6 +16,31 @@ class Ps extends CI_Controller {
 		$this->load->model('ps_model');
 		$this->load->model('user_model');
   }
+	public function old_email_setting(){
+		$config = array();
+		$config['protocol'] = 'smtp';
+		$config['smtp_host'] = 'a2plcpnl0005.prod.iad2.secureserver.net';
+		$config['smtp_user'] = 'purchasing-system@sbmtec.com';
+		$config['smtp_pass'] = '#%uLExt[!HTX';
+		$config['smtp_port'] = 587;
+		$config['charset'] = 'utf-8';
+		$config['wordwrap'] = TRUE;
+		$config['mailtype'] = 'html';
+		return $config;
+	}
+
+	public function new_email_setting(){
+		$config = array();
+		$config['protocol'] = 'smtp';
+		$config['smtp_host'] = 'ssl://sbmtec.com';
+		$config['smtp_user'] = 'purchasing-system@sbmtec.com';
+		$config['smtp_pass'] = 'O1lCT,gVV%Pp';
+		$config['smtp_port'] = 465;
+		$config['charset'] = 'utf-8';
+		$config['wordwrap'] = TRUE;
+		$config['mailtype'] = 'html';
+		return $config;
+	}
   public function add_item(){
     $item = array(
       'inventory_id' => $this->input->post('inventory_id'),
@@ -299,18 +324,9 @@ class Ps extends CI_Controller {
 		$order_info['message'] = $this->input->post('message');
 
 		$this->load->library('email');
-		$config = array();
-		$config['protocol'] = 'smtp';
-		$config['smtp_host'] = 'a2plcpnl0005.prod.iad2.secureserver.net';
-		$config['smtp_user'] = 'purchasingsystem@sbmtec.com';
-		$config['smtp_pass'] = '@a3Q(3,iCOAR';
-		$config['smtp_port'] = 587;
-		$config['charset'] = 'utf-8';
-		$config['wordwrap'] = TRUE;
-		$config['mailtype'] = 'html';
-		$this->email->initialize($config);
+		$this->email->initialize($this->old_email_setting());
 
-		$from = 'purchasingsystem@sbmtec.com';
+		$from = 'purchasing-system@sbmtec.com';
     $to = $this->input->post('to');
     $subject = $this->input->post('subject');
     $message = $this->load->view('email/po_mail', $order_info, true);
@@ -349,18 +365,9 @@ class Ps extends CI_Controller {
 		$order_info['message'] = $this->input->post('message');
 
 		$this->load->library('email');
-		$config = array();
-		$config['protocol'] = 'smtp';
-		$config['smtp_host'] = 'a2plcpnl0005.prod.iad2.secureserver.net';
-		$config['smtp_user'] = 'purchasingsystem@sbmtec.com';
-		$config['smtp_pass'] = '@a3Q(3,iCOAR';
-		$config['smtp_port'] = 587;
-		$config['charset'] = 'utf-8';
-		$config['wordwrap'] = TRUE;
-		$config['mailtype'] = 'html';
-		$this->email->initialize($config);
+		$this->email->initialize($this->old_email_setting());
 
-		$from = 'purchasingsystem@sbmtec.com';
+		$from = 'purchasing-system@sbmtec.com';
     $to = $this->input->post('to');
     $subject = $this->input->post('subject');
     $message = $this->load->view('email/po_admin_mail', $order_info, true);
@@ -389,18 +396,9 @@ class Ps extends CI_Controller {
 		$user = json_decode($this->input->post('user'));
 
 		$this->load->library('email');
-		$config = array();
-		$config['protocol'] = 'smtp';
-		$config['smtp_host'] = 'a2plcpnl0005.prod.iad2.secureserver.net';
-		$config['smtp_user'] = 'purchasingsystem@sbmtec.com';
-		$config['smtp_pass'] = '@a3Q(3,iCOAR';
-		$config['smtp_port'] = 587;
-		$config['charset'] = 'utf-8';
-		$config['wordwrap'] = TRUE;
-		$config['mailtype'] = 'html';
-		$this->email->initialize($config);
+		$this->email->initialize($this->old_email_setting());
 
-		$from = 'purchasingsystem@sbmtec.com';
+		$from = 'purchasing-system@sbmtec.com';
     $to = $user->email;
     $subject = $this->input->post('subject');
     $message = $this->input->post('message');
