@@ -406,3 +406,70 @@ WHERE
 		AND DATEPART(hour, t.trans_date) = '11'
 GROUP BY DATEPART(hour, t.trans_date), a.id, a.description, g.id, g.description
 ORDER BY DATEPART(hour, t.trans_date), g.description, amount DESC, price DESC
+
+
+
+//CRM
+-1-
+select
+tsm.clover_id spoonity會員ID,
+tsm.email 郵箱,
+tsm.phone 手機號,
+max(bookkeeping_date) '最後到店時間',
+count(*)
+ '總共來店消費次數'
+from transactions t
+join trans_spoonity_member tsm on t.id = tsm.transaction_id
+where t.delete_timestamp is null and (select count(price) from trans_articles where trans_articles.transaction_id = t.id and trans_articles.delete_timestamp is null) >0
+and t.bookkeeping_date >'2020-10-01'
+group by tsm.clover_id,tsm.phone,tsm.email
+order by max(bookkeeping_date) asc
+
+-2-
+select
+max(clover_id) 'spoonity会员号',
+phone '手机号',
+max(email) '邮箱',
+max(name) '姓名',
+code '商品编码',
+max(description) '商品名称',
+sum(qty) '数量'
+from
+(
+	 --以下是spoonity的数据
+	select
+	tsm.clover_id ,
+	tsm.email ,
+	tsm.phone,
+	concat(tsm.first_name,'',tsm.last_name) name,
+	a.code ,
+	a.description ,
+	sum(ta.qty_weight) qty
+	 from trans_spoonity_member tsm
+	join transactions t on tsm.transaction_id  = t.id
+	join trans_articles ta on t.id = ta.transaction_id and ta.delete_timestamp is null
+	join articles a on ta.article_id = a.id
+	where t.delete_timestamp is null and t.bookkeeping_date>'2020-10-01'
+	group by tsm.clover_id,tsm.phone, tsm.email,tsm.first_name,tsm.last_name,a.id,a.description,a.code
+	UNION ALL
+	  --以下是GF的数据
+	select
+	null clover_id,
+	gfo.client_email email,
+	ltrim(replace(replace(replace(gfo.client_phone,'+1',''),'-',''),'+ 1','')) phone,
+	concat(gfo.client_first_name,'',gfo.client_last_name) name,
+	a.code ,
+	a.description ,
+	sum(ta.qty_weight) qty
+	from transactions t
+	join global_food_order gfo on t.global_food_order_id = gfo.id
+	join trans_articles ta on t.id = ta.transaction_id and ta.delete_timestamp is null
+	join articles a on ta.article_id = a.id
+	where t.delete_timestamp is null and t.bookkeeping_date>'2020-10-01'
+	group by gfo.client_phone,gfo.client_email, gfo.client_phone,gfo.client_first_name,gfo.client_last_name,a.id,a.code,a.description
+) t
+group by t.phone,t.code
+order by max(clover_id) desc
+
+-index-
+create nonclustered index idx_global_food_order_id on transactions (delete_timestamp, bookkeeping_date) include (global_food_order_id)

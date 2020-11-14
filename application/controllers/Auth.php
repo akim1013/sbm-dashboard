@@ -186,6 +186,38 @@ class Auth extends CI_Controller {
 			));
 		}
 	}
+
+	public function get_all_users(){
+		$auth = $this->input->post('role');
+		if($auth == 'super_admin'){
+			$users = $this->user_model->get_all_users();
+			if($users){
+				$res = array();
+				foreach ($users->result() as $row){
+					if($row->name != 'admin'){
+						array_push($res, $row);
+					}
+				}
+				echo json_encode(array(
+					'status' => 'success',
+					'data' => $res,
+					'msg' => lang('user_read_success')
+				));
+			}else{
+				echo json_encode(array(
+					'status' => 'failed',
+					'msg' => lang('user_read_failed')
+				));
+			}
+		}else{
+			echo json_encode(array(
+				'status' => 'failed',
+				'msg' => 'Unauthorized',
+				'auth' => $auth
+			));
+		}
+	}
+
 	public function delete(){
 		$res = $this->user_model->delete($this->input->post('id'));
 		echo $res;
