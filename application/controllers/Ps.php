@@ -324,7 +324,7 @@ class Ps extends CI_Controller {
 		$order_info['message'] = $this->input->post('message');
 
 		$this->load->library('email');
-		$this->email->initialize($this->old_email_setting());
+		$this->email->initialize($this->new_email_setting());
 
 		$from = 'purchasing-system@sbmtec.com';
     $to = $this->input->post('to');
@@ -365,7 +365,7 @@ class Ps extends CI_Controller {
 		$order_info['message'] = $this->input->post('message');
 
 		$this->load->library('email');
-		$this->email->initialize($this->old_email_setting());
+		$this->email->initialize($this->new_email_setting());
 
 		$from = 'purchasing-system@sbmtec.com';
     $to = $this->input->post('to');
@@ -396,7 +396,7 @@ class Ps extends CI_Controller {
 		$user = json_decode($this->input->post('user'));
 
 		$this->load->library('email');
-		$this->email->initialize($this->old_email_setting());
+		$this->email->initialize($this->new_email_setting());
 
 		$from = 'purchasing-system@sbmtec.com';
     $to = $user->email;

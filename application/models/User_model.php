@@ -157,7 +157,7 @@
             return $this->db->get('users');
         }
         public function get_all_users(){
-          $this->db->select('name, email, access, role, database, shop_name, company, member_since, last_login');
+          $this->db->select('id, name, email, phone, address, password, status, access, role, database, shop_name, company, member_since, last_login');
           $this->db->from('users');
           return $this->db->get();
 
