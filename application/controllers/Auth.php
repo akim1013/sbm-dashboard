@@ -139,6 +139,7 @@ class Auth extends CI_Controller {
 					'access'					=> $this->input->post('access'),
 					'role'						=> $this->input->post('role'),
 					'company'					=> $this->input->post('company'),
+					'branch_id'				=> $this->input->post('branch_id'),
 					'member_since'		=> date("Y-m-d")
       );
 
@@ -172,7 +173,8 @@ class Auth extends CI_Controller {
 			'role'			=> $this->input->post('role'),
 			'database' 	=> $this->input->post('database'),
 			'access'		=> $this->input->post('access'),
-			'company'					=> $this->input->post('company')
+			'company'		=> $this->input->post('company'),
+			'branch_id'	=> $this->input->post('branch_id')
     );
 
     $res = $this->user_model->update($data);

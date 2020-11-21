@@ -20,6 +20,7 @@
             $this->db->set('role', $data['role']);
             $this->db->set('access', $data['access']);
             $this->db->set('company', $data['company']);
+            $this->db->set('branch_id', $data['branch_id']);
             $this->db->where('id', $data['id']);
             $res = $this->db->update('users');
             if($res > 0){
@@ -29,7 +30,7 @@
             }
         }
         public function login($data){
-            $this->db->select('*');
+            $this->db->select('id, name, email, phone, address, status, access, role, database, shop_name, company, branch_id, member_since, last_login');
             $this->db->where('name', $data['name']);
             $this->db->where('password', $data['password']);
             $this->db->from('users');
@@ -46,7 +47,7 @@
             }
         }
         public function ps_login($data){
-            $this->db->select('*');
+            $this->db->select('id, name, email, phone, address, status, access, role, database, shop_name, company, branch_id, member_since, last_login');
             $this->db->where('name', $data['name']);
             $this->db->where('password', $data['password']);
             $this->db->where('access', $data['access']);
@@ -172,18 +173,18 @@
             return $logs;
         }
         public function users(){
-            $this->db->select('*');
+            $this->db->select('id, name, email, phone, address, status, access, role, database, shop_name, company, branch_id, member_since, last_login');
             return $this->db->get('users');
         }
         public function get_all_users(){
-          $this->db->select('id, name, email, phone, address, password, status, access, role, database, shop_name, company, member_since, last_login');
+          $this->db->select('id, name, email, phone, address, status, access, role, database, shop_name, company, branch_id, member_since, last_login');
           $this->db->from('users');
           return $this->db->get();
 
         }
         public function get_ps_users(){
           $res = array();
-          $this->db->select('id, name, email, company');
+          $this->db->select('id, name, email, company, branch_id');
           $this->db->where('access', 'purchasing_system');
           $this->db->from('users');
           $data = $this->db->get();
@@ -194,7 +195,7 @@
         }
         public function get_ps_admin($company){
           $res = array();
-          $this->db->select('id, name, email, company');
+          $this->db->select('id, name, email, company, branch_id');
           $this->db->where('access', 'purchasing_system');
           $this->db->where('role', 'admin');
           $this->db->where('company', $company);
