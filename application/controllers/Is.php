@@ -51,4 +51,122 @@ class Is extends CI_Controller {
 			'data' => $res
 		));
 	}
+	public function remove_is_item(){
+		$id = $this->input->post('id');
+		$res = $this->is_model->remove_is_item($id);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+  }
+
+	public function get_is_counts(){
+		$branch_id = $this->input->post('branch_id');
+    $res = $this->is_model->get_counts($branch_id);
+    echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+  }
+	public function add_is_count(){
+		$counter_id = $this->input->post('counter_id');
+		$period = $this->input->post('period');
+    $res = $this->is_model->add_count(array(
+			'counter_id' => $counter_id,
+			'period' => $period
+		));
+    echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+  }
+	public function draft_is_count(){
+		$branch_id = $this->input->post('branch_id');
+    $res = $this->is_model->draft_count($branch_id);
+    echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+  }
+	public function remove_is_count(){
+		$id = $this->input->post('is_count_id');
+    $res = $this->is_model->remove_count($id);
+    echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+  }
+	public function get_c_item(){
+		$branch_id = $this->input->post('branch_id');
+		$res = $this->is_model->get_c_item($branch_id);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+	}
+	public function get_draft_items(){
+		$draft_id = $this->input->post('draft_id');
+		$res = $this->is_model->get_draft_items($draft_id);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+	}
+	public function add_count_detail(){
+		$data = array(
+			'is_count_id' => $this->input->post('is_count_id'),
+			'is_item_id' => $this->input->post('is_item_id'),
+			'qty_primary' => $this->input->post('qty_primary'),
+			'qty_secondary' => $this->input->post('qty_secondary')
+		);
+		$res = $this->is_model->add_count_detail($data);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+	}
+	public function complete_count(){
+		$draft_id = $this->input->post('draft_id');
+		$res = $this->is_model->complete_count($draft_id);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+	}
+	public function can_start_count(){
+		$counter_id = $this->input->post('counter_id');
+		$res = $this->is_model->can_start_count($counter_id);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+	}
+	public function is_draft(){
+		$id = $this->input->post('id');
+		$res = $this->is_model->is_draft($id);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+	}
+	public function remove_draft_detail_item(){
+		$id = $this->input->post('id');
+		$res = $this->is_model->remove_draft_detail_item($id);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+	}
 }

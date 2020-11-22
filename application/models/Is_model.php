@@ -35,11 +35,144 @@ class Is_model extends CI_model{
       }
     }
   }
+  public function remove_is_item($id){
+    return $this->db->delete('is_items', array('id' => $id));
+  }
   public function validate($branch_id, $inventory_id){
     $this->db->where('inventory_id', $inventory_id);
     $this->db->where('branch_id', $branch_id);
     $this->db->from('is_items');
     return $this->db->get()->num_rows();
+  }
+  public function get_counts($branch_id){
+    $sql = "
+      select
+        is_counts.id is_count_id,
+        is_counts.status status,
+        is_counts.period period,
+        is_counts.timestamp timestamp,
+        users.name counter_name
+      from is_counts
+      left join users on users.id = is_counts.counter_id
+      where users.branch_id = '".$branch_id."'
+      order by is_counts.timestamp desc
+    ";
+    $query = $this->db->query($sql);
+    $res = array();
+    foreach ($query->result() as $row){
+      array_push($res, $row);
+    }
+    return $res;
+  }
+  public function add_count($data){
+    $this->db->insert('is_counts', $data);
+    $insert_id = $this->db->insert_id();
+    return $insert_id;
+  }
+  public function is_draft($id){
+    $this->db->select('status');
+    $this->db->from('is_counts');
+    $this->db->where('id', $id);
+    $res = $this->db->get();
+    return $res->result();
+  }
+  public function remove_count($id){
+    $res1 = $this->db->delete('is_counts', array('id' => $id));
+    $res2 = $this->db->delete('is_count_details', array('is_count_id' => $id));
+    return $res1 && $res2;
+  }
+  public function remove_draft_detail_item($id){
+    return $this->db->delete('is_count_details', array('id' => $id));
+  }
+  public function get_c_item($branch_id){
+    $sql = "
+      select
+        is_items.id is_item_id,
+        is_items.safety_qty safety_qty,
+        ps_items.category category,
+        ps_items.inventory_id inventory_id,
+        ps_items.description description,
+        ps_items.vendor_description vendor_description,
+        ps_items.image image,
+        ps_items.packing_info packing_info
+      from is_items
+      left join ps_items on ps_items.inventory_id = is_items.inventory_id
+      where is_items.branch_id = '".$branch_id."'
+    ";
+    $query = $this->db->query($sql);
+    $res = array();
+    foreach ($query->result() as $row){
+      array_push($res, $row);
+    }
+    return $res;
+  }
+  public function get_draft_items($is_count_id){
+    $sql = "
+      select
+        is_count_details.id draft_detail_id,
+        is_count_details.qty_primary qty_primary,
+        is_count_details.qty_secondary qty_secondary,
+        is_items.safety_qty safety_qty,
+        ps_items.category category,
+        ps_items.inventory_id inventory_id,
+        ps_items.description description,
+        ps_items.vendor_description vendor_description,
+        ps_items.image image
+      from is_count_details
+      left join is_items on is_items.id = is_count_details.is_item_id
+      left join ps_items on ps_items.inventory_id = is_items.inventory_id
+      where is_count_details.is_count_id = '".$is_count_id."'
+    ";
+    $query = $this->db->query($sql);
+    $res = array();
+    foreach ($query->result() as $row){
+      array_push($res, $row);
+    }
+    return $res;
+  }
+  public function add_count_detail($data){
+    return $this->db->insert('is_count_details', $data);
+  }
+  public function complete_count($id){
+    $this->db->set('status', 'completed');
+    $this->db->where('id', $id);
+    return $this->db->update('is_counts');
+  }
+  public function can_start_count($counter_id){
+    $sql1 = "
+      select users.branch_id branch_id, is_counts.id is_count_id, is_counts.period period
+      from is_counts
+      left join users on users.id = is_counts.counter_id
+      where is_counts.status = 'draft'
+    ";
+    $sql2 = "
+      select branch_id
+      from users
+      where id = '".$counter_id."'
+    ";
+    $query1 = $this->db->query($sql1);
+    $query2 = $this->db->query($sql2);
+    $res1 = array();
+    $res2 = array();
+    foreach ($query1->result() as $row){
+      array_push($res1, $row);
+    }
+    foreach ($query2->result() as $row){
+      array_push($res2, $row);
+    }
+    $res = array(
+      'exist_draft' => false,
+      'draft_id' => -1,
+      'draft_period' => ''
+    );
+    foreach($res1 as $item){
+      if($item->branch_id == $res2[0]->branch_id){
+        $res['exist_draft'] = true;
+        $res['draft_id'] = $item->is_count_id;
+        $res['draft_period'] = $item->period;
+      }
+    }
+    return $res;
   }
 }
 ?>
