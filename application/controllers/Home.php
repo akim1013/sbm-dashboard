@@ -599,8 +599,24 @@ class Home extends MY_Controller {
 		$group_id = $this->input->post('group_id');
 		$causals = $this->input->post('causals');
 		$conn = parent::custom_dbconnect($db);
+
+		$query_response = $this->dashboard_model->_get_article_details($conn, $date, $shop, $d, $group_id);
+
+
+		$ret_response = array();
+		foreach($query_response as $item){
+			array_push($ret_response, array(
+				"group_id" => $item['group_id'],
+				"group_description" => $item['group_description'],
+				"article_id" => $item['article_id'],
+				"article_description" => str_replace(array("'", "\'", "&quot;"), " ", $item['article_description']),
+				"price" => $item['price'],
+				"amount" => $item['amount']
+			));
+		}
+		//var_dump($ret_response);
 		$ret = array(
-			"article_details"	=> $this->dashboard_model->_get_article_details($conn, $date, $shop, $d, $group_id)
+			"article_details"	=> $ret_response
 		);
 		echo json_encode(array(
 			'status' => 'success',

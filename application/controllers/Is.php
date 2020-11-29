@@ -73,8 +73,10 @@ class Is extends CI_Controller {
 	public function add_is_count(){
 		$counter_id = $this->input->post('counter_id');
 		$period = $this->input->post('period');
+		$branch_id = $this->input->post('branch_id');
     $res = $this->is_model->add_count(array(
 			'counter_id' => $counter_id,
+			'branch_id' => $branch_id,
 			'period' => $period
 		));
     echo json_encode(array(
