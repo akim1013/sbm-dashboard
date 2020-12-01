@@ -96,11 +96,12 @@ class Is extends CI_Controller {
   }
 	public function remove_is_count(){
 		$id = $this->input->post('is_count_id');
-    $res = $this->is_model->remove_count($id);
+    $res1 = $this->is_model->remove_count($id);
+		$res2 = $this->ps_model->remove_ref_is_order($id);
     echo json_encode(array(
 			'status' => 'success',
 			'status_code' => 200,
-			'data' => $res
+			'data' => $res1
 		));
   }
 	public function get_c_item(){
@@ -126,7 +127,8 @@ class Is extends CI_Controller {
 			'is_count_id' => $this->input->post('is_count_id'),
 			'is_item_id' => $this->input->post('is_item_id'),
 			'qty_primary' => $this->input->post('qty_primary'),
-			'qty_secondary' => $this->input->post('qty_secondary')
+			'qty_secondary' => $this->input->post('qty_secondary'),
+			'value' => $this->input->post('value')
 		);
 		$res = $this->is_model->add_count_detail($data);
 		echo json_encode(array(
@@ -138,6 +140,16 @@ class Is extends CI_Controller {
 	public function complete_count(){
 		$draft_id = $this->input->post('draft_id');
 		$res = $this->is_model->complete_count($draft_id);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+	}
+	public function order_status_update(){
+		$id = $this->input->post('id');
+		$order_status = $this->input->post('order_status');
+		$res = $this->is_model->order_status_update($id, $order_status);
 		echo json_encode(array(
 			'status' => 'success',
 			'status_code' => 200,

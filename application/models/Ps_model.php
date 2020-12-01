@@ -82,6 +82,9 @@ class Ps_model extends CI_model{
   public function remove_item($inventory_id){
     return $this->db->delete('ps_items', array('inventory_id' => $inventory_id));
   }
+  public function remove_ref_is_order($ref_is_id){
+    return $this->db->delete('ps_orders', array('ref_is_id' => $ref_is_id));
+  }
   public function add_batch_item($data){
     if(count($data) == 0){
       return 1; // Nothing to be added

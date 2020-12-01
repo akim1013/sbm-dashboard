@@ -113,12 +113,14 @@ class Is_model extends CI_model{
         is_count_details.id draft_detail_id,
         is_count_details.qty_primary qty_primary,
         is_count_details.qty_secondary qty_secondary,
+        is_count_details.value value,
         is_items.safety_qty safety_qty,
         ps_items.id item_id,
         ps_items.category category,
         ps_items.inventory_id inventory_id,
         ps_items.description description,
         ps_items.price price,
+        ps_items.packing_info packing_info,
         ps_items.vendor_description vendor_description,
         ps_items.image image
       from is_count_details
@@ -138,6 +140,11 @@ class Is_model extends CI_model{
   }
   public function complete_count($id){
     $this->db->set('status', 'completed');
+    $this->db->where('id', $id);
+    return $this->db->update('is_counts');
+  }
+  public function order_status_update($id, $order_status){
+    $this->db->set('order_status', $order_status);
     $this->db->where('id', $id);
     return $this->db->update('is_counts');
   }

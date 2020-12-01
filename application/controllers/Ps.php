@@ -227,6 +227,8 @@ class Ps extends CI_Controller {
 			'order_id' => $this->input->post('order_id'),
 			'customer_id' => $this->input->post('customer_id'),
 			'order_time' => $this->input->post('order_time'),
+			'ref_is_id' => $this->input->post('ref_is_id'),
+			'type' => $this->input->post('type'),
 			'status' => $this->input->post('status')
 		);
 		$items = json_decode($this->input->post('items'));
