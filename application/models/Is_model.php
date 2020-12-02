@@ -164,5 +164,48 @@ class Is_model extends CI_model{
     }
     return $res;
   }
+  public function send_data_to_dashboard($company, $branch_id, $counter_id, $is_count_id, $items){
+    foreach($items as $item){
+      $this->db->insert('is_history', array(
+        'company' => $company,
+        'branch_id' => $branch_id,
+        'counter_id' => $counter_id,
+        'is_count_id' => $is_count_id,
+        'item_id' => $item->item_id,
+        'price' => $item->price,
+        'primary_qty' => $item->qty_primary,
+        'secondary_qty' => $item->qty_secondary,
+        'value' => $item->value
+      ));
+    }
+    return 1;
+  }
+  public function get_inventory_history($company, $branch_id){
+    $sql = "
+      select
+        users.name counter_name,
+        users.email counter_email,
+        ps_items.category category,
+        ps_items.inventory_id inventory_id,
+        ps_items.description description,
+        ps_items.vendor_description vendor_description,
+        ps_items.packing_info packing_info,
+        is_history.price price,
+        is_history.value value,
+        is_history.primary_qty primary_qty,
+        is_history.secondary_qty secondary_qty,
+        is_history.timestamp timestamp
+      from is_history
+      left join ps_items on ps_items.id = is_history.item_id
+      left join users on users.id = is_history.counter_id
+      order by is_history.timestamp desc
+    ";
+    $query = $this->db->query($sql);
+    $res = array();
+    foreach ($query->result() as $row){
+      array_push($res, $row);
+    }
+    return $res;
+  }
 }
 ?>

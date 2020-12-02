@@ -183,4 +183,28 @@ class Is extends CI_Controller {
 			'data' => $res
 		));
 	}
+	public function send_data_to_dashboard(){
+		$company = $this->input->post('company');
+		$branch_id = $this->input->post('branch_id');
+		$counter_id = $this->input->post('counter_id');
+		$is_count_id = $this->input->post('is_count_id');
+		$items = json_decode($this->input->post('items'));
+
+		$res = $this->is_model->send_data_to_dashboard($company, $branch_id, $counter_id, $is_count_id, $items);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+	}
+	public function get_inventory_history(){
+		$company = $this->input->post('company');
+		$branch_id = $this->input->post('branch_id');
+		$res = $this->is_model->get_inventory_history($company, $branch_id);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+	}
 }
