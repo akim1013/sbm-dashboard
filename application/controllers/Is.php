@@ -74,10 +74,12 @@ class Is extends CI_Controller {
 		$counter_id = $this->input->post('counter_id');
 		$period = $this->input->post('period');
 		$branch_id = $this->input->post('branch_id');
+		$timestamp = $this->input->post('timestamp');
     $res = $this->is_model->add_count(array(
 			'counter_id' => $counter_id,
 			'branch_id' => $branch_id,
-			'period' => $period
+			'period' => $period,
+			'timestamp' => $timestamp
 		));
     echo json_encode(array(
 			'status' => 'success',
@@ -188,9 +190,10 @@ class Is extends CI_Controller {
 		$branch_id = $this->input->post('branch_id');
 		$counter_id = $this->input->post('counter_id');
 		$is_count_id = $this->input->post('is_count_id');
+		$timestamp = $this->input->post('timestamp');
 		$items = json_decode($this->input->post('items'));
 
-		$res = $this->is_model->send_data_to_dashboard($company, $branch_id, $counter_id, $is_count_id, $items);
+		$res = $this->is_model->send_data_to_dashboard($company, $branch_id, $counter_id, $is_count_id, $timestamp, $items);
 		echo json_encode(array(
 			'status' => 'success',
 			'status_code' => 200,

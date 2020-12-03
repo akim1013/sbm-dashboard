@@ -164,7 +164,7 @@ class Is_model extends CI_model{
     }
     return $res;
   }
-  public function send_data_to_dashboard($company, $branch_id, $counter_id, $is_count_id, $items){
+  public function send_data_to_dashboard($company, $branch_id, $counter_id, $is_count_id, $timestamp, $items){
     foreach($items as $item){
       $this->db->insert('is_history', array(
         'company' => $company,
@@ -175,7 +175,8 @@ class Is_model extends CI_model{
         'price' => $item->price,
         'primary_qty' => $item->qty_primary,
         'secondary_qty' => $item->qty_secondary,
-        'value' => $item->value
+        'value' => $item->value,
+        'timestamp' => $timestamp
       ));
     }
     return 1;
@@ -195,8 +196,9 @@ class Is_model extends CI_model{
         is_history.primary_qty primary_qty,
         is_history.secondary_qty secondary_qty,
         is_history.timestamp timestamp
-      from is_history
-      left join ps_items on ps_items.id = is_history.item_id
+      from is_items
+      left join ps_items on ps_items.inventory_id = is_items.inventory_id
+      left join is_history on ps_items.id = is_history.item_id
       left join users on users.id = is_history.counter_id
       order by is_history.timestamp desc
     ";
