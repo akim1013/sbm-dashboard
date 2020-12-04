@@ -40,7 +40,7 @@
                         <div class="info d-flex align-items-center">
                             <div class="content">
                                 <div class="logo">
-                                    <h1 class="lang_auth_heading"><?php echo lang('auth_heading');?></h1>
+                                    <h1 class="lang_auth_heading">This is the backend API of sbmtec apps.</h1>
                                 </div>
                                 <p class="lang_auth_subtitle"><?php echo lang('auth_subtitle_1');?><br> <?php echo lang('auth_subtitle_2');?></p>
                             </div>
