@@ -25,13 +25,13 @@ async function runQuery(query, config) {
   return result
 }
 
-// app.get('/api', function(req, res) {
-//   runQuery(`select * from shops`, CONFIG).then(result => {
-//     res.send(result)
-//   }).catch(error => {
-//     res.send('Something went wrong..')
-//   })
-// });
+app.get('/api', function(req, res) {
+  runQuery(`select * from shops`, CONFIG).then(result => {
+    res.send(result)
+  }).catch(error => {
+    res.send('Something went wrong..')
+  })
+});
 
 app.post('/api/crm/get_customer_info', jsonParser, function(req, res) {
   runQuery(`
