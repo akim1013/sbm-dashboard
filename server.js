@@ -58,6 +58,6 @@ app.post('/api/crm/get_customer_info', jsonParser, function(req, res) {
 });
 
 // default Heroku PORT
-app.listen(process.env.PORT || 3001, function(){
-    console.log('App is running on http://localhost:3001')
+app.listen(process.env.PORT || 3000, function(){
+    console.log('App is running on http://localhost:3000')
 });
