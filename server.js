@@ -6,7 +6,7 @@ const app = express();
 // app.use(express.static(__dirname + '/'));
 //
 // // Send all requests to index.html
-app.get('/', function(req, res) {
+app.get('/api', function(req, res) {
     res.send('Nodejs API server is live');
 });
 
