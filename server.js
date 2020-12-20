@@ -4,7 +4,7 @@ const app = express()
 
 const router = require('./ns/router')
 
-app.use('/api', router);
+app.use('/', router);
 
 // default Heroku PORT
 app.listen(process.env.PORT || 3001, function(){
