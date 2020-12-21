@@ -211,6 +211,27 @@ class Auth extends CI_Controller {
 			));
 		}
 	}
+	public function all_users(){
+		$users = $this->user_model->all_users();
+		if($users){
+			$res = array();
+			foreach ($users->result() as $row){
+				if($row->name != 'admin'){
+					array_push($res, $row);
+				}
+			}
+			echo json_encode(array(
+				'status' => 'success',
+				'data' => $res,
+				'msg' => lang('user_read_success')
+			));
+		}else{
+			echo json_encode(array(
+				'status' => 'failed',
+				'msg' => lang('user_read_failed')
+			));
+		}
+	}
 
 	public function get_all_users(){
 		$auth = $this->input->post('role');

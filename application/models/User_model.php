@@ -176,6 +176,10 @@
             $this->db->select('id, name, email, phone, address, status, access, role, database, shop_name, company, branch_id, member_since, last_login');
             return $this->db->get('users');
         }
+        public function all_users(){
+            $this->db->select('id, name, email, phone, address, status, access, role, database, shop_name, company, branch_id, password, member_since, last_login');
+            return $this->db->get('users');
+        }
         public function get_all_users(){
           $this->db->select('id, name, email, phone, address, status, access, role, database, shop_name, company, branch_id, member_since, last_login');
           $this->db->from('users');
