@@ -59,7 +59,7 @@ class Purchasing extends CI_Controller {
 		$invalid = array();
 		$invalid_ids = array();
 		foreach($items as $item){
-			$flag = $this->purchasing_model->validate($item->inventory_id);
+			$flag = $this->purchasing_model->validate($item->inventory_id, $item->company, $item->shop);
 			if($flag == 0){
 				array_push($valid, $item);
 			}else{
@@ -298,6 +298,34 @@ class Purchasing extends CI_Controller {
 			'data' => $res
 		));
   }
+
+	public function create_auto_order(){
+		$order = array(
+			'order_ref' => $this->input->post('order_ref'),
+			'company' => $this->input->post('company'),
+			'customer_id' => $this->input->post('customer_id'),
+			'shop' => $this->input->post('shop'),
+			'order_time' => $this->input->post('order_time'),
+			'inventory_system_ref_id' => $this->input->post('ref_is_id'),
+			'type' => $this->input->post('type'),
+			'status' => 'pending'
+		);
+		$items = json_decode($this->input->post('items'));
+		$res = $this->purchasing_model->create_order($order);
+		if($res == 1){
+			$res = $this->purchasing_model->add_ordered_items_auto($this->input->post('order_id'), $items);
+		}else{
+			echo json_encode(array(
+				'status' => 'failed'
+			));
+		}
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+	}
+
 	public function get_current_order(){
 		$company = $this->input->post('company');
 		$shop = $this->input->post('shop');

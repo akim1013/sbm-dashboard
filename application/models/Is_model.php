@@ -1,10 +1,11 @@
 <?php
 class Is_model extends CI_model{
-  public function get_item($branch_id){
+  public function get_item($company, $shop){
     $ret = array();
     $this->db->select('*');
     $this->db->from('is_items');
-    $this->db->where('branch_id', $branch_id);
+    $this->db->where('company', $company);
+    $this->db->where('shop', $shop);
     $query = $this->db->get();
     foreach ($query->result() as $row){
       array_push($ret, $row);
@@ -12,14 +13,15 @@ class Is_model extends CI_model{
     return $ret;
   }
   public function add_is_item($data){
-    if($this->validate($data['branch_id'], $data['inventory_id']) > 0){
+    if($this->validate($data['company'], $data['shop'], $data['purchasing_item_id']) > 0){
       // update
       $this->db->set('safety_qty', $data['safety_qty']);
       $this->db->set('sp_qty', $data['sp_qty']);
       $this->db->set('primary_unit', $data['primary_unit']);
       $this->db->set('secondary_unit', $data['secondary_unit']);
-      $this->db->where('inventory_id', $data['inventory_id']);
-      $this->db->where('branch_id', $data['branch_id']);
+      $this->db->where('purchasing_item_id', $data['purchasing_item_id']);
+      $this->db->where('company', $data['company']);
+      $this->db->where('shop', $data['shop']);
       $res = $this->db->update('is_items');
       if($res > 0){
         return 1;
@@ -38,9 +40,10 @@ class Is_model extends CI_model{
   public function remove_is_item($id){
     return $this->db->delete('is_items', array('id' => $id));
   }
-  public function validate($branch_id, $inventory_id){
-    $this->db->where('inventory_id', $inventory_id);
-    $this->db->where('branch_id', $branch_id);
+  public function validate($company, $shop, $purchasing_item_id){
+    $this->db->where('purchasing_item_id', $purchasing_item_id);
+    $this->db->where('company', $company);
+    $this->db->where('shop', $shop);
     $this->db->from('is_items');
     return $this->db->get()->num_rows();
   }
@@ -84,21 +87,22 @@ class Is_model extends CI_model{
   public function remove_draft_detail_item($id){
     return $this->db->delete('is_count_details', array('id' => $id));
   }
-  public function get_c_item($branch_id){
+  public function get_c_item($company, $shop){
     $sql = "
       select
         is_items.id is_item_id,
         is_items.safety_qty safety_qty,
-        ps_items.category category,
-        ps_items.inventory_id inventory_id,
-        ps_items.description description,
-        ps_items.vendor_description vendor_description,
-        ps_items.image image,
-        ps_items.price price,
-        ps_items.packing_info packing_info
+        purchasing_system_items.category category,
+        purchasing_system_items.inventory_id inventory_id,
+        purchasing_system_items.description description,
+        purchasing_system_items.vendor_description vendor_description,
+        purchasing_system_items.image image,
+        purchasing_system_items.price price,
+        purchasing_system_items.packing_info packing_info
       from is_items
-      left join ps_items on ps_items.inventory_id = is_items.inventory_id
-      where is_items.branch_id = '".$branch_id."'
+      left join purchasing_system_items on purchasing_system_items.id = is_items.purchasing_item_id
+      where is_items.company = '".$company."' and is_items.shop = '".$shop."'
+        and purchasing_system_items.company = '".$company."' and purchasing_system_items.shop = '".$shop."'
     ";
     $query = $this->db->query($sql);
     $res = array();
@@ -115,17 +119,17 @@ class Is_model extends CI_model{
         is_count_details.qty_secondary qty_secondary,
         is_count_details.value value,
         is_items.safety_qty safety_qty,
-        ps_items.id item_id,
-        ps_items.category category,
-        ps_items.inventory_id inventory_id,
-        ps_items.description description,
-        ps_items.price price,
-        ps_items.packing_info packing_info,
-        ps_items.vendor_description vendor_description,
-        ps_items.image image
+        purchasing_system_items.id item_id,
+        purchasing_system_items.category category,
+        purchasing_system_items.inventory_id inventory_id,
+        purchasing_system_items.description description,
+        purchasing_system_items.price price,
+        purchasing_system_items.packing_info packing_info,
+        purchasing_system_items.vendor_description vendor_description,
+        purchasing_system_items.image image
       from is_count_details
       left join is_items on is_items.id = is_count_details.is_item_id
-      left join ps_items on ps_items.inventory_id = is_items.inventory_id
+      left join purchasing_system_items on purchasing_system_items.id = is_items.purchasing_item_id
       where is_count_details.is_count_id = '".$is_count_id."'
     ";
     $query = $this->db->query($sql);
@@ -186,19 +190,19 @@ class Is_model extends CI_model{
       select
         users.name counter_name,
         users.email counter_email,
-        ps_items.category category,
-        ps_items.inventory_id inventory_id,
-        ps_items.description description,
-        ps_items.vendor_description vendor_description,
-        ps_items.packing_info packing_info,
+        purchasing_system_items.category category,
+        purchasing_system_items.inventory_id inventory_id,
+        purchasing_system_items.description description,
+        purchasing_system_items.vendor_description vendor_description,
+        purchasing_system_items.packing_info packing_info,
         is_history.price price,
         is_history.value value,
         is_history.primary_qty primary_qty,
         is_history.secondary_qty secondary_qty,
         is_history.timestamp timestamp
       from is_items
-      left join ps_items on ps_items.inventory_id = is_items.inventory_id
-      left join is_history on ps_items.id = is_history.item_id
+      left join purchasing_system_items on purchasing_system_items.id = is_items.purchasing_item_id
+      left join is_history on purchasing_system_items.id = is_history.item_id
       left join users on users.id = is_history.counter_id
       order by is_history.timestamp desc
     ";

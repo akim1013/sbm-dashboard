@@ -1,7 +1,9 @@
 <?php
 class Purchasing_model extends CI_model{
-  public function validate($inventory_id){
+  public function validate($inventory_id, $company, $shop){
     $this->db->where('inventory_id', $inventory_id);
+    $this->db->where('company', $company);
+    $this->db->where('shop', $shop);
     $this->db->from('purchasing_system_items');
     return $this->db->get()->num_rows();
   }
@@ -279,6 +281,20 @@ class Purchasing_model extends CI_model{
       array_push($ret, $row);
     }
     return $ret;
+  }
+
+  public function add_ordered_items_auto($order_id, $items){
+    $sql = "INSERT INTO purchasing_system_order_items (order_id, item_id, order_qty) VALUES";
+    $idx = 0;
+    foreach($items as $item){
+      $idx++;
+      $sql = $sql . "('" . $order_id . "', " . "'" . $item->item_id . "', " . "'" . $item->qty . "')";
+      if($idx != count($items)){
+        $sql = $sql . ", ";
+      }
+    }
+    $res = $this->db->query($sql);
+    return $res;
   }
 
   public function add_ordered_item($order_ref, $item_id, $order_qty){

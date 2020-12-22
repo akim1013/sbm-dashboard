@@ -15,11 +15,13 @@ class Is extends CI_Controller {
 		$this->load->library('session');
 		$this->load->model('is_model');
     $this->load->model('ps_model');
+		$this->load->model('purchasing_model');
 		$this->load->model('user_model');
   }
 	public function get_ps_item(){
 		$company = $this->input->post('company');
-    $res = $this->ps_model->get_item($company);
+		$shop = $this->input->post('shop');
+    $res = $this->purchasing_model->get_item($company, $shop);
     echo json_encode(array(
 			'status' => 'success',
 			'status_code' => 200,
@@ -27,8 +29,9 @@ class Is extends CI_Controller {
 		));
   }
 	public function get_is_item(){
-		$branch_id = $this->input->post('branch_id');
-    $res = $this->is_model->get_item($branch_id);
+		$company = $this->input->post('company');
+		$shop = $this->input->post('shop');
+    $res = $this->is_model->get_item($company, $shop);
     echo json_encode(array(
 			'status' => 'success',
 			'status_code' => 200,
@@ -37,8 +40,10 @@ class Is extends CI_Controller {
   }
 	public function add_is_item(){
 		$data = array(
+			'company' => $this->input->post('company'),
+			'shop' => $this->input->post('shop'),
 			'branch_id' => $this->input->post('branch_id'),
-			'inventory_id' => $this->input->post('inventory_id'),
+			'purchasing_item_id' => $this->input->post('purchasing_item_id'),
 			'safety_qty' => $this->input->post('safety_qty'),
 			'primary_unit' => $this->input->post('primary_unit'),
 			'secondary_unit' => $this->input->post('secondary_unit'),
@@ -99,7 +104,6 @@ class Is extends CI_Controller {
 	public function remove_is_count(){
 		$id = $this->input->post('is_count_id');
     $res1 = $this->is_model->remove_count($id);
-		$res2 = $this->ps_model->remove_ref_is_order($id);
     echo json_encode(array(
 			'status' => 'success',
 			'status_code' => 200,
@@ -107,8 +111,9 @@ class Is extends CI_Controller {
 		));
   }
 	public function get_c_item(){
-		$branch_id = $this->input->post('branch_id');
-		$res = $this->is_model->get_c_item($branch_id);
+		$company = $this->input->post('company');
+		$shop = $this->input->post('shop');
+		$res = $this->is_model->get_c_item($company, $shop);
 		echo json_encode(array(
 			'status' => 'success',
 			'status_code' => 200,
