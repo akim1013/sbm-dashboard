@@ -11,7 +11,7 @@ class Purchasing extends CI_Controller {
 		$this->load->model('purchasing_model');
 		$this->load->model('user_model');
   }
-  private function upload_file($file, $inventory_id){
+  private function upload_file($file, $id){
     $target_dir = 'C:/inetpub/wwwroot/sbm-dashboard/uploads/'; // add the specific path to save the file
     $data = explode(',', $file);
     $decoded_file = base64_decode($data[1]); // decode the file
@@ -20,7 +20,7 @@ class Purchasing extends CI_Controller {
     $file_dir = $target_dir . $file_name;
     try {
       file_put_contents($file_dir, $decoded_file); // save
-      return $this->purchasing_model->update_item_image(base_url(). 'uploads/' . $file_name, $inventory_id);
+      return $this->purchasing_model->update_item_image(base_url(). 'uploads/' . $file_name, $id);
     } catch (Exception $e) {
       return -1;
     }
@@ -45,8 +45,7 @@ class Purchasing extends CI_Controller {
 
   public function get_item(){
 		$company = $this->input->post('company');
-    $shop = $this->input->post('shop');
-    $res = $this->purchasing_model->get_item($company, $shop);
+    $res = $this->purchasing_model->get_item($company);
     echo json_encode(array(
 			'status' => 'success',
 			'status_code' => 200,
@@ -59,7 +58,7 @@ class Purchasing extends CI_Controller {
 		$invalid = array();
 		$invalid_ids = array();
 		foreach($items as $item){
-			$flag = $this->purchasing_model->validate($item->inventory_id, $item->company, $item->shop);
+			$flag = $this->purchasing_model->validate($item->inventory_id, $item->company);
 			if($flag == 0){
 				array_push($valid, $item);
 			}else{
@@ -82,7 +81,7 @@ class Purchasing extends CI_Controller {
 		));
 	}
   public function update_item_status(){
-    $res = $this->purchasing_model->update_item_status($this->input->post('status'), $this->input->post('inventory_id'));
+    $res = $this->purchasing_model->update_item_status($this->input->post('status'), $this->input->post('id'));
     echo json_encode(array(
       'status' => 'success',
       'status_code' => 200,
@@ -90,7 +89,7 @@ class Purchasing extends CI_Controller {
     ));
   }
   public function remove_item(){
-    $res = $this->purchasing_model->remove_item($this->input->post('inventory_id'));
+    $res = $this->purchasing_model->remove_item($this->input->post('id'));
     echo json_encode(array(
 			'status' => 'success',
 			'status_code' => 200,
@@ -102,7 +101,8 @@ class Purchasing extends CI_Controller {
     $item = array(
       'inventory_id' => $this->input->post('inventory_id'),
       'company' => $this->input->post('company'),
-      'shop' => $this->input->post('shop'),
+			'vendor_name' => $this->input->post('vendor_name'),
+			'vendor_item_num' => $this->input->post('vendor_item_num'),
       'user_access' => $this->input->post('user_access'),
       'gross_weight' => $this->input->post('gross_weight'),
       'category' => $this->input->post('category'),
@@ -119,26 +119,26 @@ class Purchasing extends CI_Controller {
       'created_at' => date('Y-m-d h:i:s'),
       'updated_at' => date('Y-m-d h:i:s')
 		);
-    $res = $this->purchasing_model->add_item($item);
+    $id = $this->purchasing_model->add_item($item);
     $file_uploaded = 0;
-    if($res == 1){
+    if($id){
       $file = $this->input->post('image');
       if(isset($file) && (!empty($file))){
-        $file_uploaded = $this->upload_file($file, $this->input->post('inventory_id'));
+        $file_uploaded = $this->upload_file($file, $id);
         if($file_uploaded != 1){
-          $res = -2;
+          $id = -2;
         }
       }
     }
     echo json_encode(array(
 			'status' => 'success',
 			'status_code' => 200,
-			'data' => $res
+			'data' => 1
 		));
   }
 
   public function get_item_by_id(){
-    $res = $this->purchasing_model->get_item_by_id($this->input->post('inventory_id'));
+    $res = $this->purchasing_model->get_item_by_id($this->input->post('id'));
     echo json_encode(array(
 			'status' => 'success',
 			'status_code' => 200,
@@ -163,13 +163,13 @@ class Purchasing extends CI_Controller {
       'qty_display' => $this->input->post('qty_display'),
       'updated_at' => date('Y-m-d h:i:s')
 		);
-    $res = $this->purchasing_model->update_item($item, $this->input->post('inventory_id'));
+    $res = $this->purchasing_model->update_item($item, $this->input->post('id'));
 
     $file_uploaded = 0;
     if($res == 1){
       $file = $this->input->post('image');
       if(isset($file) && (!empty($file)) && (!strpos($file, 'uploads'))){
-        $file_uploaded = $this->upload_file($file, $this->input->post('inventory_id'));
+        $file_uploaded = $this->upload_file($file, $this->input->post('id'));
         if($file_uploaded != 1){
           $res = -2;
         }
@@ -268,8 +268,7 @@ class Purchasing extends CI_Controller {
 
 	public function get_user_items(){
 		$company = $this->input->post('company');
-		$shop = $this->input->post('shop');
-		$res = $this->purchasing_model->get_item($company, $shop);
+		$res = $this->purchasing_model->get_item($company);
     echo json_encode(array(
 			'status' => 'success',
 			'status_code' => 200,

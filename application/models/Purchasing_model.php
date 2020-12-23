@@ -1,18 +1,16 @@
 <?php
 class Purchasing_model extends CI_model{
-  public function validate($inventory_id, $company, $shop){
+  public function validate($inventory_id, $company){
     $this->db->where('inventory_id', $inventory_id);
     $this->db->where('company', $company);
-    $this->db->where('shop', $shop);
     $this->db->from('purchasing_system_items');
     return $this->db->get()->num_rows();
   }
-  public function get_item($company, $shop){
+  public function get_item($company){
     $ret = array();
     $this->db->select('*');
     $this->db->from('purchasing_system_items');
     $this->db->where('company', $company);
-    $this->db->where('shop', $shop);
     $query = $this->db->get();
     foreach ($query->result() as $row){
       array_push($ret, $row);
@@ -41,16 +39,16 @@ class Purchasing_model extends CI_model{
             'gross_weight' => $item->gross_weight,
             'packing_info' => $item->packing_info
           );
-          $this->db->where('inventory_id', $id);
+          $this->db->where('id', $id);
           $this->db->update('purchasing_system_items', $_item);
         }
       }
     }
     return 1;
   }
-  public function update_item_status($status, $inventory_id){
+  public function update_item_status($status, $id){
     $this->db->set('status', $status);
-    $this->db->where('inventory_id', $inventory_id);
+    $this->db->where('id', $id);
     $res = $this->db->update('purchasing_system_items');
     if($res > 0){
         return 1;
@@ -58,23 +56,19 @@ class Purchasing_model extends CI_model{
         return -1;
     }
   }
-  public function remove_item($inventory_id){
-    return $this->db->delete('purchasing_system_items', array('inventory_id' => $inventory_id));
+  public function remove_item($id){
+    return $this->db->delete('purchasing_system_items', array('id' => $id));
   }
   public function add_item($data){
-    if($this->validate($data['inventory_id']) > 0){
+    if($this->validate($data['inventory_id'], $data['company']) > 0){
       return 0;
     }
-    $res = $this->db->insert('purchasing_system_items', $data);
-    if($res > 0){
-      return 1;
-    }else{
-      return -1;
-    }
+    $this->db->insert('purchasing_system_items', $data);
+    return $this->db->insert_id();
   }
-  public function update_item_image($file, $inventory_id){
+  public function update_item_image($file, $id){
     $this->db->set('image', $file);
-    $this->db->where('inventory_id', $inventory_id);
+    $this->db->where('id', $id);
     $res = $this->db->update('purchasing_system_items');
     if($res > 0){
         return 1;
@@ -82,14 +76,14 @@ class Purchasing_model extends CI_model{
         return 0;
     }
   }
-  public function get_item_by_id($inventory_id){
+  public function get_item_by_id($id){
     $this->db->select('*');
-    $this->db->where('inventory_id', $inventory_id);
+    $this->db->where('id', $id);
     $this->db->from('purchasing_system_items');
     $res = $this->db->get();
     return $res->result()[0];
   }
-  public function update_item($data, $inventory_id){
+  public function update_item($data, $id){
     $this->db->set('user_access', $data['user_access']);
     $this->db->set('gross_weight', $data['gross_weight']);
     $this->db->set('category', $data['category']);
@@ -104,7 +98,7 @@ class Purchasing_model extends CI_model{
     $this->db->set('status', $data['status']);
     $this->db->set('qty_display', $data['qty_display']);
     $this->db->set('updated_at', $data['updated_at']);
-    $this->db->where('inventory_id', $inventory_id);
+    $this->db->where('id', $id);
     $res = $this->db->update('purchasing_system_items');
     if($res > 0){
         return 1;
