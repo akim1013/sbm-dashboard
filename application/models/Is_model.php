@@ -102,7 +102,7 @@ class Is_model extends CI_model{
       from is_items
       left join purchasing_system_items on purchasing_system_items.id = is_items.purchasing_item_id
       where is_items.company = '".$company."' and is_items.shop = '".$shop."'
-        and purchasing_system_items.company = '".$company."' and purchasing_system_items.shop = '".$shop."'
+        and purchasing_system_items.company = '".$company."'
     ";
     $query = $this->db->query($sql);
     $res = array();
@@ -168,10 +168,14 @@ class Is_model extends CI_model{
     }
     return $res;
   }
-  public function send_data_to_dashboard($company, $branch_id, $counter_id, $is_count_id, $timestamp, $items){
+  public function send_data_to_dashboard($company, $shop, $branch_id, $counter_id, $is_count_id, $timestamp, $items){
     foreach($items as $item){
-      $this->db->insert('is_history', array(
+
+      // inventory system count history
+
+      $this->db->insert('is_count_history', array(
         'company' => $company,
+        'shop' => $shop,
         'branch_id' => $branch_id,
         'counter_id' => $counter_id,
         'is_count_id' => $is_count_id,
@@ -182,7 +186,31 @@ class Is_model extends CI_model{
         'value' => $item->value,
         'timestamp' => $timestamp
       ));
+
+      // inventory system items stock update
+      $this->db->set('stock_qty_primary', $item->qty_primary);
+      $this->db->set('stock_qty_secondary', $item->qty_secondary);
+      $this->db->where('company', $company);
+      $this->db->where('shop', $shop);
+      $this->db->where('branch_id', $branch_id);
+      $this->db->where('purchasing_item_id', $item->item_id);
+      $this->db->update('is_items');
+
+      // inventory system items stock update history
+
+      $this->db->insert('is_stock_history', array(
+        'company' => $company,
+        'shop' => $shop,
+        'branch_id' => $branch_id,
+        'customer_id' => $counter_id,
+        'purchasing_item_id' => $item->item_id,
+        'primary_qty_change' => $item->qty_primary,
+        'secondary_qty_change' => $item->qty_secondary,
+        'platform' => 'Inventory System',
+        'description' => 'Monthly count'
+      ));
     }
+
     return 1;
   }
   public function get_inventory_history($company, $branch_id){

@@ -162,8 +162,7 @@ class Purchasing_model extends CI_model{
     $this->db->join('purchasing_system_approvements', 'purchasing_system_approvements.shipment_id = purchasing_system_shipments.id', 'left');
     $this->db->join('purchasing_system_items', 'purchasing_system_items.id = purchasing_system_approvements.item_id', 'left');
     $this->db->where('purchasing_system_shipments.order_id', $order_id);
-    $this->db->where('purchasing_system_approvements.status', 'shipped');
-    $this->db->or_where('purchasing_system_approvements.status', 'accepted');
+    $this->db->where('purchasing_system_approvements.status <>', 'approved');
     $query = $this->db->get();
     foreach ($query->result() as $row){
       array_push($ret, $row);
@@ -366,10 +365,97 @@ class Purchasing_model extends CI_model{
     }
     return $ret;
   }
+  public function get_order_history_inventory($company, $shop, $branch){
+    $ret = array();
+    $this->db->select('purchasing_system_orders.*, users.name, users.email, is_counts.period');
+    $this->db->from('purchasing_system_orders');
+    $this->db->join('users', 'users.id = purchasing_system_orders.customer_id', 'left');
+    $this->db->join('is_counts', 'is_counts.id = purchasing_system_orders.inventory_system_ref_id', 'left');
+    $this->db->where('purchasing_system_orders.company', $company);
+    $this->db->where('purchasing_system_orders.shop', $shop);
+    $this->db->where('purchasing_system_orders.branch', $branch);
+    $this->db->where('purchasing_system_orders.status <>', 'draft');
+    $this->db->where('purchasing_system_orders.order_type', 'auto_order');
+    $this->db->order_by('order_time', 'DESC');
+
+    $query = $this->db->get();
+    foreach ($query->result() as $row){
+      array_push($ret, $row);
+    }
+    return $ret;
+  }
   public function accept_item($id){
     $this->db->set('status', 'accepted');
     $this->db->where('id', $id);
     return $this->db->update('purchasing_system_approvements');
+  }
+  public function update_stock_history_accept_from_inventory(
+    $company,
+    $shop,
+    $branch_id,
+    $customer_id,
+    $item_id,
+    $primary_qty
+  ){
+    $this->db->select('stock_qty_primary');
+    $this->db->where('company', $company);
+    $this->db->where('shop', $shop);
+    $this->db->where('branch_id', $branch_id);
+    $this->db->where('purchasing_item_id', $item_id);
+    $qty = $this->db->get('is_items');
+    $final_qty = $qty->result()[0]->stock_qty_primary + $primary_qty;
+
+    $this->db->set('stock_qty_primary', $final_qty);
+    $this->db->where('company', $company);
+    $this->db->where('shop', $shop);
+    $this->db->where('branch_id', $branch_id);
+    $this->db->where('purchasing_item_id', $item_id);
+    $this->db->update('is_items');
+
+    $this->db->insert('is_stock_history', array(
+      'company' => $company,
+      'shop' => $shop,
+      'branch_id' => $branch_id,
+      'customer_id' => $customer_id,
+      'purchasing_item_id' => $item_id,
+      'primary_qty_change' => $qty->result()[0]->stock_qty_primary,
+      'platform' => 'Inventory System',
+      'description' => 'Order received from weekly count'
+    ));
+  }
+  public function update_stock_history_accept_from_purchasing(
+    $company,
+    $shop,
+    $branch_id,
+    $customer_id,
+    $item_id,
+    $primary_qty
+  ){
+    $this->db->select('stock_qty_primary');
+    $this->db->where('company', $company);
+    $this->db->where('shop', $shop);
+    $this->db->where('branch_id', $branch_id);
+    $this->db->where('purchasing_item_id', $item_id);
+    $qty = $this->db->get('is_items');
+    $final_qty = $qty->result()[0]->stock_qty_primary + $primary_qty;
+
+    $this->db->set('stock_qty_primary', $final_qty);
+    $this->db->where('company', $company);
+    $this->db->where('shop', $shop);
+    $this->db->where('branch_id', $branch_id);
+    $this->db->where('purchasing_item_id', $item_id);
+    $this->db->update('is_items');
+
+    $this->db->insert('is_stock_history', array(
+      'company' => $company,
+      'shop' => $shop,
+      'branch_id' => $branch_id,
+      'customer_id' => $customer_id,
+      'purchasing_item_id' => $item_id,
+      'primary_qty_change' => $qty->result()[0]->stock_qty_primary,
+      'platform' => 'Purchasing System',
+      'description' => 'Manual order received'
+    ));
   }
 }
 ?>

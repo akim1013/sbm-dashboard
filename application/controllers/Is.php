@@ -20,8 +20,7 @@ class Is extends CI_Controller {
   }
 	public function get_ps_item(){
 		$company = $this->input->post('company');
-		$shop = $this->input->post('shop');
-    $res = $this->purchasing_model->get_item($company, $shop);
+    $res = $this->purchasing_model->get_item($company);
     echo json_encode(array(
 			'status' => 'success',
 			'status_code' => 200,
@@ -192,13 +191,14 @@ class Is extends CI_Controller {
 	}
 	public function send_data_to_dashboard(){
 		$company = $this->input->post('company');
+		$shop = $this->input->post('shop');
 		$branch_id = $this->input->post('branch_id');
 		$counter_id = $this->input->post('counter_id');
 		$is_count_id = $this->input->post('is_count_id');
 		$timestamp = $this->input->post('timestamp');
 		$items = json_decode($this->input->post('items'));
+		$res = $this->is_model->send_data_to_dashboard($company, $shop, $branch_id, $counter_id, $is_count_id, $timestamp, $items);
 
-		$res = $this->is_model->send_data_to_dashboard($company, $branch_id, $counter_id, $is_count_id, $timestamp, $items);
 		echo json_encode(array(
 			'status' => 'success',
 			'status_code' => 200,

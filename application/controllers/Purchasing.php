@@ -302,26 +302,23 @@ class Purchasing extends CI_Controller {
 		$order = array(
 			'order_ref' => $this->input->post('order_ref'),
 			'company' => $this->input->post('company'),
+			'branch' => $this->input->post('branch'),
 			'customer_id' => $this->input->post('customer_id'),
 			'shop' => $this->input->post('shop'),
 			'order_time' => $this->input->post('order_time'),
 			'inventory_system_ref_id' => $this->input->post('ref_is_id'),
-			'type' => $this->input->post('type'),
+			'order_type' => $this->input->post('type'),
+			'order_time' => date("Y-m-d H:i:s"),
 			'status' => 'pending'
 		);
 		$items = json_decode($this->input->post('items'));
-		$res = $this->purchasing_model->create_order($order);
-		if($res == 1){
-			$res = $this->purchasing_model->add_ordered_items_auto($this->input->post('order_id'), $items);
-		}else{
-			echo json_encode(array(
-				'status' => 'failed'
-			));
-		}
+		$order_id = $this->purchasing_model->create_order($order);
+		$res2 = $this->purchasing_model->add_ordered_items_auto($order_id, $items);
+
 		echo json_encode(array(
 			'status' => 'success',
 			'status_code' => 200,
-			'data' => $res
+			'data' => $res2
 		));
 	}
 
@@ -394,9 +391,54 @@ class Purchasing extends CI_Controller {
 			'data' => $res
 		));
 	}
-	public function accept_item(){
-		$id = $this->input->post('id');
-		$res = $this->purchasing_model->accept_item($id);
+	public function get_order_history_inventory(){
+		$company = $this->input->post('company');
+		$shop = $this->input->post('shop');
+		$branch = $this->input->post('branch');
+		$res = $this->purchasing_model->get_order_history_inventory($company, $shop, $branch);
+    echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+	}
+
+	public function accept_item_inventory(){
+		$company = $this->input->post('company');
+		$shop = $this->input->post('shop');
+		$branch_id = $this->input->post('branch_id');
+		$customer_id = $this->input->post('customer_id');
+		$item = json_decode($this->input->post('item'));
+		$this->purchasing_model->update_stock_history_accept_from_inventory(
+			$company,
+			$shop,
+			$branch_id,
+			$customer_id,
+			$item->id,
+			$item->approved_qty
+		);
+		$res = $this->purchasing_model->accept_item($item->approvement_id);
+    echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+	}
+	public function accept_item_purchasing(){
+		$company = $this->input->post('company');
+		$shop = $this->input->post('shop');
+		$branch_id = $this->input->post('branch_id');
+		$customer_id = $this->input->post('customer_id');
+		$item = json_decode($this->input->post('item'));
+		$this->purchasing_model->update_stock_history_accept_from_purchasing(
+			$company,
+			$shop,
+			$branch_id,
+			$customer_id,
+			$item->id,
+			$item->approved_qty
+		);
+		$res = $this->purchasing_model->accept_item($item->approvement_id);
     echo json_encode(array(
 			'status' => 'success',
 			'status_code' => 200,
