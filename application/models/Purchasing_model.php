@@ -418,7 +418,7 @@ class Purchasing_model extends CI_model{
       'branch_id' => $branch_id,
       'customer_id' => $customer_id,
       'purchasing_item_id' => $item_id,
-      'primary_qty_change' => $qty->result()[0]->stock_qty_primary,
+      'primary_qty_change' => $primary_qty,
       'platform' => 'Inventory System',
       'description' => 'Order received from weekly count'
     ));
@@ -452,7 +452,7 @@ class Purchasing_model extends CI_model{
       'branch_id' => $branch_id,
       'customer_id' => $customer_id,
       'purchasing_item_id' => $item_id,
-      'primary_qty_change' => $qty->result()[0]->stock_qty_primary,
+      'primary_qty_change' => $primary_qty,
       'platform' => 'Purchasing System',
       'description' => 'Manual order received'
     ));

@@ -215,4 +215,28 @@ class Is extends CI_Controller {
 			'data' => $res
 		));
 	}
+
+	public function get_inventory_stock(){
+		$company = $this->input->post('company');
+		$shop = $this->input->post('shop');
+		$branch_id = $this->input->post('branch_id');
+		$res = $this->is_model->get_inventory_stock($company, $shop, $branch_id);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+	}
+	public function get_item_history_data(){
+		$company = $this->input->post('company');
+		$shop = $this->input->post('shop');
+		$branch_id = $this->input->post('branch_id');
+		$purchasing_item_id = $this->input->post('purchasing_item_id');
+		$res = $this->is_model->get_item_history_data($company, $shop, $branch_id, $purchasing_item_id);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+	}
 }

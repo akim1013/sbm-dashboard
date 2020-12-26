@@ -140,6 +140,44 @@ class Is_model extends CI_model{
     return $res;
   }
   public function add_count_detail($data){
+    $this->db->select('company, shop, branch_id, purchasing_item_id');
+    $this->db->from('is_items');
+    $this->db->where('id', $data['is_item_id']);
+    $query = $this->db->get();
+    $purchasing_item_id = $query->result()[0]->purchasing_item_id;
+    $company = $query->result()[0]->company;
+    $shop = $query->result()[0]->shop;
+    $branch_id = $query->result()[0]->branch_id;
+
+    $this->db->select('counter_id');
+    $this->db->from('is_counts');
+    $this->db->where('id', $data['is_count_id']);
+    $query2 = $this->db->get();
+    $customer_id = $query2->result()[0]->counter_id;
+
+    // Update is_items stocks
+
+    $this->db->set('stock_qty_primary', $data['qty_primary']);
+    $this->db->set('stock_qty_secondary', $data['qty_secondary']);
+    $this->db->where('purchasing_item_id', $purchasing_item_id);
+    $this->db->where('company', $company);
+    $this->db->where('shop', $shop);
+    $this->db->where('branch_id', $branch_id);
+    $this->db->update('is_items');
+
+    // Update stocks_history
+
+    $this->db->insert('is_stock_history', array(
+      'company' => $company,
+      'shop' => $shop,
+      'branch_id' => $branch_id,
+      'customer_id' => $customer_id,
+      'purchasing_item_id' => $purchasing_item_id,
+      'primary_qty_change' => $data['qty_primary'],
+      'platform' => 'Inventory System',
+      'description' => 'Weekly count qty'
+    ));
+
     return $this->db->insert('is_count_details', $data);
   }
   public function complete_count($id){
@@ -240,6 +278,32 @@ class Is_model extends CI_model{
       array_push($res, $row);
     }
     return $res;
+  }
+
+  public function get_inventory_stock($company, $shop, $branch_id){
+    $ret = array();
+    $this->db->select('is_items.safety_qty safety_qty, is_items.stock_qty_primary, is_items.stock_qty_secondary, purchasing_system_items.*');
+    $this->db->from('is_items');
+    $this->db->join('purchasing_system_items', 'purchasing_system_items.id = is_items.purchasing_item_id', 'left');
+    $this->db->where('is_items.company', $company);
+    $this->db->where('is_items.shop', $shop);
+    $this->db->where('is_items.branch_id', $branch_id);
+    $query = $this->db->get();
+    foreach ($query->result() as $row){
+      array_push($ret, $row);
+    }
+    return $ret;
+  }
+
+  public function get_item_history_data($company, $shop, $branch_id, $purchasing_item_id){
+    $this->db->select('*');
+    $this->db->from('is_stock_history');
+    $this->db->where('company', $company);
+    $this->db->where('shop', $shop);
+    $this->db->where('branch_id', $branch_id);
+    $this->db->where('purchasing_item_id', $purchasing_item_id);
+    $query = $this->db->get();
+    return $query->result();
   }
 }
 ?>
