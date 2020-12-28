@@ -65,4 +65,33 @@ class Kitchen extends CI_Controller {
 			'res' => $res
 		));
 	}
+
+	public function kitchen_item_use(){
+		$data = array(
+			'shop'   => $this->input->post('shop_name'),
+			'company'      => $this->input->post('company'),
+			'branch_id' => $this->input->post('branch_id'),
+			'description'    => $this->input->post('reason'),
+			'platform'    => 'Kitchen',
+			'timestamp' => $this->input->post('timestamp'),
+			'purchasing_item_id' => $this->input->post('purchasing_item_id'),
+			'primary_qty_change' => '-' . $this->input->post('primary_qty_change'),
+			'secondary_qty_change' => '-' . $this->input->post('secondary_qty_change')
+		);
+		$res = $this->kitchen_model->kitchen_item_use($data);
+		echo json_encode(array(
+			'res' => $res
+		));
+	}
+
+	public function kitchen_get_purchasing_item(){
+		$data = array(
+			'company'      => $this->input->post('company'),
+			'inventory_id'   => $this->input->post('item_code')
+		);
+		$res = $this->kitchen_model->kitchen_get_purchasing_item($data);
+		echo json_encode(array(
+			'res' => $res
+		));
+	}
 }

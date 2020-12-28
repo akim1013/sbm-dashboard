@@ -17,7 +17,7 @@
           $this->db->where('id', $res->result()[0]->id);
           $this->db->update('users');
           $user_info = $res->result()[0];
-          return 1;
+          return $res->result();
       }
     }
     public function log_history($data){
@@ -98,6 +98,23 @@
           array_push($ret, $row);
       }
       return $ret;
+    }
+
+    public function kitchen_get_purchasing_item($data){
+      $ret = array();
+      $this->db->select('*');
+      $this->db->from('purchasing_system_items');
+      $this->db->where('company', $data['company']);
+      $this->db->where('inventory_id', $data['inventory_id']);
+      $query = $this->db->get();
+      foreach ($query->result() as $row){
+        array_push($ret, $row);
+      }
+      return $ret;
+    }
+
+    public function kitchen_item_use($data){
+      return $this->db->insert('is_stock_history', $data);
     }
   }
 ?>
