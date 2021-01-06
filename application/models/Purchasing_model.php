@@ -27,24 +27,27 @@ class Purchasing_model extends CI_model{
   public function update_batch_item($ids, $data){
     if(count($data) == 0){
       return 1;
-    }
-    foreach($ids as $id){
-      foreach($data as $item){
-        if($id == $item->inventory_id){
-          $_item = array(
-            'qty' => $item->qty,
-            'moq' => $item->moq,
-            'cbf' => $item->cbf,
-            'price' => $item->price,
-            'gross_weight' => $item->gross_weight,
-            'packing_info' => $item->packing_info
-          );
-          $this->db->where('id', $id);
-          $this->db->update('purchasing_system_items', $_item);
+    }else{
+      foreach($ids as $id){
+        foreach($data as $item){
+          if($id == $item->inventory_id){
+            $_item = array(
+              'qty' => $item->qty,
+              'moq' => $item->moq,
+              'cbf' => $item->cbf,
+              'price' => $item->price,
+              'vendor_name' => $item->vendor_name,
+              'vendor_item_num' => $item->vendor_item_num,
+              'gross_weight' => $item->gross_weight,
+              'packing_info' => $item->packing_info
+            );
+            $this->db->where('inventory_id', $id);
+            $this->db->update('purchasing_system_items', $_item);
+          }
         }
       }
+      return 2;
     }
-    return 1;
   }
   public function update_item_status($status, $id){
     $this->db->set('status', $status);
@@ -89,6 +92,8 @@ class Purchasing_model extends CI_model{
     $this->db->set('category', $data['category']);
     $this->db->set('description', $data['description']);
     $this->db->set('vendor_description', $data['vendor_description']);
+    $this->db->set('vendor_name', $data['vendor_name']);
+    $this->db->set('vendor_item_num', $data['vendor_item_num']);
     $this->db->set('packing_info', $data['packing_info']);
     $this->db->set('unit', $data['unit']);
     $this->db->set('price', $data['price']);
@@ -97,6 +102,7 @@ class Purchasing_model extends CI_model{
     $this->db->set('moq', $data['moq']);
     $this->db->set('status', $data['status']);
     $this->db->set('qty_display', $data['qty_display']);
+    $this->db->set('qty_enabled', $data['qty_enabled']);
     $this->db->set('updated_at', $data['updated_at']);
     $this->db->where('id', $id);
     $res = $this->db->update('purchasing_system_items');
@@ -212,6 +218,7 @@ class Purchasing_model extends CI_model{
     return $this->db->update('purchasing_system_orders');
   }
   public function remove_approved_item($id){
+    
     return $this->db->delete('purchasing_system_approvements', array('id' => $id));
   }
   public function ship_order($data){

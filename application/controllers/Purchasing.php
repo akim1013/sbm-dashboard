@@ -116,6 +116,7 @@ class Purchasing extends CI_Controller {
       'moq' => $this->input->post('moq'),
       'status' => $this->input->post('status'),
       'qty_display' => $this->input->post('qty_display'),
+			'qty_enabled' => $this->input->post('qty_enabled'),
       'created_at' => date('Y-m-d h:i:s'),
       'updated_at' => date('Y-m-d h:i:s')
 		);
@@ -153,6 +154,8 @@ class Purchasing extends CI_Controller {
       'category' => $this->input->post('category'),
       'description' => $this->input->post('description'),
       'vendor_description' => $this->input->post('vendor_description'),
+			'vendor_name' => $this->input->post('vendor_name'),
+			'vendor_item_num' => $this->input->post('vendor_item_num'),
       'packing_info' => $this->input->post('packing_info'),
       'unit' => $this->input->post('unit'),
       'price' => $this->input->post('price'),
@@ -161,6 +164,7 @@ class Purchasing extends CI_Controller {
       'moq' => $this->input->post('moq'),
       'status' => $this->input->post('status'),
       'qty_display' => $this->input->post('qty_display'),
+			'qty_enabled' => $this->input->post('qty_enabled'),
       'updated_at' => date('Y-m-d h:i:s')
 		);
     $res = $this->purchasing_model->update_item($item, $this->input->post('id'));
@@ -213,10 +217,14 @@ class Purchasing extends CI_Controller {
 		$order_id = $this->input->post('order_id');
 		$item_id = $this->input->post('item_id');
 		$approved_qty = $this->input->post('approved_qty');
+		$qty_enabled = $this->input->post('qty_enabled');
 		$approved_price = $this->input->post('approved_price');
 
 		$this->purchasing_model->update_order_status($order_id, 'processing');
-		$this->purchasing_model->update_item_qty($item_id, $approved_qty);
+
+		if($qty_enabled == 'true'){
+			$this->purchasing_model->update_item_qty($item_id, $approved_qty);
+		}
 
 		$res = $this->purchasing_model->approve_item(array(
 			'order_id' => $order_id,
@@ -233,6 +241,12 @@ class Purchasing extends CI_Controller {
 	}
 	public function remove_approved_item(){
 		$approvement_id = $this->input->post('approvement_id');
+		$qty_enabled = $this->input->post('qty_enabled');
+		$approved_qty = $this->input->post('approved_qty');
+		$purchasing_id = $this->input->post('purchasing_id');
+		if($qty_enabled == 'true'){
+			$this->purchasing_model->update_item_qty($purchasing_id, -1 * $approved_qty);
+		}
 		$res = $this->purchasing_model->remove_approved_item($approvement_id);
     echo json_encode(array(
 			'status' => 'success',
