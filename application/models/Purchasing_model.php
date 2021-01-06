@@ -158,6 +158,7 @@ class Purchasing_model extends CI_model{
       purchasing_system_shipments.order_id order_id,
       purchasing_system_shipments.shipment_ref_number,
       purchasing_system_shipments.shipment_date,
+      purchasing_system_shipments.shipment_eta,
       purchasing_system_approvements.id approvement_id,
       purchasing_system_approvements.approved_qty,
       purchasing_system_approvements.approved_price,
@@ -218,7 +219,7 @@ class Purchasing_model extends CI_model{
     return $this->db->update('purchasing_system_orders');
   }
   public function remove_approved_item($id){
-    
+
     return $this->db->delete('purchasing_system_approvements', array('id' => $id));
   }
   public function ship_order($data){

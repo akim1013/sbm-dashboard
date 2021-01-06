@@ -257,10 +257,12 @@ class Purchasing extends CI_Controller {
 	public function ship_order(){
 		$order_id = $this->input->post('order_id');
 		$shipment_date = $this->input->post('shipment_date');
+		$shipment_eta = $this->input->post('shipment_eta');
 		$shipment_ref_number = $this->input->post('shipment_ref_number');
 		$shipment_id = $this->purchasing_model->ship_order(array(
 			'order_id' => $order_id,
 			'shipment_date' => $shipment_date,
+			'shipment_eta' => $shipment_eta,
 			'shipment_ref_number' => $shipment_ref_number
 		));
 		$res = $this->purchasing_model->update_approvement_status($order_id, $shipment_id);
