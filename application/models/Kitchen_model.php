@@ -99,7 +99,40 @@
       }
       return $ret;
     }
+    public function get_amount_detail_history($data){
+      $d = '';
+      switch($data['d']){
+        case 'hour':
+          $d = "DATE_FORMAT(timestamp, '%H')";
+          break;
+        case 'day':
+          $d = "DATE_FORMAT(timestamp, '%d')";
+          break;
+        case 'month':
+          $d = "DATE_FORMAT(timestamp, '%m')";
+          break;
+        case 'year':
+          $d = "DATE_FORMAT(timestamp, %YY'YY')";
+          break;
+        default:
+          $d = "DATE_FORMAT(timestamp, '%d')";
+          break;
+      }
 
+      $ret = array();
+      $sql = "
+        SELECT SUM(amount) amount, item_id, item_name, type, ".$d." d
+        FROM kt_histories
+        WHERE shop_id = '" . $data['shop_id'] . "' AND timestamp BETWEEN '" . $data['from'] . ' 00:00:00' . "' AND '" . $data['to'] . ' 23:59:59' . "'
+        GROUP BY item_id, item_name, type, ".$d."
+        ORDER BY item_id, ".$d."
+      ";
+      $query = $this->db->query($sql);
+      foreach ($query->result() as $row){
+          array_push($ret, $row);
+      }
+      return $ret;
+    }
     public function kitchen_get_purchasing_item($data){
       $ret = array();
       $this->db->select('*');

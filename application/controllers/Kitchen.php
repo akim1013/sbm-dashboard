@@ -49,10 +49,12 @@ class Kitchen extends CI_Controller {
 			'd'					=> $this->input->post('d')
 		);
 		$amount = $this->kitchen_model->get_amount_history($data);
+		$amount_detail = $this->kitchen_model->get_amount_detail_history($data);
 		$item = $this->kitchen_model->get_item_history($data);
 		$history = $this->kitchen_model->get_history($data);
 		echo json_encode(array(
 			'amount_history' => $amount,
+			'amount_detail_history' => $amount_detail,
 			'item_history' => $item,
 			'history' => $history
 		));
