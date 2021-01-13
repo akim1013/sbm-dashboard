@@ -143,6 +143,16 @@ class Is extends CI_Controller {
 			'data' => $res
 		));
 	}
+	public function add_count_detail_batch(){
+		$data = json_decode($this->input->post('items'));
+
+		$res = $this->is_model->add_count_detail_batch($data);
+		echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+	}
 	public function complete_count(){
 		$draft_id = $this->input->post('draft_id');
 		$res = $this->is_model->complete_count($draft_id);

@@ -53,6 +53,7 @@ class Is_model extends CI_model{
         is_counts.id is_count_id,
         is_counts.status status,
         is_counts.period period,
+        is_counts.order_status order_status,
         is_counts.timestamp timestamp,
         users.name counter_name
       from is_counts
@@ -97,6 +98,7 @@ class Is_model extends CI_model{
         purchasing_system_items.description description,
         purchasing_system_items.vendor_description vendor_description,
         purchasing_system_items.image image,
+        purchasing_system_items.unit unit,
         purchasing_system_items.price price,
         purchasing_system_items.packing_info packing_info
       from is_items
@@ -179,6 +181,49 @@ class Is_model extends CI_model{
     ));
 
     return $this->db->insert('is_count_details', $data);
+  }
+  public function add_count_detail_batch($data){
+    foreach($data as $item){
+      $this->db->select('company, shop, branch_id, purchasing_item_id');
+      $this->db->from('is_items');
+      $this->db->where('id', $item->is_item_id);
+      $query = $this->db->get();
+      $purchasing_item_id = $query->result()[0]->purchasing_item_id;
+      $company = $query->result()[0]->company;
+      $shop = $query->result()[0]->shop;
+      $branch_id = $query->result()[0]->branch_id;
+
+      $this->db->select('counter_id');
+      $this->db->from('is_counts');
+      $this->db->where('id', $item->is_count_id);
+      $query2 = $this->db->get();
+      $customer_id = $query2->result()[0]->counter_id;
+
+      // Update is_items stocks
+
+      $this->db->set('stock_qty_primary', $item->qty_primary);
+      $this->db->set('stock_qty_secondary', $item->qty_secondary);
+      $this->db->where('purchasing_item_id', $purchasing_item_id);
+      $this->db->where('company', $company);
+      $this->db->where('shop', $shop);
+      $this->db->where('branch_id', $branch_id);
+      $this->db->update('is_items');
+
+      // Update stocks_history
+
+      $this->db->insert('is_stock_history', array(
+        'company' => $company,
+        'shop' => $shop,
+        'branch_id' => $branch_id,
+        'customer_id' => $customer_id,
+        'purchasing_item_id' => $purchasing_item_id,
+        'primary_qty_change' => $item->qty_primary,
+        'platform' => 'Inventory System',
+        'description' => 'Weekly count qty'
+      ));
+      $this->db->insert('is_count_details', $item);
+    }
+    return 1;
   }
   public function complete_count($id){
     $this->db->set('status', 'completed');
