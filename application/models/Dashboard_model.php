@@ -1090,15 +1090,15 @@ class Dashboard_model extends CI_Model{
     }
     function _get_hourly_sale($conn, $date, $shop_name){
         $sql = "
-            SELECT DATEPART(hour, t.trans_date) h, COUNT(*) transaction_count
+            SELECT cast(DATEPART(YEAR, t.trans_date) as varchar) + '-' + cast(DATEPART(MONTH, t.trans_date) as varchar) + '-' + cast(DATEPART(day, t.trans_date) as varchar) d, DATEPART(hour, t.trans_date) h, COUNT(*) transaction_count
             FROM transactions t
             LEFT JOIN shops s ON s.id = t.shop_id
             LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id
             WHERE t.delete_operator_id IS NULL
-                AND t.bookkeeping_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
+                AND t.trans_date BETWEEN '" . $date['start'] . "' AND '" . $date['end'] . "'
                 AND s.description = '" . $shop_name . "'
-            GROUP BY DATEPART(hour, t.trans_date)
-            ORDER BY h
+            GROUP BY DATEPART(YEAR, t.trans_date), DATEPART(MONTH, t.trans_date), DATEPART(day, t.trans_date), DATEPART(hour, t.trans_date)
+            ORDER BY DATEPART(YEAR, t.trans_date), DATEPART(MONTH, t.trans_date), DATEPART(day, t.trans_date), DATEPART(hour, t.trans_date)
         ";
         return $this->run_query($conn, $sql);
     }
