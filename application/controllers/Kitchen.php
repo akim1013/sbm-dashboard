@@ -31,6 +31,8 @@ class Kitchen extends CI_Controller {
 			'item_code' => $this->input->post('item_code'),
 			'item_name' => $this->input->post('item_name'),
 			'amount'    => $this->input->post('amount'),
+			'bag'    => $this->input->post('bag'),
+			'batch'    => $this->input->post('batch'),
 			'reason'    => $this->input->post('reason'),
 			'timestamp' => $this->input->post('timestamp')
 		);

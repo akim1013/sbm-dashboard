@@ -478,5 +478,12 @@ from
 group by t.phone,t.code
 order by max(clover_id) desc
 
+
+exec proc_stock_material_statistic_by_transaction '5' ,'2021-01-16 00:00:00','2021-01-16 12:22:22'
+
+
+
+
+
 -index-
 create nonclustered index idx_global_food_order_id on transactions (delete_timestamp, bookkeeping_date) include (global_food_order_id)

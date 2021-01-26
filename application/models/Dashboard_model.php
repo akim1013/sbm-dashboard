@@ -1120,7 +1120,7 @@ class Dashboard_model extends CI_Model{
         $sql = "
             SELECT
             SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as price,
-            a.description as article_name, count(a.description) qty
+            a.description as article_name, sum(ta.qty_weight) qty
             FROM transactions t
             INNER JOIN shops s ON s.id = t.shop_id
             LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id AND tk.in_statistics=1
@@ -1427,7 +1427,7 @@ class Dashboard_model extends CI_Model{
                 a.id as article_id,
             	a.description as article_description,
                 SUM(ta.price + COALESCE(ta.discount, 0) + COALESCE(ta.promotion_discount, 0)) as price,
-                count(ta.price) amount
+                sum(ta.qty_weight) amount
             FROM transactions t
             INNER JOIN shops s ON s.id = t.shop_id
             LEFT JOIN transaction_causals tk ON tk.id = t.transaction_causal_id

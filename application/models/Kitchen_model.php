@@ -40,7 +40,7 @@
     public function get_item_history($data){
       $ret = array();
       $sql = "
-        SELECT item_id, item_code, item_name, SUM(amount) amount, type
+        SELECT item_id, item_code, item_name, SUM(amount * batch * bag) amount, type
         FROM kt_histories
         WHERE shop_id = '" . $data['shop_id'] . "' AND timestamp BETWEEN '" . $data['from'] . ' 00:00:00' . "' AND '" . $data['to'] . ' 23:59:59' . "'
         GROUP BY item_id, type
@@ -121,7 +121,7 @@
 
       $ret = array();
       $sql = "
-        SELECT SUM(amount) amount, item_id, item_name, type, ".$d." d
+        SELECT SUM(amount * batch * bag) amount, item_id, item_name, type, ".$d." d
         FROM kt_histories
         WHERE shop_id = '" . $data['shop_id'] . "' AND timestamp BETWEEN '" . $data['from'] . ' 00:00:00' . "' AND '" . $data['to'] . ' 23:59:59' . "'
         GROUP BY item_id, item_name, type, ".$d."
@@ -147,7 +147,8 @@
     }
 
     public function kitchen_item_use($data){
-      return $this->db->insert('is_stock_history', $data);
+      //return $this->db->insert('is_stock_history', $data);
+      return 1;
     }
   }
 ?>

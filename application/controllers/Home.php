@@ -491,8 +491,8 @@ class Home extends MY_Controller {
 	}
 	public function payment_data(){
 		$date = array(
-			"start" => $this->input->post('from'),
-			"end"	=> $this->input->post('to')
+			"start" => $this->input->post('from') . ' 00:00:00',
+			"end"	=> $this->input->post('to') . ' 23:59:59'
 		);
 		$shop = $this->input->post('shop');
 		$db = $this->input->post('db');
