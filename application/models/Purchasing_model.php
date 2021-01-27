@@ -465,5 +465,15 @@ class Purchasing_model extends CI_model{
       'description' => 'Manual order received'
     ));
   }
+  public function get_last_po_number($company, $shop, $branch){
+    $this->db->limit(1);
+    $this->db->select('order_ref');
+    $this->db->where('company', $company);
+    $this->db->where('shop', $shop);
+    $this->db->where('branch', $branch);
+    $this->db->order_by('order_time', 'DESC');
+    $order_id = $this->db->get('purchasing_system_orders');
+    return $order_id->result();
+  }
 }
 ?>

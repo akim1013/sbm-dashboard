@@ -461,4 +461,19 @@ class Purchasing extends CI_Controller {
 			'data' => $res
 		));
 	}
+	public function get_last_po_number(){
+		$company = $this->input->post('company');
+		$shop = $this->input->post('shop');
+		$branch = $this->input->post('branch');
+		$res = $this->purchasing_model->get_last_po_number(
+			$company,
+			$shop,
+			$branch
+		);
+    echo json_encode(array(
+			'status' => 'success',
+			'status_code' => 200,
+			'data' => $res
+		));
+	}
 }
